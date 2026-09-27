@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bg text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.1;
+  }
+
+  p,
+  li {
+    line-height: 1.5;
+  }
+
+  /* Focus rings are a keyboard-accessibility requirement — never remove them.
+     AGENTS.md §8 / CLAUDE.md rule 9. */
+  :focus-visible {
+    outline: 2px solid theme('colors.pink.DEFAULT');
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* AGENTS.md §8: motion is fade-and-rise only, 200-300ms. */
+  .animate-rise {
+    animation: rise 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(to right, theme('colors.border') 1px, transparent 1px),
+      linear-gradient(to bottom, theme('colors.border') 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 100%);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
