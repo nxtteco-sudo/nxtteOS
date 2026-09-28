@@ -1,0 +1,1019 @@
+"use client";
+
+// Homepage design ported from the Vite prototype (_vite-scaffold-archive).
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { trackEvent } from "@/lib/analytics";
+import { siFacebook, siInstagram, siPinterest, siThreads, siTiktok, siWhatsapp, siX, siYoutube } from "simple-icons";
+import {
+  ArrowDown,
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpRight,
+  BarChart3,
+  Bookmark,
+  CalendarCheck,
+  CalendarX,
+  CalendarRange,
+  Check,
+  CheckCheck,
+  ChevronDown,
+  ChevronUp,
+  Clock3,
+  FileBarChart,
+  Handshake,
+  Ghost,
+  Heart,
+  Inbox,
+  LayoutTemplate,
+  Instagram,
+  Layers3,
+  Mail,
+  Map as MapIcon,
+  MapPin,
+  Menu,
+  MessageCircle,
+  MoveUpRight,
+  Play,
+  Plus,
+  ScanSearch,
+  Send,
+  SendHorizontal,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  Ticket,
+  TrendingDown,
+  TrendingUp,
+  UserPlus,
+  Timer,
+  Receipt,
+  Unlock,
+  Users,
+  Workflow,
+  X,
+  Zap,
+} from "lucide-react";
+
+const whatsappHref = buildWhatsAppLink("Hi nxtte, I'd like to talk about turning my content into bookings.");
+
+const navItems = [
+  ["Services", "/services"],
+  ["Work", "/work"],
+  ["About", "/about"],
+  ["Insights", "/insights"],
+  ["Contact", "/contact"],
+];
+
+const packages = [
+  {
+    name: "Starter",
+    price: "RM 890",
+    note: "per month",
+    detail: "For one clear channel and a consistent presence.",
+    included: ["1 platform", "12 posts — static + carousel", "Captions", "Monthly report"],
+  },
+  {
+    name: "Growth",
+    price: "RM 1,590",
+    note: "per month",
+    detail: "The complete content engine for a business ready to move.",
+    included: ["2 platforms", "12 posts + 4 reels", "Content calendar", "Monthly report"],
+    featured: true,
+  },
+  {
+    name: "Scale",
+    price: "RM 2,890",
+    note: "per month",
+    detail: "For operators ready to connect content, ads and conversion.",
+    included: ["2 platforms + ads management", "Content + reels", "Landing page", "Biweekly reporting"],
+  },
+];
+
+const services = [
+  {
+    index: "01",
+    icon: Sparkles,
+    title: "Content Creation",
+    body: "Ideas, scripts and finished posts designed to make your offer easy to understand and easy to act on.",
+    audience: "For businesses with something good to say but no repeatable way to say it.",
+    price: "Included in every package",
+  },
+  {
+    index: "02",
+    icon: Layers3,
+    title: "Social Media Management",
+    body: "A calm, consistent operating rhythm across your channels — publishing, replying and reporting without the noise.",
+    audience: "For owners who want a reliable presence without another thing on their plate.",
+    price: "RM 590 / month",
+  },
+  {
+    index: "03",
+    icon: TrendingUp,
+    title: "Ads & Growth",
+    body: "Campaign structure, creative testing and conversion tracking that gives your best content somewhere to go.",
+    audience: "For businesses with a proven offer and a clear next step for prospects.",
+    price: "RM 800 / month or 18% of ad spend, whichever is higher",
+  },
+  {
+    index: "04",
+    icon: Target,
+    title: "Brand & Business",
+    body: "The foundations underneath the content: positioning, landing pages and a clearer path from attention to enquiry.",
+    audience: "For teams who need the content, site and funnel to feel like one system.",
+    price: "Quoted after a 15-minute call",
+  },
+];
+
+
+
+function Logo({ light = false }: { light?: boolean }) {
+  return (
+    <Link href="/" className={`logo-lockup ${light ? "logo-lockup-light" : ""}`} aria-label="nxtte home">
+      <span className="logo-mark">n.</span>
+      <span className="logo-word">nxtte</span>
+    </Link>
+  );
+}
+
+function PrimaryButton({ href = whatsappHref, children = "Start a conversation", className = "" }: { href?: string; children?: React.ReactNode; className?: string }) {
+  return (
+    <a className={`btn btn-primary ${className}`} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined} onClick={() => trackEvent("whatsapp_click")}>
+      {children}
+      <ArrowUpRight size={17} strokeWidth={2.2} />
+    </a>
+  );
+}
+
+function SecondaryButton({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link className="btn btn-secondary" href={href}>
+      {children}
+      <ArrowRight size={16} />
+    </Link>
+  );
+}
+
+function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return <div className={`eyebrow ${light ? "eyebrow-light" : ""}`}><span className="eyebrow-dot" />{children}</div>;
+}
+
+function SectionHeading({ eyebrow, title, body, light = false, align = "left" }: { eyebrow: string; title: React.ReactNode; body?: string; light?: boolean; align?: "left" | "center" }) {
+  return (
+    <div className={`section-heading ${light ? "section-heading-light" : ""} ${align === "center" ? "section-heading-center" : ""}`}>
+      <Eyebrow light={light}>{eyebrow}</Eyebrow>
+      <h2>{title}</h2>
+      {body && <p>{body}</p>}
+    </div>
+  );
+}
+
+function Nav({ stripped = false }: { stripped?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = usePathname();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 18);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => setMenuOpen(false), [location]);
+
+  // Sliding hover pill behind the desktop links.
+  const navRef = useRef<HTMLElement>(null);
+  const [pill, setPill] = useState<{ x: number; w: number; on: boolean }>({ x: 0, w: 0, on: false });
+  const movePill = (el: HTMLElement) => setPill({ x: el.offsetLeft, w: el.offsetWidth, on: true });
+
+  if (stripped) {
+    return <header className="audit-nav"><div className="site-shell"><Logo /></div></header>;
+  }
+
+  return (
+    <>
+      <header className={`site-nav ${scrolled ? "site-nav-scrolled" : ""} ${menuOpen ? "site-nav-hidden" : ""}`}>
+        <div className="nav-inner">
+          <Logo />
+          <nav ref={navRef} className="desktop-nav" aria-label="Main navigation" onMouseLeave={() => setPill((p) => ({ ...p, on: false }))}>
+            <span className={`nav-pill ${pill.on ? "is-on" : ""}`} style={{ transform: `translateX(${pill.x}px)`, width: pill.w }} aria-hidden="true" />
+            {navItems.map(([label, href]) => <Link key={href} href={href} className={location === href ? "active" : ""} aria-current={location === href ? "page" : undefined} onMouseEnter={(e) => movePill(e.currentTarget)} onFocus={(e) => movePill(e.currentTarget)}>{label}</Link>)}
+          </nav>
+          <a className="nav-whatsapp" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}><MessageCircle size={15} /> WhatsApp us <ArrowUpRight size={15} className="nav-wa-arrow" /></a>
+          <button className="mobile-menu-btn" aria-label="Open menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
+        </div>
+      </header>
+      <div className={`mobile-menu ${menuOpen ? "mobile-menu-open" : ""}`} aria-hidden={!menuOpen}>
+        <div className="mobile-menu-top"><Logo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu"><X /></button></div>
+        <div className="mobile-links">{navItems.map(([label, href], index) => <Link key={href} href={href}><span>0{index + 1}</span>{label}<ArrowUpRight size={22} /></Link>)}</div>
+        <div className="mobile-menu-bottom"><span>Built for bookings.</span><a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp us <ArrowUpRight size={17} /></a></div>
+      </div>
+    </>
+  );
+}
+
+// Footer: its own rounded dark panel with a glowing top edge, real social logos,
+// and a giant gradient wordmark. Email and SSM stay as visible placeholders
+// (content gaps) until the real details are supplied.
+const FOOTER_SOCIALS = [
+  { label: "WhatsApp", logo: siWhatsapp, href: whatsappHref },
+  { label: "Instagram", logo: siInstagram, href: "https://instagram.com/TODO_HANDLE" },
+  { label: "TikTok", logo: siTiktok, href: "https://tiktok.com/@TODO_HANDLE" },
+];
+
+function Footer() {
+  return (
+    <footer className="site-footer ft">
+      <div className="ft-panel">
+        <div className="site-shell">
+          <div className="ft-main">
+            <div className="ft-brand">
+              <Logo light />
+              <p>Content that produces bookings, not just likes.</p>
+            </div>
+          <div className="ft-cols">
+            <div className="ft-col">
+              <span className="footer-label">Explore</span>
+              {navItems.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+            </div>
+            <div className="ft-col">
+              <span className="footer-label">Say hello</span>
+              <div className="ft-socials">
+                {FOOTER_SOCIALS.map(({ label, logo, href }) => (
+                  <a key={label} className="ft-social" href={href} target="_blank" rel="noreferrer" aria-label={`nxtte on ${label}`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d={logo.path} /></svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="ft-col">
+              <span className="footer-label">Find us</span>
+              <a className="ft-line" href="mailto:TODO_BUSINESS_EMAIL"><Mail size={15} /> TODO_BUSINESS_EMAIL</a>
+              <span className="ft-line"><MapPin size={15} /> Kuala Lumpur, Malaysia</span>
+            </div>
+          </div>
+          </div>
+          <div className="ft-bottom">
+            <span>© 2026 nxtte, a sub-brand of Aurexis Solution</span>
+            <span>SSM No. TODO_SSM_NUMBER</span>
+            <a className="ft-top-btn" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Back to top <ArrowUp size={14} /></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function PageShell({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`page ${className}`}><Nav />{children}<Footer /></div>;
+}
+
+
+
+// Hero background: brand gradient + fine white grid with a few lit cells on the
+// edges (away from the headline and phone). Cells light up once on load, then
+// pulse slowly; paused off-screen and still for reduced-motion users.
+// [grid column offset from centre, grid row, tone]
+const HERO_CELLS: [number, number, "glass" | "pink"][] = [
+  [-11, 3, "glass"], [-10, 5, "pink"], [-12, 7, "glass"], [-9, 9, "glass"], [-11, 11, "pink"],
+  [9, 2, "pink"], [11, 4, "glass"], [10, 7, "glass"], [12, 9, "pink"], [9, 11, "glass"],
+];
+
+// Light signals travelling along grid lines: [axis, line index, duration s, delay s].
+// Rows/columns chosen to stay clear of the headline.
+const HERO_SIGNALS: ["h" | "v", number, number, number][] = [
+  ["h", 1, 9, -2], ["h", 9, 11, -6], ["h", 12, 8, -1],
+  ["v", -10, 7, -3], ["v", 11, 9, -5], ["v", -13, 10, -8], ["v", 13, 8, -4],
+];
+
+function HeroBackground() {
+  const [ref, inView] = useInView<HTMLDivElement>();
+  // Cursor spotlight on the grid (desktop pointers only).
+  useEffect(() => {
+    const bg = ref.current;
+    const hero = bg?.parentElement;
+    if (!bg || !hero || !window.matchMedia("(pointer: fine)").matches) return;
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        bg.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        bg.style.setProperty("--my", `${e.clientY - r.top}px`);
+        bg.classList.add("hg-lit");
+      });
+    };
+    const onLeave = () => bg.classList.remove("hg-lit");
+    hero.addEventListener("mousemove", onMove);
+    hero.addEventListener("mouseleave", onLeave);
+    return () => { cancelAnimationFrame(raf); hero.removeEventListener("mousemove", onMove); hero.removeEventListener("mouseleave", onLeave); };
+  }, [ref]);
+  return (
+    <div ref={ref} className={`hero-bg hg ${inView ? "" : "loop-paused"}`} aria-hidden="true">
+      <div className="hg-veil" />
+      <div className="hg-grid" />
+      <div className="hg-dots" />
+      <div className="hg-spot" />
+      <div className="hg-signals">
+        {HERO_SIGNALS.map(([axis, n, dur, del], i) => (
+          <span key={i} className={`hg-signal hg-signal-${axis}`} style={axis === "h" ? { top: n * 56, animationDuration: `${dur}s`, animationDelay: `${del}s` } : { left: `calc(50% - 28px + ${n * 56}px)`, animationDuration: `${dur}s`, animationDelay: `${del}s` }} />
+        ))}
+      </div>
+      {HERO_CELLS.map(([col, row, tone], i) => (
+        <span key={i} className={`hg-cell hg-${tone}`} style={{ left: `calc(50% - 28px + ${col * 56}px)`, top: row * 56, ["--cd" as string]: `${500 + i * 110}ms`, ["--tw" as string]: `${5 + (i % 4)}s` }} />
+      ))}
+      <div className="hg-phone-glow" />
+      <div className="hero-grain" />
+    </div>
+  );
+}
+
+
+const heroPromises = [
+  { icon: Clock3, label: "Calendar in 72 hours" },
+  { icon: BarChart3, label: "Published pricing" },
+  { icon: Check, label: "No lock-in" },
+  { icon: MessageCircle, label: "Reply within 24 hours" },
+];
+
+// Illustrative phone: a post turning into a WhatsApp enquiry (the spec's
+// "attention into bookings"). No stock photos, ratings or partner logos: those
+// would be fabricated proof.
+function HeroStage() {
+  return (
+    <div className="hero-stage" aria-hidden="true">
+      <svg className="hero-arcs" viewBox="0 0 1000 520" preserveAspectRatio="none">
+        <path fill="none" d="M40 470 C 220 120, 780 120, 960 470" />
+        <path fill="none" d="M130 500 C 300 250, 700 250, 870 500" />
+      </svg>
+
+      <div className="float-icon float-icon-1"><Instagram size={20} /></div>
+      <div className="float-icon float-icon-2"><Play size={18} /></div>
+      <div className="float-icon float-icon-3"><MessageCircle size={20} /></div>
+      <div className="float-icon float-icon-4"><CalendarCheck size={20} /></div>
+
+      <div className="float-card float-card-left">
+        <span className="float-card-icon"><Sparkles size={15} /></span>
+        <span><strong>Carousel published</strong><small>Clear offer, one next step</small></span>
+      </div>
+      <div className="float-card float-card-right">
+        <span className="float-card-icon float-card-icon-ink"><MessageCircle size={15} /></span>
+        <span><strong>New WhatsApp enquiry</strong><small>&ldquo;Hi, can I book for Saturday?&rdquo;</small></span>
+      </div>
+
+      <div className="phone-halo" />
+      <div className="phone">
+        <div className="phone-notch" />
+        <div className="phone-screen">
+          <div className="phone-profile">
+            <span className="phone-avatar">n.</span>
+            <span className="phone-handle">nxtte<small>Kuala Lumpur</small></span>
+            <span className="phone-dots">•••</span>
+          </div>
+          <div className="phone-post">
+            <span className="phone-post-kicker">Slide 1 / 5</span>
+            <span className="phone-post-title">Likes don&rsquo;t pay rent.<br /><em>Bookings do.</em></span>
+            <span className="phone-post-foot">nxtte</span>
+          </div>
+          <div className="phone-actions">
+            <Heart size={18} /><MessageCircle size={18} /><Send size={18} /><Bookmark size={18} className="phone-save" />
+          </div>
+          <div className="phone-caption"><i /><i /></div>
+          <div className="phone-cta"><MessageCircle size={14} /> Message on WhatsApp</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Staggered fade-and-rise helper: each .art-step reads its delay from --d.
+const delay = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
+
+// Adds "is-in" once the card is 35% visible. Without IntersectionObserver the
+// card simply renders in its final state.
+function useRevealOnce<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [state, setState] = useState<"static" | "waiting" | "in">("static");
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    setState("waiting");
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setState("in");
+        io.disconnect();
+      }
+    }, { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return [ref, state] as const;
+}
+
+
+// Service-tile illustrations: what each service produces. The row builds left to
+// right once when it scrolls into view (same fade-and-rise steps as the problem cards).
+function ServiceArtContent({ base }: { base: number }) {
+  return (
+    <div className="svc-art svc-art-content" aria-hidden="true">
+      <span className="svc-post svc-post-back art-step" style={delay(base)}><i /><b /></span>
+      <span className="svc-post svc-post-mid art-step" style={delay(base + 90)}><i /><b /></span>
+      <span className="svc-post svc-post-front art-step" style={delay(base + 180)}><Play size={14} fill="currentColor" /></span>
+    </div>
+  );
+}
+
+const WEEK = ["M", "T", "W", "T", "F", "S", "S"];
+const POSTED_DAYS = new Set([0, 2, 4, 5]);
+
+function ServiceArtManage({ base }: { base: number }) {
+  return (
+    <div className="svc-art svc-art-week" aria-hidden="true">
+      {WEEK.map((day, i) => (
+        <span key={i} className="svc-day art-step" style={delay(base + i * 45)}>
+          <small>{day}</small>
+          <i className={POSTED_DAYS.has(i) ? "svc-day-done" : ""}>{POSTED_DAYS.has(i) && <Check size={11} strokeWidth={3} />}</i>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+const BAR_HEIGHTS = [28, 38, 34, 54, 66, 84];
+
+function ServiceArtAds({ base }: { base: number }) {
+  return (
+    <div className="svc-art svc-art-bars" aria-hidden="true">
+      {BAR_HEIGHTS.map((h, i) => <i key={i} className={`art-step ${i === BAR_HEIGHTS.length - 1 ? "svc-bar-top" : ""}`} style={{ ...delay(base + i * 60), height: `${h}%` }} />)}
+      <TrendingUp className="svc-trend art-step" size={18} style={delay(base + 420)} />
+    </div>
+  );
+}
+
+function ServiceArtBrand({ base }: { base: number }) {
+  return (
+    <div className="svc-art svc-art-page" aria-hidden="true">
+      <div className="svc-browser art-step" style={delay(base)}>
+        <div className="svc-browser-bar"><i /><i /><i /></div>
+        <b className="svc-line-lg" /><b className="svc-line-sm" />
+        <span className="svc-cta art-step" style={delay(base + 260)}>Book now</span>
+      </div>
+    </div>
+  );
+}
+
+const serviceArt = [ServiceArtContent, ServiceArtManage, ServiceArtAds, ServiceArtBrand];
+
+// Colourful platform logos drifting down on a loop, confined to the right half of
+// the heading row. Decorative; stills for reduced-motion users; hidden on phones.
+const RAIN_LOGOS = [siInstagram, siTiktok, siWhatsapp, siFacebook, siYoutube, siX, siThreads, siPinterest];
+const RAIN_COLUMNS = [
+  { speed: 80, delay: -10, offset: 0 },
+  { speed: 96, delay: -44, offset: 3 },
+  { speed: 72, delay: -22, offset: 6 },
+  { speed: 90, delay: -5, offset: 2 },
+  { speed: 76, delay: -58, offset: 5 },
+  { speed: 100, delay: -30, offset: 1 },
+];
+const LOGOS_PER_COLUMN = 12;
+
+function SocialRain() {
+  const [ref, inView] = useInView<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`social-rain ${inView ? "" : "loop-paused"}`} aria-hidden="true">
+      {RAIN_COLUMNS.map((col, c) => {
+        const logos = Array.from({ length: LOGOS_PER_COLUMN }, (_, k) => RAIN_LOGOS[(k + col.offset) % RAIN_LOGOS.length]);
+        return (
+          <div className="rain-col" key={c}>
+            <div className="rain-track" style={{ animationDuration: `${col.speed}s`, animationDelay: `${col.delay}s` }}>
+              {[...logos, ...logos].map((logo, k) => (
+                <svg key={k} className="rain-logo" viewBox="0 0 24 24" style={{ fill: `#${logo.hex}` }}><path d={logo.path} /></svg>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// "Why nxtte": the spec's differentiator drawn as a path. Most agencies stop at
+// content; nxtte + Aurexis cover the whole route from post to booking.
+const PATH_STATIONS = [
+  { icon: Sparkles, label: "Content", note: "Posts and reels" },
+  { icon: LayoutTemplate, label: "Website", note: "Landing page" },
+  { icon: Workflow, label: "Lead capture", note: "WhatsApp + follow-up" },
+  { icon: CalendarCheck, label: "Booking", note: "The number that matters" },
+];
+
+const WHY_PROOFS = [
+  { icon: Zap, title: "Fast turnaround", body: "Calendar in 72 hours." },
+  { icon: BarChart3, title: "Published pricing", body: "Costs known before the call." },
+  { icon: Clock3, title: "No lock-in", body: "Good work earns the next month." },
+];
+
+function WhySection() {
+  const [ref, inView] = useInView<HTMLElement>();
+  const [gridRef, gridState] = useRevealOnce<HTMLDivElement>();
+  const motion = gridState === "static" ? "" : gridState === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section ref={ref} className={`why-section why3 ${inView ? "" : "loop-paused"}`}>
+      <div className="why3-bg" aria-hidden="true"><div className="aurora aurora-1" /><div className="aurora aurora-2" /><div className="aurora aurora-3" /><div className="aurora aurora-4" /><div className="why3-grid-lines" /></div>
+      <div className="site-shell">
+        <div className="why3-head">
+          <SectionHeading eyebrow="Why nxtte" title={<>One team from<br /><em>story to sale.</em></>} />
+          <div className="why3-head-right">
+            <p>nxtte is attached to Aurexis Solution. So the website, the funnel, the lead capture and the content come from one team.</p>
+            <Link className="arrow-link" href="/about">See how we work <ArrowUpRight size={17} /></Link>
+          </div>
+        </div>
+        <div ref={gridRef} className={`why3-bento ${motion}`}>
+          <div className="why3-relay art-step" style={delay(0)} role="img" aria-label="Most agencies stop after content and the lead is lost. nxtte and Aurexis carry it from content to website to lead capture to a booking.">
+            <div className="relay relay-others">
+              <div className="relay-head"><span className="relay-label">Most agencies</span><span className="relay-note">Content, then a hand-off</span></div>
+              <div className="relay-track">
+                <span className="relay-line relay-line-solid" /><span className="relay-line relay-line-dashed" />
+                <span className="relay-runner relay-runner-a"><i className="relay-orb relay-orb-a" /></span>
+                <span className="relay-lost">Lead lost</span>
+                <ol className="relay-nodes">
+                  {PATH_STATIONS.map(({ icon: Icon, label }, i) => (
+                    <li key={label} className={i > 0 ? "is-dim" : ""}><span className="relay-dot"><Icon size={19} strokeWidth={1.8} /></span><strong>{label}</strong></li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+            <div className="relay relay-us">
+              <div className="relay-head"><span className="relay-label relay-label-us">nxtte + Aurexis</span><span className="relay-note">One team, the whole path</span></div>
+              <div className="relay-track">
+                <span className="relay-line relay-line-full" />
+                <span className="relay-runner relay-runner-b"><i className="relay-orb relay-orb-b" /></span>
+                <span className="relay-booked"><Check size={13} strokeWidth={3} /> Booked</span>
+                <ol className="relay-nodes">
+                  {PATH_STATIONS.map(({ icon: Icon, label, note }, i) => (
+                    <li key={label} className={`relay-pass relay-pass-${i} ${i === PATH_STATIONS.length - 1 ? "relay-end" : ""}`}><span className="relay-dot"><Icon size={19} strokeWidth={1.8} /></span><strong>{label}</strong><small>{note}</small></li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div className="why3-tile art-step" style={delay(120)}>
+            <span className="why3-tile-icon"><Timer size={17} /></span>
+            <div className="why3-big">72<span>h</span></div>
+            <strong>To your first content calendar</strong>
+            <small>Clear next steps from day one.</small>
+          </div>
+          <div className="why3-tile art-step" style={delay(200)}>
+            <span className="why3-tile-icon"><Receipt size={17} /></span>
+            <div className="why3-big">3</div>
+            <strong>Published price tiers</strong>
+            <small>RM 890 · RM 1,590 · RM 2,890</small>
+          </div>
+          <div className="why3-tile art-step" style={delay(280)}>
+            <span className="why3-tile-icon"><Unlock size={17} /></span>
+            <div className="why3-big">0</div>
+            <strong>Lock-in contracts</strong>
+            <small>Good work earns the next month.</small>
+          </div>
+          <div className="why3-tile why3-tile-team art-step" style={delay(360)}>
+            <div className="why3-lockup"><span className="why3-mark">n.</span><Plus size={14} /><span className="why3-aurexis">Aurexis Solution</span></div>
+            <strong>Site, funnel and content from one team</strong>
+            <div className="why3-chips">{["Content", "Website", "Lead capture", "Automation"].map((c) => <span key={c}>{c}</span>)}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Replaces the case-study preview until real cases with results exist (spec:
+// never publish a tile without a result). Steps mirror the site's own FAQ answer
+// to "What actually happens in the first month?".
+const FIRST_MONTH = [
+  { icon: Handshake, when: "Day 1", title: "Kickoff", body: "We align on your offer, your audience and the one next step every post should drive." },
+  { icon: CalendarRange, when: "Within 72 hours", title: "First content calendar", body: "A month of ideas, hooks and formats, ready for you to approve." },
+  { icon: Send, when: "After you approve", title: "Publishing starts", body: "Posts go live on a steady rhythm. Your pace depends on the package and your approvals." },
+  { icon: FileBarChart, when: "End of month", title: "Report and next moves", body: "What worked, what did not, and what we change next month." },
+];
+
+// Days of the first month each step lands on, and an example posting rhythm
+// (Growth: 12 posts). Shown as an example, not a fixed schedule.
+const FM_DAYS = [1, 3, 5, 30];
+const FM_POST_DAYS = new Set([5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 29]);
+const FM_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function FirstMonth() {
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  const [active, setActive] = useState<number | null>(null);
+  const milestoneAt = (day: number) => FM_DAYS.indexOf(day);
+  return (
+    <section className="first-month fm2">
+      <div className="fm2-bg" aria-hidden="true"><div className="fm2-glow fm2-glow-a" /><div className="fm2-glow fm2-glow-b" /></div>
+      <div ref={ref} className={`site-shell fm2-grid ${motion}`}>
+        <div className="fm2-copy">
+          <SectionHeading eyebrow="Your first month" title={<>What happens<br /><em>after you say yes.</em></>} body="No black box. Here is the first 30 days, step by step." />
+          <ol className="fm2-steps">
+            {FIRST_MONTH.map(({ icon: Icon, when, title, body }, i) => (
+              <li key={title} className={`fm2-step art-step ${active === i ? "is-active" : ""}`} style={delay(120 + i * 90)} onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(i)} onBlur={() => setActive(null)} tabIndex={0}>
+                <span className="fm2-step-icon"><Icon size={18} strokeWidth={1.8} /></span>
+                <span className="fm2-step-text"><span className="fm2-when">{when}</span><strong>{title}</strong><small>{body}</small></span>
+              </li>
+            ))}
+          </ol>
+          <SecondaryButton href="/audit">Start with the RM 299 audit</SecondaryButton>
+        </div>
+        <div className="fm2-cal art-step" style={delay(60)} aria-label="First month calendar: kickoff on day 1, content calendar by day 3, publishing from day 5, report on day 30.">
+          <div className="fm2-cal-head"><span className="fm2-cal-title">Month 1</span><span className="fm2-cal-sub">with nxtte</span></div>
+          <div className="fm2-week">{FM_WEEKDAYS.map((d) => <span key={d}>{d}</span>)}</div>
+          <div className="fm2-days">
+            {Array.from({ length: 35 }, (_, k) => {
+              const day = k + 1;
+              if (day > 30) return <span key={k} className="fm2-day fm2-day-empty" />;
+              const m = milestoneAt(day);
+              const isPost = FM_POST_DAYS.has(day);
+              const Icon = m >= 0 ? FIRST_MONTH[m].icon : null;
+              return (
+                <span key={k} className={`fm2-day ${m >= 0 ? `fm2-day-m fm2-day-m${m}` : ""} ${isPost ? "fm2-day-post" : ""} ${m >= 0 && active === m ? "is-active" : ""}`} style={delay(200 + k * 28)}>
+                  <b>{day}</b>
+                  {Icon ? <Icon size={15} strokeWidth={2} /> : isPost ? <i /> : null}
+                </span>
+              );
+            })}
+          </div>
+          <div className="fm2-legend"><span><i className="fm2-key-m" />Milestone</span><span><i className="fm2-key-post" />Post goes live (example rhythm)</span></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Final CTA: black full-bleed (spec). An "audit scanner" sweeps a feed strip and
+// flags example gaps. Labels are illustrative, not client data.
+const SCAN_TILES = [
+  { kind: "profile", tone: "", flag: "Bio unclear" },
+  { kind: "post", tone: "pb-pink", flag: "" },
+  { kind: "post", tone: "pb-lilac", flag: "No clear offer" },
+  { kind: "post", tone: "pb-ink", flag: "" },
+  { kind: "post", tone: "pb-blush", flag: "No next step" },
+  { kind: "post", tone: "pb-pink", flag: "" },
+];
+
+function FinalCTA() {
+  const [ref, inView] = useInView<HTMLElement>();
+  let flagN = 0;
+  return (
+    <section ref={ref} className={`cta-section cta2 dark-band ${inView ? "" : "loop-paused"}`}>
+      <div className="cta2-bg" aria-hidden="true"><div className="cta2-spot" /><div className="cta2-rays" /></div>
+      <div className="site-shell cta2-inner">
+        <Eyebrow light>One useful next step</Eyebrow>
+        <h2>Find the gap <em>before you fill it.</em></h2>
+        <p>Get a clear view of what is stopping your content from converting, and what to do about it next.</p>
+        <div className="cta2-scan" aria-hidden="true">
+          <div className="cta2-tiles">
+            {SCAN_TILES.map((t, i) => {
+              const n = t.flag ? ++flagN : 0;
+              return (
+                <div key={i} className={`cta2-tile ${t.flag ? `is-flag cta2-flag-${n}` : ""}`}>
+                  {t.kind === "profile" ? (
+                    <div className="cta2-profile"><i /><b /><b /><b /></div>
+                  ) : (
+                    <div className={`cta2-img ${t.tone}`} />
+                  )}
+                  {t.flag && <span className="cta2-label">{t.flag}</span>}
+                </div>
+              );
+            })}
+          </div>
+          <div className="cta2-runner"><span className="cta2-beam" /></div>
+          <span className="cta2-found"><ScanSearch size={13} /> 3 gaps found</span>
+        </div>
+        <div className="cta2-actions">
+          <Link className="cta-btn cta-btn-primary" href="/audit">Book the RM 299 audit <ArrowUpRight size={17} /></Link>
+          <a className="cta-btn cta-btn-ghost" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}><MessageCircle size={16} /> WhatsApp us</a>
+        </div>
+        <ul className="cta2-facts">
+          <li><Ticket size={14} /> RM 299, credited to month one if you sign within 14 days</li>
+          <li><Clock3 size={14} /> Delivered in five working days</li>
+          <li><MapIcon size={14} /> 90-day roadmap, week by week</li>
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+function ServicesGrid() {
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <div ref={ref} className={`service-preview-grid ${motion}`}>
+      {services.map(({ index, icon: Icon, title, body, price }, i) => {
+        const Art = serviceArt[i];
+        const base = i * 260;
+        return (
+          <Link href="/services" className="service-tile" key={title}>
+            <div className="service-tile-top"><span>{index}</span><Icon size={22} strokeWidth={1.7} /></div>
+            <Art base={base} />
+            {i < services.length - 1 && <span className="svc-link art-step" style={delay(base + 240)} aria-hidden="true"><ArrowRight size={13} /></span>}
+            <h3>{title}</h3><p>{body}</p>
+            <div className="service-tile-bottom"><span>{price}</span><ArrowUpRight size={17} /></div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+// "The problem": a live busy feed on a phone, torn down by three callouts, each
+// wired to the spot on screen where the problem shows up. Decorative loops pause
+// off-screen and stop for reduced-motion users.
+const VANITY_WORDS = ["likes", "views", "saves", "shares", "reach", "followers", "impressions"];
+const PB_POSTS = ["pink", "lilac", "ink", "blush", "pink", "lilac"] as const;
+const PB_CALLOUTS = [
+  { n: "01", icon: CalendarX, title: "Posting with no plan", body: "Every week starts from a blank page and a hope that something lands." },
+  { n: "02", icon: TrendingDown, title: "Content that does not convert", body: "The posts get attention. Nothing gives people a next step." },
+  { n: "03", icon: Ghost, title: "An agency that went quiet", body: "Busy in month one. By month two, no plan and no report." },
+];
+
+const PB_TOASTS = [
+  { icon: UserPlus, text: "New follower", sub: "just now", cls: "pb-toast-a" },
+  { icon: Bookmark, text: "Post saved", sub: "2m ago", cls: "pb-toast-b" },
+  { icon: Play, text: "Your reel is getting views", sub: "5m ago", cls: "pb-toast-c" },
+];
+
+function ProblemPhone() {
+  return (
+    <div className="pb-phone">
+      <div className="pb-notch" />
+      <div className="pb-screen">
+        <div className="pb-topbar">
+          <span className="pb-icon pb-icon-plan"><CalendarX size={15} /><span className="pb-hot" data-n="1" /></span>
+          <span className="pb-handle">your.brand</span>
+          <span className="pb-icon"><Send size={15} /></span>
+        </div>
+        <div className="pb-feed">
+          <div className="pb-feed-track">
+            {[...PB_POSTS, ...PB_POSTS].map((tone, k) => (
+              <div key={k} className="pb-post">
+                <div className="pb-post-head"><i /><b /></div>
+                <div className={`pb-post-img pb-${tone}`} />
+                <div className="pb-post-actions"><Heart size={13} fill="currentColor" /><MessageCircle size={13} /><Send size={13} /><Bookmark size={13} /></div>
+              </div>
+            ))}
+          </div>
+          <div className="pb-hearts">{[0, 1, 2, 3].map((k) => <Heart key={k} size={16} fill="currentColor" />)}</div>
+        </div>
+        <div className="pb-chip"><Inbox size={14} /><span><strong>0 enquiries</strong> this week</span><span className="pb-hot" data-n="2" /></div>
+        <div className="pb-sheet">
+          <span className="pb-hot" data-n="3" />
+          <strong>Will send the report soon</strong>
+          <small>Agency · seen 3 weeks ago</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProblemSection() {
+  const [ref, inView] = useInView<HTMLElement>();
+  const [gapRef, gapState] = useRevealOnce<HTMLDivElement>();
+  const gapMotion = gapState === "static" ? "" : gapState === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section ref={ref} className={`problem-section pb-section ${inView ? "" : "loop-paused"}`}>
+      <div className="pb-bg" aria-hidden="true">
+        <div className="pb-blob pb-blob-a" />
+        <div className="pb-blob pb-blob-b" />
+        {[0, 1].map((row) => (
+          <div key={row} className={`pb-marquee pb-marquee-${row}`}>
+            <div className="pb-marquee-track">
+              {[...VANITY_WORDS, ...VANITY_WORDS].map((w, k) => <span key={k}>{w}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="site-shell pb-grid">
+        <div className="pb-copy">
+          <SectionHeading eyebrow="The problem" title={<>A busy feed is not<br /><em>a business system.</em></>} body="If your content is not connected to the next step, it is only keeping the algorithm warm." />
+          <div ref={gapRef} className={`pb-gap ${gapMotion}`} aria-label="Attention is high, enquiries are close to none">
+            <div className="pb-gap-row"><span className="pb-gap-label">Attention</span><div className="pb-bar"><i className="pb-bar-full" /></div></div>
+            <div className="pb-gap-row"><span className="pb-gap-label">Enquiries</span><div className="pb-bar"><i className="pb-bar-thin" /></div></div>
+            <p>That gap is the whole job. <strong>We close it.</strong></p>
+          </div>
+          <div className="pb-cta-row">
+            <a className="pb-cta" href="#what-we-do">See how we close it <ArrowDown size={16} /></a>
+            <span>Most agencies stop at the post.</span>
+          </div>
+        </div>
+        <div className="pb-stage">
+          <div className="pb-stage-inner">
+            <svg className="pb-lines" viewBox="0 0 680 560" aria-hidden="true">
+              <path d="M190 88 H239" /><circle cx="190" cy="88" r="3.5" />
+              <path d="M425 285 H490" /><circle cx="490" cy="285" r="3.5" />
+              <path d="M190 475 H239" /><circle cx="190" cy="475" r="3.5" />
+            </svg>
+            <ProblemPhone />
+            {PB_TOASTS.map(({ icon: Icon, text, sub, cls }) => (
+              <div key={text} className={`pb-toast ${cls}`} aria-hidden="true">
+                <span className="pb-toast-icon"><Icon size={14} /></span>
+                <span><strong>{text}</strong><small>{sub}</small></span>
+              </div>
+            ))}
+            {PB_CALLOUTS.map(({ n, icon: Icon, title, body }, i) => (
+              <article key={n} className={`pb-callout pb-callout-${i + 1}`}>
+                <div className="pb-callout-top"><span className="pb-callout-icon"><Icon size={16} /></span><span className="pb-callout-n">{n}</span></div>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Runs a decorative loop only while it is on screen.
+function useInView<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window)) { setInView(true); return; }
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return [ref, inView] as const;
+}
+
+
+export default function HomePage() {
+  return (
+    <PageShell>
+      <main>
+        <section className="hero-section">
+          <HeroBackground />
+          <div className="site-shell hero-center">
+            <div className="hero-badge rise"><span className="hero-badge-mark">n.</span>Content, funnel and site from one team</div>
+            <h1 className="rise" style={{ animationDelay: "60ms" }}>Your content should bring in <em>bookings</em>, not just likes.</h1>
+            <p className="hero-sub rise" style={{ animationDelay: "120ms" }}>We build the content, landing page and follow-up system that turns attention into a reason to get in touch.</p>
+            <div className="hero-actions rise" style={{ animationDelay: "180ms" }}><PrimaryButton>Start a conversation</PrimaryButton><a className="text-link" href="#packages">See packages <ArrowDownRight size={16} /></a></div>
+            <div className="rise hero-stage-wrap" style={{ animationDelay: "240ms" }}><HeroStage /></div>
+          </div>
+          <div className="site-shell hero-promises">
+            <span className="hero-promises-label">How we work</span>
+            <ul>{heroPromises.map(({ icon: Icon, label }) => <li key={label}><Icon size={16} /> {label}</li>)}</ul>
+          </div>
+        </section>
+
+        <ProblemSection />
+
+        <section id="what-we-do" className="services-preview section-padding"><div className="site-shell"><div className="split-heading"><SocialRain /><div className="svc-head-left"><SectionHeading eyebrow="What we do" title={<>The pieces work<br /><em>better together.</em></>} body="You do not need another content vendor. You need the next step to make sense." /></div><div className="svc-head-btn"><SecondaryButton href="/services">See all services</SecondaryButton></div></div><ServicesGrid /></div></section>
+
+        <WhySection />
+
+        <PackagesSection />
+
+        <FirstMonth />
+
+        <section className="proof-strip"><div className="site-shell proof-strip-inner"><div className="proof-label"><span className="pulse-dot" /> Proof in public</div><div className="proof-stat"><strong>+38%</strong><span>profile actions<br />in 30 days</span></div><div className="proof-stat"><strong>4.6x</strong><span>more saves on<br />campaign posts</span></div><div className="proof-stat"><strong>RM 17</strong><span>cost per qualified<br />enquiry</span></div><div className="proof-end"><span>We show our work.</span><ArrowUpRight size={18} /></div></div></section>
+
+        <FAQSection />
+
+        <FinalCTA />
+      </main>
+    </PageShell>
+  );
+}
+
+function PackagesSection({ compact = false }: { compact?: boolean }) {
+  return (
+    <section id="packages" className={`packages-section dark-band ${compact ? "packages-section-compact" : ""}`}>
+      <div className="pk-bg" aria-hidden="true"><div className="pk-aurora" /><div className="pk-grid" /></div>
+      <div className="site-shell">
+        <div className="pk-head">
+          <div><Eyebrow light>Published pricing</Eyebrow><h2>Pick the pace <em>that fits now.</em></h2></div>
+        </div>
+        <div className="package-grid">
+          {packages.map((item, i) => <PackageCard key={item.name} item={item} index={i} />)}
+          <div className="pk-includes">
+            <span className="pk-includes-label">Every package includes</span>
+            <ul>{PACKAGE_INCLUDES.map(({ icon: Icon, label }) => <li key={label}><span className="pk-includes-icon"><Icon size={15} /></span>{label}</li>)}</ul>
+          </div>
+          <div className="pk-side">
+            <p className="ad-note"><span>+</span>Ad spend is always separate from management fees. Ads management is RM 800/month or 18% of ad spend, whichever is higher, on a minimum RM 2,000 spend.</p>
+            <Link className="pk-audit-link" href="/audit">Not sure which? Start with the RM 299 audit <ArrowUpRight size={15} /></Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Shared inclusions, taken from the spec and the site's own FAQ answers.
+const PACKAGE_INCLUDES = [
+  { icon: Check, label: "No lock-in contract" },
+  { icon: Clock3, label: "Content calendar in 72 hours" },
+  { icon: BarChart3, label: "Regular performance reports" },
+  { icon: ShieldCheck, label: "You own all the content" },
+];
+
+// Cursor-following glow on hover (a hover state, not a looping animation).
+function PackageCard({ item, index }: { item: (typeof packages)[number]; index: number }) {
+  const onMove = (event: React.MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+    event.currentTarget.style.setProperty("--my", `${event.clientY - rect.top}px`);
+  };
+  return (
+    <article onMouseMove={onMove} className={`package-card ${item.featured ? "package-card-featured" : ""}`}>
+      <div className="package-card-top">
+        <span className="package-name">{item.name}</span>
+        {item.featured ? <span className="popular-ribbon"><Sparkles size={12} /> Most popular</span> : <span className="package-index">0{index + 1}</span>}
+      </div>
+      <div className="package-price">{item.price}<small>/mo</small></div>
+      <p className="package-detail">{item.detail}</p>
+      <ul>{item.included.map((line) => <li key={line}><span className="pk-check"><Check size={12} strokeWidth={3} /></span>{line}</li>)}</ul>
+      <a href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")} className={`pk-cta ${item.featured ? "pk-cta-featured" : ""}`}>Talk about {item.name} <ArrowUpRight size={16} /></a>
+    </article>
+  );
+}
+
+const FAQ_ITEMS = [
+    ["How long is the contract, and can I stop?", "There is no lock-in. Good work should earn the next month. We will always give you clear notice of what is in progress."],
+    ["What actually happens in the first month?", "We align on the offer, build your first content calendar within 72 hours, then publish, learn and report on what changes."],
+    ["Who owns the content you produce?", "You do. Your brand, channels and finished content stay yours."],
+    ["Is ad spend included in the management fee?", "No. Ad spend is separate and paid directly to the platform. Management starts at RM 800/month or 18% of ad spend, whichever is higher, on a minimum RM 2,000 spend."],
+    ["How fast is turnaround once I sign?", "We share the first calendar in 72 hours. The exact publishing rhythm depends on the package and the speed of your approvals."],
+  ];
+
+const FAQ_BUBBLES = [
+  { left: "43%", text: "Can I stop anytime?", size: "fb-md", dur: 24, delay: -3, side: "fb-left" },
+  { left: "49%", text: "Who owns the content?", size: "fb-sm", dur: 30, delay: -17, side: "fb-right" },
+  { left: "88%", text: "Is ad spend extra?", size: "fb-sm", dur: 27, delay: -9, side: "fb-left" },
+  { left: "91%", text: "How fast do we start?", size: "fb-md", dur: 33, delay: -22, side: "fb-right" },
+];
+
+// FAQ as a WhatsApp-style chat: pick a question, nxtte "types" the answer.
+// One answer shown at a time; replies are announced via aria-live.
+function FAQSection() {
+  const [open, setOpen] = useState(0);
+  const [typing, setTyping] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  const ask = (i: number) => {
+    if (i === open && !typing) return;
+    setOpen(i);
+    if (timer.current) clearTimeout(timer.current);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { setTyping(false); return; }
+    setTyping(true);
+    timer.current = setTimeout(() => setTyping(false), 900);
+  };
+  const [question, answer] = FAQ_ITEMS[open];
+  const [secRef, inView] = useInView<HTMLElement>();
+  return (
+    <section ref={secRef} className={`faq-section faq2 ${inView ? "" : "loop-paused"}`}>
+      <div className="faq2-bg" aria-hidden="true">
+        <div className="faq2-pattern" />
+        {FAQ_BUBBLES.map((b) => <span key={b.text} className={`faq2-float ${b.size} ${b.side}`} style={{ left: b.left, animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s` }}>{b.text}</span>)}
+      </div>
+      <div className="site-shell faq2-grid">
+        <div className="faq2-intro">
+          <Eyebrow>Before you ask</Eyebrow>
+          <h2>Straight answers<br /><em>to the usual questions.</em></h2>
+          <p>The five things people ask us privately before they commit. Tap one.</p>
+          <div className="faq2-chips" role="group" aria-label="Frequently asked questions">
+            {FAQ_ITEMS.map(([q], i) => (
+              <button key={q} type="button" className={`faq2-chip ${open === i ? "is-active" : ""}`} aria-pressed={open === i} aria-controls="faq2-log" onClick={() => ask(i)}>
+                <span className="faq2-chip-n">0{i + 1}</span>{q}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="faq2-chat">
+          <div className="faq2-chat-head">
+            <span className="faq2-avatar">n.</span>
+            <span><strong>nxtte</strong><small><i className="faq2-online" /> online · replies within 24 hours</small></span>
+          </div>
+          <div id="faq2-log" className="faq2-log" aria-live="polite">
+            <span className="faq2-date">Today</span>
+            <div className="faq2-bubble faq2-them">Hi. Tap any question and we will answer it here.<span className="faq2-time">09:00</span></div>
+            <div key={`q-${open}`} className="faq2-bubble faq2-me faq2-pop">{question}<span className="faq2-time">09:01 <CheckCheck size={13} /></span></div>
+            {typing ? (
+              <div className="faq2-bubble faq2-them faq2-typing" aria-label="nxtte is typing"><i /><i /><i /></div>
+            ) : (
+              <div key={`a-${open}`} className="faq2-bubble faq2-them faq2-pop">{answer}<span className="faq2-time">09:01</span></div>
+            )}
+          </div>
+          <a className="faq2-input" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}>
+            <span>Message nxtte on WhatsApp…</span>
+            <span className="faq2-send"><SendHorizontal size={17} /></span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, DM_Sans, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
@@ -15,6 +15,9 @@ const primaryFont = Inter({
   variable: '--font-primary',
   display: 'swap',
 })
+
+const bodyFont = DM_Sans({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-body', display: 'swap' })
+const displayFont = Space_Grotesk({ subsets: ['latin'], weight: ['500', '600', '700'], variable: '--font-display', display: 'swap' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={primaryFont.variable}>
+    <html lang="en" className={`${primaryFont.variable} ${bodyFont.variable} ${displayFont.variable}`}>
       <body>
         {children}
         <Analytics />
