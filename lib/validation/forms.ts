@@ -25,11 +25,13 @@ export const auditSchema = z.object({
   whatsapp: whatsappField,
 })
 
+// Matches the 2026 packages and menu (see supabase/migrations/0005).
 export const SERVICE_INTERESTS = [
-  'Content Creation',
-  'Social Media Management',
-  'Ads & Growth',
-  'Brand & Business',
+  'A monthly package',
+  'Ads management',
+  'Something from the menu',
+  'The RM 199 audit',
+  'Not sure yet',
 ] as const
 
 export const contactSchema = z.object({

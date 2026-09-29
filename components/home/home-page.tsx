@@ -1798,3 +1798,6 @@ function FAQSection() {
     </section>
   );
 }
+
+// Shared with the Insights views (client components only).
+export { PageShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref, FAQ_ITEMS };

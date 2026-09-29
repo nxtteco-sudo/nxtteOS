@@ -1,0 +1,90 @@
+/* ---- /work: case studies (shares buttons, CTA, glow and prose from insights.css) ---- */
+.wk-hero { position: relative; overflow: hidden; isolation: isolate; padding: 140px 0 70px; background: linear-gradient(170deg, #f3d4ea 0%, var(--pink-tint) 45%, #fbe0ea 100%); }
+.wk-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.wk-hero .eyebrow, .wk-case-head .eyebrow { color: #a83963; }
+.wk-hero .eyebrow-dot { background: #a83963; }
+.wk-hero-copy h1 { margin: 16px 0 0; color: var(--ink); font: 700 clamp(46px, 6vw, 88px)/.95 var(--display); letter-spacing: -.06em; }
+.wk-hero-copy h1 em { display: block; color: #a83963; font-style: normal; }
+.wk-hero-copy p { max-width: 470px; margin: 20px 0 0; color: #3d2530; font-size: 17px; line-height: 1.6; }
+
+/* The three-part story every case follows, as stepped cards. */
+.wk-story-strip { position: relative; display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.wk-story-strip::before { content: ""; position: absolute; left: 39px; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(var(--pink-soft), var(--ink)); }
+.wk-step { position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: center; padding: 16px 20px 16px 12px; border-radius: 22px; box-shadow: 0 24px 44px -30px rgba(120,30,70,.55); transition: translate .3s var(--ease-out); }
+.wk-step:hover { translate: 6px 0; }
+.wk-step b { position: relative; z-index: 1; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 18px; font: 700 20px var(--display); letter-spacing: -.03em; }
+.wk-step strong { display: block; font: 700 19px var(--display); letter-spacing: -.02em; }
+.wk-step small { display: block; margin-top: 2px; font-size: 14px; line-height: 1.45; }
+.wk-step-1 { margin-right: 60px; background: #fff; color: var(--ink); }
+.wk-step-1 b { background: var(--pink-tint); color: var(--pink); }
+.wk-step-1 small { color: #55555b; }
+.wk-step-2 { margin: 0 30px; background: var(--pink); color: #fff; }
+.wk-step-2 b { background: rgba(255,255,255,.2); }
+.wk-step-3 { margin-left: 60px; background: var(--ink); color: #fff; }
+.wk-step-3 b { background: var(--pink); }
+.wk-step-3 small, .wk-step-2 small { color: rgba(255,255,255,.85); }
+
+/* Tiles */
+.wk-list { padding: 56px 0 80px; background: linear-gradient(180deg, #fbe0ea 0%, var(--pink-tint) 14%, #fff9fb 100%); }
+.wk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin: 0; padding: 0; list-style: none; }
+.ip-more .wk-grid { margin-top: 16px; }
+.wk-tile-link { display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: 28px; background: #fff; color: var(--ink); box-shadow: 0 30px 60px -38px rgba(120,30,70,.55); transition: translate .35s var(--ease-out), box-shadow .35s ease; }
+.wk-tile-link:hover { translate: 0 -6px; box-shadow: 0 40px 70px -34px rgba(120,30,70,.65); }
+.wk-tile-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wk-tile-cover { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: linear-gradient(160deg, var(--pink-soft), #8f2d55); }
+.wk-tile-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(10,10,10,.78) 100%); }
+.wk-cover-img { object-fit: cover; transition: scale .6s var(--ease-out); }
+.wk-tile-link:hover .wk-cover-img { scale: 1.05; }
+.wk-cover-fallback { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.8); }
+.wk-tile-result { position: absolute; left: 22px; right: 22px; bottom: 18px; z-index: 1; display: flex; align-items: flex-end; gap: 14px; color: #fff; }
+.wk-tile-result b { font: 700 clamp(48px, 5vw, 68px)/.85 var(--display); letter-spacing: -.06em; }
+.wk-tile-result span { padding-bottom: 4px; font-size: 15px; font-weight: 700; line-height: 1.25; }
+.wk-tile-result small { display: block; color: rgba(255,255,255,.8); font-size: 13px; font-weight: 500; }
+.wk-tile-text { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 20px 24px 24px; }
+.wk-tile-text strong { font: 600 22px/1.2 var(--display); letter-spacing: -.03em; }
+.wk-tile-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: #55555b; font-size: 13.5px; font-weight: 600; }
+.wk-badge { padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.wk-badge-client { background: var(--ink); color: #fff; }
+.wk-badge-own { background: var(--pink); color: #fff; }
+.wk-badge-trial { background: var(--pink-tint); color: #a83963; box-shadow: inset 0 0 0 1px rgba(201,80,123,.35); }
+.wk-read { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 4px; color: #a83963; font-size: 14.5px; font-weight: 700; }
+
+/* Case page */
+.wk-case-head { position: relative; overflow: hidden; isolation: isolate; padding: 130px 0 0; background: linear-gradient(180deg, #f3d4ea 0%, var(--pink-tint) 55%, #fff9fb 100%); }
+.wk-case-grid { display: grid; grid-template-columns: 1.3fr .7fr; gap: 40px; align-items: end; margin-top: 12px; }
+.wk-case-head h1 { margin: 14px 0 0; color: var(--ink); font: 700 clamp(36px, 4.6vw, 62px)/1.02 var(--display); letter-spacing: -.05em; }
+.wk-client { margin: 12px 0 0; color: #3d2530; font-size: 17px; }
+.wk-result { display: flex; flex-direction: column; gap: 4px; padding: 26px 28px; border-radius: 26px; background: var(--ink); color: #fff; box-shadow: 0 40px 70px -34px rgba(201,80,123,.7); }
+.wk-result b { color: var(--pink-soft); font: 700 clamp(56px, 6vw, 84px)/.9 var(--display); letter-spacing: -.06em; }
+.wk-result span { margin-top: 8px; font: 600 19px/1.25 var(--display); letter-spacing: -.02em; }
+.wk-result small { color: #c9c9cf; font-size: 14px; }
+.wk-case-head .ip-post-cover { margin-top: 32px; }
+.wk-case-main { padding: 56px 0 72px; background: #fff9fb; }
+.wk-parts { display: grid; gap: 0; max-width: 900px; margin: 0 auto; padding: 0; list-style: none; }
+.wk-part { display: grid; grid-template-columns: 90px 1fr; gap: 24px; padding: 30px 0; border-top: 1px solid rgba(201,80,123,.2); }
+.wk-part:first-child { border-top: 0; padding-top: 0; }
+.wk-part-n { color: var(--pink); font: 700 44px/1 var(--display); letter-spacing: -.05em; }
+.wk-part h2 { margin: 4px 0 12px; color: var(--ink); font: 700 26px var(--display); letter-spacing: -.035em; }
+.wk-part .ip-prose { max-width: none; margin: 0; font-size: 17.5px; }
+.wk-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; max-width: 900px; margin: 12px auto 0; padding: 0; list-style: none; }
+.wk-metrics li { display: flex; flex-direction: column; gap: 4px; padding: 20px 22px; border-radius: 22px; background: #fff; box-shadow: 0 20px 40px -30px rgba(120,30,70,.5); }
+.wk-metrics b { color: var(--pink); font: 700 40px/1 var(--display); letter-spacing: -.05em; }
+.wk-metrics span { color: #3d2530; font-size: 14.5px; }
+.wk-services { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; max-width: 900px; margin: 28px auto 0; }
+.wk-services > span { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.wk-services ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.wk-services li { padding: 8px 14px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1px var(--border); }
+.wk-quote { max-width: 900px; margin: 36px auto 0; padding: 30px 32px; border-radius: 26px; background: var(--pink); color: #fff; }
+.wk-quote blockquote { margin: 12px 0 0; font: 600 clamp(20px, 2.2vw, 26px)/1.35 var(--display); letter-spacing: -.02em; }
+.wk-quote figcaption { margin-top: 14px; font-size: 14.5px; font-weight: 700; }
+.wk-case-main .ip-endcard { max-width: 900px; }
+
+@media (max-width: 900px) {
+  .wk-hero { padding: 120px 0 44px; }
+  .wk-hero-grid, .wk-case-grid { grid-template-columns: 1fr; gap: 30px; }
+  .wk-step-1, .wk-step-2, .wk-step-3 { margin: 0; }
+  .wk-grid { grid-template-columns: 1fr; }
+  .wk-case-head { padding-top: 112px; }
+  .wk-part { grid-template-columns: 1fr; gap: 6px; }
+  .wk-part-n { font-size: 32px; }
+}
