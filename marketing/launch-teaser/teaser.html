@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>nxtte launch teaser</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=block" rel="stylesheet">
+<style>
+  :root {
+    --pink: #C9507B; --pink-soft: #F2779F; --pink-tint: #FDF2F6;
+    --ink: #0A0A0A; --muted: #6B6B72; --surface: #F7F6F4; --border: #E6E4E1;
+    --lav: #E3B8E9; --logo-pink: #F39CB7;
+  }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); }
+  .stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+  .cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  .scene { position: absolute; inset: 0; visibility: hidden; overflow: hidden; }
+  .d { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.045em; line-height: 1.02; }
+  .pink { color: var(--pink); }
+  [data-in] { opacity: 0; display: inline-block; will-change: transform, opacity, filter; }
+  .line { display: block; }
+  .w { margin-right: .2em; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 16px; font-size: 30px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .eyebrow svg { width: 26px; height: 26px; }
+  .spark { display: block; }
+
+  /* S1 intro */
+  #s1 { background: var(--ink); }
+  .s1-star { position: absolute; left: 50%; top: 820px; width: 260px; height: 260px; margin-left: -130px; margin-top: -130px; }
+  .s1-star .flare { position: absolute; left: 50%; top: 50%; background: linear-gradient(90deg, transparent, rgba(227,184,233,.9), transparent); height: 3px; width: 900px; margin-left: -450px; margin-top: -1.5px; }
+  .s1-star .flare.v { transform: rotate(90deg); }
+  .s1-star .glow { position: absolute; inset: -140px; border-radius: 50%; background: radial-gradient(circle, rgba(227,184,233,.45), rgba(242,119,159,.12) 40%, transparent 68%); }
+  .s1-text { position: absolute; left: 0; right: 0; top: 1080px; text-align: center; color: #fff; font-size: 64px; font-weight: 500; letter-spacing: -.02em; }
+
+  /* S2 */
+  #s2 { background: #fff; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(10px); }
+  .marquee { position: absolute; white-space: nowrap; font: 700 360px/1 'Space Grotesk'; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 2.5px rgba(201,80,123,.14); }
+  .s2-body { position: absolute; left: 84px; right: 60px; top: 520px; }
+  .s2-body .eyebrow { margin-bottom: 52px; }
+  .big { font-size: 128px; }
+  .huge { font-size: 176px; letter-spacing: -.055em; }
+  .hl { position: relative; }
+  .hl-bar { position: absolute; left: -14px; right: 6px; top: 58%; height: 38%; background: rgba(242,119,159,.22); border-radius: 12px; transform-origin: left center; transform: scaleX(0); z-index: -1; }
+  .strike { position: relative; display: inline-block; }
+  .strike::after { content: ''; position: absolute; left: -8px; right: -8px; top: 52%; height: 14px; background: var(--ink); border-radius: 7px; transform-origin: left center; transform: scaleX(var(--k, 0)); }
+
+  /* S3 */
+  #s3 { background: var(--surface); }
+  .feed { position: absolute; left: -40px; right: -40px; top: 0; height: 1920px; display: flex; gap: 28px; justify-content: center; -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.55) 40%, transparent 56%); mask-image: linear-gradient(180deg, rgba(0,0,0,.9) 0, rgba(0,0,0,.55) 40%, transparent 56%); }
+  .col { width: 340px; display: flex; flex-direction: column; gap: 28px; }
+  .tile { height: 380px; border-radius: 30px; position: relative; flex: none; overflow: hidden; }
+  .tile .hrt { position: absolute; left: 26px; bottom: 26px; display: flex; align-items: center; gap: 10px; font: 700 26px 'DM Sans'; color: rgba(10,10,10,.55); }
+  .tile .hrt svg { width: 30px; height: 30px; }
+  .tile .bar { position: absolute; left: 26px; top: 28px; width: 46%; height: 18px; border-radius: 9px; background: rgba(10,10,10,.08); }
+  .tile .bar2 { top: 58px; width: 30%; }
+  .s3-cards { position: absolute; left: 84px; right: 84px; top: 330px; display: grid; gap: 28px; }
+  .card { background: #fff; border: 2px solid var(--border); border-radius: 34px; padding: 46px 54px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 30px 80px rgba(10,10,10,.10); }
+  .card-label { font-size: 38px; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 20px; }
+  .card-label svg { width: 44px; height: 44px; }
+  .card-num { font: 700 112px/1 'Space Grotesk'; letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .card-num.zero { color: var(--pink); display: inline-block; }
+  .hearts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+  .heart { position: absolute; width: 54px; height: 54px; opacity: 0; }
+  .s3-head { position: absolute; left: 84px; right: 60px; top: 1010px; }
+
+  /* S4 */
+  #s4 { background: #fff; }
+  .s4-inner { position: absolute; inset: 0; transform-origin: 50% 55%; }
+  .s4-top { position: absolute; left: 84px; top: 290px; }
+  .steps { position: absolute; left: 84px; right: 84px; top: 400px; }
+  .step { position: relative; display: flex !important; align-items: center; gap: 36px; padding: 36px 44px; margin-bottom: 36px; border: 2px solid var(--border); border-radius: 34px; background: #fff; box-shadow: 0 18px 50px rgba(10,10,10,.06); }
+  .step-n { width: 100px; height: 100px; border-radius: 26px; background: var(--pink-tint); color: var(--pink); display: grid; place-items: center; font: 700 40px/1 'Space Grotesk'; flex: none; }
+  .step-n.on { background: var(--pink); color: #fff; }
+  .step-t { font: 700 66px/1 'Space Grotesk'; letter-spacing: -.035em; color: var(--ink); }
+  .step-s { font-size: 31px; color: var(--muted); margin-top: 10px; }
+  .connector { position: absolute; left: 134px; width: 8px; top: 140px; height: 560px; background: linear-gradient(var(--pink), var(--lav)); border-radius: 4px; transform-origin: top center; transform: scaleY(0); }
+  .s4-head { position: absolute; left: 84px; right: 60px; top: 1300px; }
+  .s4-dark { position: absolute; inset: 0; background: var(--ink); opacity: 0; }
+
+  /* S5 */
+  #s5 { background: var(--ink); }
+  .gridlines { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.045) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.045) 2px, transparent 2px); background-size: 108px 108px; background-position: -2px 42px; }
+  .cell { position: absolute; width: 88px; height: 88px; border-radius: 18px; background: var(--pink-soft); opacity: 0; }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 640px 620px at 50% 49%, rgba(10,10,10,.97) 40%, rgba(10,10,10,0) 100%); }
+  .burst { position: absolute; left: 50%; top: 800px; width: 1400px; height: 1400px; margin: -700px 0 0 -700px; border-radius: 50%; background: radial-gradient(circle, rgba(243,156,183,.95), rgba(227,184,233,.35) 30%, transparent 62%); opacity: 0; }
+  .shock { position: absolute; left: 50%; top: 800px; width: 600px; height: 600px; margin: -300px 0 0 -300px; border-radius: 50%; border: 6px solid var(--logo-pink); opacity: 0; }
+  .particles { position: absolute; inset: 0; }
+  .pt { position: absolute; opacity: 0; }
+  .logo { position: absolute; left: 50%; top: 800px; width: 900px; height: 389px; margin: -195px 0 0 -450px; opacity: 0; }
+  .logo img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .logo .sweep { position: absolute; inset: 0; -webkit-mask: url(logo-word.png) center / 100% 100% no-repeat; mask: url(logo-word.png) center / 100% 100% no-repeat; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.95) 50%, transparent 62%); background-size: 300% 100%; background-repeat: no-repeat; }
+  .logo .star { transform-origin: 90.5% 29%; }
+  .logo .flare { position: absolute; left: 90.5%; top: 29%; width: 0; height: 0; }
+  .logo .flare i { position: absolute; left: -260px; top: -2px; width: 520px; height: 4px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); }
+  .logo .flare i.v { transform: rotate(90deg); }
+  .logo .flare b { position: absolute; left: -90px; top: -90px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(227,184,233,.8), transparent 65%); }
+  .s5-copy { position: absolute; left: 0; right: 0; top: 1110px; text-align: center; }
+  .launch { color: #fff; font-size: 96px; }
+  .tagline { color: #B4B4BB; font-size: 38px; margin-top: 30px; }
+  .pill { margin-top: 64px; align-items: center; gap: 18px; padding: 24px 44px; border-radius: 999px; border: 2px solid rgba(243,156,183,.55); background: rgba(243,156,183,.08); color: #fff; font-size: 36px; font-weight: 500; }
+  .pill-in { display: inline-flex; align-items: center; gap: 18px; }
+  .pill i { width: 16px; height: 16px; border-radius: 50%; background: var(--logo-pink); display: block; box-shadow: 0 0 18px var(--logo-pink); }
+  .sub { position: absolute; left: 0; right: 0; bottom: 150px; text-align: center; color: #8E8E96; font-size: 28px; letter-spacing: .04em; }
+
+  /* overlays */
+  .wipe { position: absolute; top: -200px; bottom: -200px; width: 2600px; left: 0; transform: translateX(-3000px) skewX(-14deg); }
+  .flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  #grain { position: absolute; inset: 0; width: 1080px; height: 1920px; mix-blend-mode: overlay; opacity: .09; pointer-events: none; }
+  .fade-black { position: absolute; inset: 0; background: var(--ink); opacity: 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="lavg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3D6F5"/><stop offset="1" stop-color="#C69BE0"/></linearGradient>
+    <linearGradient id="pkg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5ADC2"/><stop offset="1" stop-color="#EF8EB2"/></linearGradient>
+    <symbol id="spark" viewBox="0 0 100 100"><path d="M50 0C53 35 65 47 100 50 65 53 53 65 50 100 47 65 35 53 0 50 35 47 47 35 50 0Z"/></symbol>
+    <symbol id="heart" viewBox="0 0 24 24"><path d="M12 21 4.3 13.6A5 5 0 0 1 12 6.4a5 5 0 0 1 7.7 7.2Z"/></symbol>
+  </defs>
+</svg>
+
+<div class="stage">
+ <div class="cam" id="cam">
+
+  <section class="scene" id="s1">
+    <div class="s1-star" id="s1star">
+      <div class="glow"></div>
+      <div class="flare" id="f1"></div><div class="flare v" id="f2"></div>
+      <svg class="spark" viewBox="0 0 100 100" width="260" height="260" fill="url(#lavg)"><use href="#spark"/></svg>
+    </div>
+    <div class="s1-text" id="s1text">
+      <span class="w" data-in="0.6" data-fx="blur">Something</span><span class="w" data-in="0.85" data-fx="blur">new</span><span class="w" data-in="1.1" data-fx="blur">is</span><span data-in="1.35" data-fx="blur">coming.</span>
+    </div>
+  </section>
+
+  <section class="scene" id="s2">
+    <div class="blob" style="width:1000px;height:1000px;right:-420px;top:-380px;background:radial-gradient(circle, rgba(242,119,159,.30), transparent 65%)" id="b1"></div>
+    <div class="blob" style="width:1100px;height:1100px;left:-600px;bottom:-520px;background:radial-gradient(circle, rgba(227,184,233,.40), transparent 65%)" id="b2"></div>
+    <div class="marquee" id="mq1" style="top:120px">bookings bookings bookings bookings</div>
+    <div class="marquee" id="mq2" style="top:1480px">not just likes not just likes not just likes</div>
+    <div class="s2-body">
+      <div class="eyebrow" data-in="2.0" data-fx="rise"><svg viewBox="0 0 100 100" fill="#C9507B"><use href="#spark"/></svg>What we believe</div>
+      <div class="d big">
+        <span class="line"><span class="w" data-in="2.0" data-fx="slam">Your</span><span data-in="2.25" data-fx="slam">content</span></span>
+        <span class="line"><span class="w" data-in="2.5" data-fx="slam">should</span><span class="w" data-in="2.75" data-fx="slam">bring</span><span data-in="3.0" data-fx="slam">in</span></span>
+        <span class="line huge pink hl" data-in="3.5" data-fx="slam" data-amt="0.9"><span class="hl-bar" id="hlbar"></span>bookings,</span>
+        <span class="line" id="s2last"><span class="w" data-in="4.5" data-fx="slam">not</span><span class="w" data-in="4.75" data-fx="slam">just</span><span data-in="5.0" data-fx="slam"><span class="strike" id="likes">likes.</span></span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s3">
+    <div class="feed" id="feed"></div>
+    <div class="s3-cards">
+      <div class="card" data-in="6.2" data-fx="pop" style="display:flex">
+        <div class="card-label"><svg viewBox="0 0 24 24" fill="#F2779F"><use href="#heart"/></svg>Likes</div>
+        <div class="card-num" id="likesNum">0</div>
+      </div>
+      <div class="card" data-in="6.4" data-fx="pop" style="display:flex">
+        <div class="card-label"><svg viewBox="0 0 24 24" fill="none" stroke="#6B6B72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.7A8.4 8.4 0 1 1 21 11.5Z"/></svg>Enquiries</div>
+        <div class="card-num zero" id="zero">0</div>
+      </div>
+    </div>
+    <div class="hearts" id="hearts"></div>
+    <div class="s3-head">
+      <div class="eyebrow" data-in="7.6" data-fx="rise" style="margin-bottom:46px"><svg viewBox="0 0 100 100" fill="#C9507B"><use href="#spark"/></svg>The problem</div>
+      <div class="d big">
+        <span class="line" data-in="7.75" data-fx="slam">A busy feed</span>
+        <span class="line" data-in="8.25" data-fx="slam">is not a</span>
+        <span class="line pink" data-in="8.75" data-fx="slam">business system.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s4">
+    <div class="s4-inner" id="s4inner">
+      <div class="s4-top"><div class="eyebrow" data-in="10.0" data-fx="rise"><svg viewBox="0 0 100 100" fill="#C9507B"><use href="#spark"/></svg>One team</div></div>
+      <div class="steps">
+        <div class="connector" id="conn"></div>
+        <div class="step" data-in="10.5" data-fx="pop"><div class="step-n" id="n1">01</div><div><div class="step-t">Content</div><div class="step-s">Posts people stop for</div></div></div>
+        <div class="step" data-in="11.0" data-fx="pop"><div class="step-n" id="n2">02</div><div><div class="step-t">Landing page</div><div class="step-s">Somewhere to send them</div></div></div>
+        <div class="step" data-in="11.5" data-fx="pop"><div class="step-n" id="n3">03</div><div><div class="step-t">Follow-up</div><div class="step-s">A reason to get in touch</div></div></div>
+      </div>
+      <div class="s4-head d big">
+        <span class="line" data-in="12.0" data-fx="slam">One team from</span>
+        <span class="line pink" data-in="12.5" data-fx="slam">story to sale.</span>
+      </div>
+    </div>
+    <div class="s4-dark" id="s4dark"></div>
+  </section>
+
+  <section class="scene" id="s5">
+    <div class="gridlines"></div>
+    <div id="cells"></div>
+    <div class="particles" id="particles"></div>
+    <div class="vignette"></div>
+    <div class="burst" id="burst"></div>
+    <div class="shock" id="shock"></div>
+    <div class="logo" id="logo">
+      <img src="logo-word.png" alt="">
+      <div class="sweep" id="sweep"></div>
+      <img class="star" id="lstar" src="logo-star.png" alt="">
+      <div class="flare" id="lflare"><b></b><i></i><i class="v"></i></div>
+    </div>
+    <div class="s5-copy">
+      <div class="d launch"><span class="w" data-in="15.0" data-fx="blur" id="launchA">Launching</span><span data-in="15.25" data-fx="blur" id="launchB">soon.</span></div>
+      <div class="tagline" data-in="15.6" data-fx="rise">Content, funnel and site from one team.</div>
+      <div><div class="pill" data-in="16.1" data-fx="pop"><span class="pill-in"><i id="pdot"></i><span id="pilltext">In a few days</span></span></div></div>
+    </div>
+    <div class="sub" data-in="16.6" data-fx="rise" style="display:block">A sub-brand of Aurexis Solution</div>
+  </section>
+
+ </div>
+ <div class="wipe" id="wipeA" style="background:var(--lav)"></div>
+ <div class="wipe" id="wipeB" style="background:var(--pink-soft)"></div>
+ <div class="flash" id="flash"></div>
+ <canvas id="grain" width="540" height="960"></canvas>
+ <div class="fade-black" id="fb"></div>
+</div>
+
+<script>
+  // Edit these to change the end card once a launch date is confirmed.
+  const LAUNCH_WORDS = ['Launching', 'soon.'];
+  const PILL_TEXT = 'In a few days';
+
+  window.DURATION = 20;
+  const $ = (id) => document.getElementById(id);
+  $('launchA').textContent = LAUNCH_WORDS[0];
+  $('launchB').textContent = LAUNCH_WORDS[1];
+  $('pilltext').textContent = PILL_TEXT;
+
+  const KICKS = [...Array(22)].map((_, i) => 2 + i * 0.5).concat([...Array(9)].map((_, i) => 14 + i * 0.5));
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  const easeOut = (x) => 1 - Math.pow(1 - x, 4);
+  const easeIn = (x) => x * x * x;
+  const easeInOut = (x) => x < .5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+  const easeBack = (x) => { const c = 1.9; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const prog = (t, s, d, e = easeOut) => e(clamp((t - s) / d));
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  // Generic entrance effects driven by data-in / data-fx.
+  const animated = [...document.querySelectorAll('[data-in]')].map((el) => ({
+    el, at: +el.dataset.in, fx: el.dataset.fx, amt: +(el.dataset.amt || 1),
+  }));
+  const FX = {
+    rise: (k) => ({ o: k, tf: `translateY(${(1 - k) * 60}px)` }),
+    slam: (k, amt) => ({ o: clamp(k * 3), tf: `scale(${1 + 0.45 * amt * (1 - k)}) translateY(${(1 - k) * -20}px)`, blur: (1 - k) * 16 }),
+    blur: (k) => ({ o: k, tf: `translateY(${(1 - k) * 24}px) scale(${1.08 - .08 * k})`, blur: (1 - k) * 22 }),
+    pop: (k) => ({ o: clamp(k * 2.5), tf: `scale(${0.7 + 0.3 * k}) translateY(${(1 - k) * 40}px)` }),
+  };
+  const DUR = { rise: .6, slam: .32, blur: .6, pop: .5 };
+  const EASE = { rise: easeOut, slam: easeOut, blur: easeOut, pop: easeBack };
+  function runEntrances(t) {
+    for (const a of animated) {
+      const k = prog(t, a.at, DUR[a.fx], EASE[a.fx]);
+      const s = FX[a.fx](k, a.amt);
+      a.el.style.opacity = s.o;
+      a.el.style.transform = s.tf;
+      a.el.style.filter = s.blur > .2 ? `blur(${s.blur}px)` : '';
+    }
+  }
+
+  // S3 feed of abstract post tiles
+  const TILE_BG = ['#FBE3EC', '#EFE4F7', '#ECEAE7', '#FDF2F6', '#F5D5E1', '#E9E0F4'];
+  const feedCols = [];
+  for (let c = 0; c < 3; c++) {
+    const col = document.createElement('div');
+    col.className = 'col';
+    for (let i = 0; i < 9; i++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.style.background = TILE_BG[(i * 2 + c * 3) % TILE_BG.length];
+      tile.innerHTML = `<div class="bar"></div><div class="bar bar2"></div><div class="hrt"><svg viewBox="0 0 24 24" fill="#F2779F"><use href="#heart"/></svg>${Math.floor(200 + rnd() * 3800).toLocaleString('en-US')}</div>`;
+      col.appendChild(tile);
+    }
+    $('feed').appendChild(col);
+    feedCols.push({ col, speed: 150 + c * 60, offset: -c * 170 });
+  }
+  const hearts = [...Array(16)].map((_, i) => {
+    const h = document.createElement('div');
+    h.className = 'heart';
+    h.innerHTML = '<svg viewBox="0 0 24 24" fill="#F2779F"><use href="#heart"/></svg>';
+    $('hearts').appendChild(h);
+    return { h, at: 6.5 + i * 0.075, x: 700 + rnd() * 260, drift: (rnd() - .5) * 160, size: .6 + rnd() * .8 };
+  });
+
+  // S5 cells + particles
+  const cells = [];
+  for (let c = 0; c < 10; c++) for (let r = 0; r < 18; r++) {
+    if (rnd() > 0.22) continue;
+    const el = document.createElement('div');
+    el.className = 'cell';
+    el.style.left = (c * 108 + 10) + 'px';
+    el.style.top = (r * 108 + 54) + 'px';
+    $('cells').appendChild(el);
+    cells.push({ el, delay: rnd() * 1.2, period: 1.6 + rnd() * 1.6, peak: .15 + rnd() * .35, kick: rnd() > .5 });
+  }
+  const parts = [...Array(34)].map(() => {
+    const el = document.createElement('div');
+    el.className = 'pt';
+    const s = 10 + rnd() * 26;
+    el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}" fill="${rnd() > .5 ? 'url(#lavg)' : 'url(#pkg)'}"><use href="#spark"/></svg>`;
+    $('particles').appendChild(el);
+    return { el, x: 60 + rnd() * 960, y: 300 + rnd() * 1500, v: 30 + rnd() * 70, ph: rnd() * 6.28, rate: 1.5 + rnd() * 2.5 };
+  });
+
+  // Film grain, deterministic per frame
+  const grainCtx = $('grain').getContext('2d');
+  const grainFrames = [...Array(6)].map(() => {
+    const img = grainCtx.createImageData(540, 960);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = rnd() * 255;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = 255;
+    }
+    return img;
+  });
+
+  function kickEnv(t) {
+    let last = -1;
+    for (const k of KICKS) if (k <= t) last = k;
+    return last < 0 ? 0 : Math.exp(-(t - last) * 9);
+  }
+
+  const SCENES = [['s1', 0, 2], ['s2', 2, 6], ['s3', 6, 10], ['s4', 10, 14], ['s5', 14, 99]];
+
+  function render(t) {
+    for (const [id, a, b] of SCENES) $(id).style.visibility = t >= a && t < b ? 'visible' : 'hidden';
+    runEntrances(t);
+
+    // camera: beat pulse + slow push
+    const pulse = kickEnv(t) * 0.014;
+    $('cam').style.transform = `scale(${1 + pulse + (t % 4) * 0.004})`;
+
+    // S1: sparkle pops, flares breathe, then zooms through into a white flash
+    const sp = prog(t, 0.1, 0.7, easeBack);
+    const through = prog(t, 1.55, 0.45, easeIn);
+    $('s1star').style.transform = `scale(${sp * (1 + through * 26)}) rotate(${(1 - sp) * -120 + t * 25 + through * 90}deg)`;
+    $('s1star').style.opacity = clamp(sp * 2);
+    const fl = 0.35 + 0.65 * Math.abs(Math.sin(t * 2.4));
+    $('f1').style.transform = `scaleX(${fl * sp})`;
+    $('f2').style.transform = `rotate(90deg) scaleX(${fl * sp * .8})`;
+    $('s1text').style.opacity = 1 - through;
+
+    // S2
+    $('mq1').style.transform = `translateX(${-200 - (t - 2) * 130}px)`;
+    $('mq2').style.transform = `translateX(${-1400 + (t - 2) * 110}px)`;
+    $('b1').style.transform = `translate(${Math.sin(t) * 40}px, ${Math.cos(t * .8) * 40}px)`;
+    $('b2').style.transform = `translate(${Math.cos(t * .7) * 50}px, ${Math.sin(t * .9) * 30}px)`;
+    $('hlbar').style.transform = `scaleX(${prog(t, 3.65, .35, easeInOut)})`;
+    const sk = prog(t, 5.5, .22, easeInOut);
+    $('likes').style.setProperty('--k', sk);
+    $('likes').style.color = sk > .5 ? '#6B6B72' : '';
+    const shake = t > 5.5 ? Math.exp(-(t - 5.5) * 10) * 14 : 0;
+    $('s2last').style.transform = `translateX(${Math.sin(t * 90) * shake}px)`;
+
+    // S3: feed scroll, counter, hearts, zero shake
+    for (const f of feedCols) f.col.style.transform = `translateY(${f.offset - (t - 6) * f.speed}px)`;
+    $('likesNum').textContent = Math.round(12480 * prog(t, 6.5, 1.2, (x) => 1 - Math.pow(1 - x, 4))).toLocaleString('en-US');
+    for (const h of hearts) {
+      const k = clamp((t - h.at) / 0.9);
+      h.h.style.opacity = k > 0 && k < 1 ? Math.sin(k * Math.PI) : 0;
+      h.h.style.transform = `translate(${h.x + h.drift * k}px, ${420 - k * 260}px) scale(${h.size * (0.6 + k * .6)})`;
+    }
+    const zs = t > 7.5 ? Math.exp(-(t - 7.5) * 7) : 0;
+    $('zero').style.transform = `translateX(${Math.sin((t - 7.5) * 70) * zs * 22}px) scale(${1 + zs * .25})`;
+
+    // S4: connector, number chips light up, build into the drop
+    $('conn').style.transform = `scaleY(${prog(t, 10.6, 1.1, easeInOut)})`;
+    ['n1', 'n2', 'n3'].forEach((id, i) => $(id).classList.toggle('on', t >= 10.55 + i * .5));
+    const build = prog(t, 13.0, 1.0, easeIn);
+    const amp = build * 10;
+    $('s4inner').style.transform = `scale(${1 + build * .16}) translate(${Math.sin(t * 73) * amp}px, ${Math.cos(t * 61) * amp}px)`;
+    $('s4inner').style.filter = build > .05 ? `blur(${build * 6}px)` : '';
+    $('s4dark').style.opacity = prog(t, 13.55, .45, easeIn);
+
+    // S5: drop
+    const bk = clamp((t - 14) / 0.9);
+    $('burst').style.opacity = t >= 14 ? (1 - easeOut(bk)) * .95 : 0;
+    $('burst').style.transform = `scale(${0.4 + easeOut(bk) * 1.4})`;
+    const sh = clamp((t - 14) / 0.8);
+    $('shock').style.opacity = t >= 14 && sh < 1 ? (1 - sh) : 0;
+    $('shock').style.transform = `scale(${0.3 + easeOut(sh) * 2.8})`;
+    const lg = prog(t, 14.0, 0.55);
+    $('logo').style.opacity = clamp(lg * 3);
+    $('logo').style.transform = `scale(${1.35 - .35 * lg + kickEnv(t) * (t > 14.6 ? .012 : 0)})`;
+    $('logo').style.filter = lg < .98 ? `blur(${(1 - lg) * 22}px)` : '';
+    $('sweep').style.backgroundPosition = `${100 - prog(t, 14.45, .9, easeInOut) * 100}% 0`;
+    $('sweep').style.opacity = t > 14.45 && t < 15.4 ? 1 : 0;
+    let tw = 0;
+    for (const s of [14.6, 16.6, 18.6]) { const k = (t - s) / .7; if (k >= 0 && k < 1) tw = Math.max(tw, Math.sin(k * Math.PI) * (s === 14.6 ? 1 : .6)); }
+    $('lstar').style.transform = `scale(${1 + tw * .5}) rotate(${tw * 45}deg)`;
+    $('lflare').style.opacity = tw;
+    $('lflare').style.transform = `scale(${0.4 + tw * .8}) rotate(${tw * 20}deg)`;
+    const gIn = prog(t, 14.0, 1.0);
+    const ke = kickEnv(t);
+    for (const c of cells) {
+      const local = t - 14 - c.delay;
+      const wave = local < 0 ? 0 : 0.5 - 0.5 * Math.cos((local / c.period) * Math.PI * 2);
+      c.el.style.opacity = gIn * (c.peak * wave + (c.kick ? ke * .35 : 0));
+    }
+    for (const p of parts) {
+      const y = p.y - (t - 14) * p.v;
+      p.el.style.opacity = t < 14 ? 0 : gIn * (0.25 + 0.55 * Math.abs(Math.sin(p.ph + t * p.rate)));
+      p.el.style.transform = `translate(${p.x + Math.sin(t + p.ph) * 20}px, ${y}px) rotate(${t * 40 + p.ph * 50}deg)`;
+    }
+    $('pdot').style.opacity = 0.45 + 0.55 * (0.5 + 0.5 * Math.cos((t - 16.1) * Math.PI * 2));
+
+    // transitions
+    // Pink panel is exactly centred (full cover) at the cut; lavender leads it.
+    for (const [id, lag] of [['wipeA', -.08], ['wipeB', 0]]) {
+      let x = -3000;
+      for (const c of [6, 10]) {
+        const k = clamp((t - (c - .32 + lag)) / .64);
+        if (k > 0 && k < 1) x = -3000 + easeInOut(k) * 4480;
+      }
+      $(id).style.transform = `translateX(${x}px) skewX(-14deg)`;
+    }
+    let fla = 0;
+    if (t >= 2) fla = Math.max(fla, 1 - prog(t, 2, .4));
+    if (t >= 3.5 && t < 3.8) fla = Math.max(fla, (1 - prog(t, 3.5, .25)) * .35);
+    if (t >= 14) fla = Math.max(fla, (1 - prog(t, 14, .25)) * .9);
+    $('flash').style.opacity = fla;
+
+    const frame = Math.floor(t * 30);
+    grainCtx.putImageData(grainFrames[frame % grainFrames.length], 0, 0);
+    $('grain').style.opacity = t < 2 || t >= 14 ? .12 : .07;
+    $('fb').style.opacity = prog(t, 19.3, .7, easeInOut);
+  }
+
+  window.render = render;
+  render(0);
+</script>
+</body>
+</html>

@@ -6,9 +6,9 @@ import { Form, type FormField } from '@/components/ui/form'
 import { submitAuditRequest } from './actions'
 
 export const metadata: Metadata = {
-  title: 'Find out why your content is not converting — RM 299 audit | nxtte',
+  title: 'Find out why your content is not converting — RM 199 audit | nxtte',
   description:
-    'A profile teardown, content review, competitor comparison and a 90-day roadmap, delivered in five working days. RM 299, credited to your first month.',
+    'A profile teardown, content review, competitor comparison and a 90-day roadmap, delivered in five working days. RM 199, credited to your first month.',
 }
 
 const AUDIT_FIELDS: FormField[] = [
@@ -37,7 +37,7 @@ export default function AuditPage() {
             Find out why your content is not converting.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base text-muted md:text-lg">
-            RM 299, credited to your first month.
+            RM 199, credited to your first month.
           </p>
           <div className="mt-8 flex justify-center">
             <Button href="#audit-form">Book the audit</Button>
@@ -98,7 +98,7 @@ export default function AuditPage() {
                 The offer
               </h2>
               <p className="mt-4 max-w-prose text-base text-muted">
-                <span className="font-bold text-pink">RM 299</span>, fully credited against
+                <span className="font-bold text-pink">RM 199</span>, fully credited against
                 your first month if you sign within 14 days.
               </p>
             </div>

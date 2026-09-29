@@ -26,7 +26,10 @@ import {
   FileBarChart,
   Handshake,
   Ghost,
+  FileText,
   Heart,
+  IdCard,
+  Image as ImageIcon,
   Inbox,
   LayoutTemplate,
   Instagram,
@@ -36,6 +39,7 @@ import {
   MapPin,
   Menu,
   MessageCircle,
+  Phone,
   MoveUpRight,
   Play,
   Plus,
@@ -44,6 +48,7 @@ import {
   SendHorizontal,
   ShieldCheck,
   Sparkles,
+  Tag,
   Target,
   Ticket,
   TrendingDown,
@@ -51,11 +56,23 @@ import {
   UserPlus,
   Timer,
   Receipt,
+  Type as TypeIcon,
   Unlock,
   Users,
   Workflow,
   X,
   Zap,
+  Wallet,
+  Moon,
+  Minus,
+  Flag,
+  Flame,
+  Languages,
+  ShoppingBag,
+  GraduationCap,
+  Wrench,
+  Scissors,
+  Coffee,
 } from "lucide-react";
 
 const whatsappHref = buildWhatsAppLink("Hi nxtte, I'd like to talk about turning my content into bookings.");
@@ -68,30 +85,31 @@ const navItems = [
   ["Contact", "/contact"],
 ];
 
+// Prices and inclusions from nxtte Services & Pricing 2026 (valid from October 2026).
 const packages = [
   {
     name: "Starter",
-    price: "RM 890",
+    price: "RM 1,199",
     note: "per month",
-    detail: "For one clear channel and a consistent presence.",
-    included: ["1 platform", "12 posts — static + carousel", "Captions", "Monthly report"],
+    detail: "Show up consistently on one platform.",
+    included: ["1 platform", "12 posts (single image and carousel)", "Captions and hashtags", "Monthly content calendar", "Monthly report"],
   },
   {
     name: "Growth",
-    price: "RM 1,590",
+    price: "RM 2,299",
     note: "per month",
-    detail: "The complete content engine for a business ready to move.",
-    included: ["2 platforms", "12 posts + 4 reels", "Content calendar", "Monthly report"],
+    detail: "Reels, where most new customers find local businesses today.",
+    included: ["2 platforms", "12 posts + 4 reels or TikToks", "Captions, hashtags and calendar", "Monthly report", "Monthly strategy call"],
     featured: true,
   },
   {
-    name: "Scale",
-    price: "RM 2,890",
+    name: "Pro",
+    price: "RM 3,399",
     note: "per month",
-    detail: "For operators ready to connect content, ads and conversion.",
-    included: ["2 platforms + ads management", "Content + reels", "Landing page", "Biweekly reporting"],
+    detail: "Content, ads and shoots handled together.",
+    included: ["3 platforms", "16 posts + 6 reels or TikToks", "Ads management on 1 platform", "Half-day weekend shoot every quarter", "Report and monthly strategy call"],
   },
-];
+]
 
 const services = [
   {
@@ -108,7 +126,7 @@ const services = [
     title: "Social Media Management",
     body: "A calm, consistent operating rhythm across your channels — publishing, replying and reporting without the noise.",
     audience: "For owners who want a reliable presence without another thing on their plate.",
-    price: "RM 590 / month",
+    price: "In every package, from RM 1,199/month",
   },
   {
     index: "03",
@@ -116,7 +134,7 @@ const services = [
     title: "Ads & Growth",
     body: "Campaign structure, creative testing and conversion tracking that gives your best content somewhere to go.",
     audience: "For businesses with a proven offer and a clear next step for prospects.",
-    price: "RM 800 / month or 18% of ad spend, whichever is higher",
+    price: "RM 1,200/month, or 15% of ad spend if higher",
   },
   {
     index: "04",
@@ -124,7 +142,7 @@ const services = [
     title: "Brand & Business",
     body: "The foundations underneath the content: positioning, landing pages and a clearer path from attention to enquiry.",
     audience: "For teams who need the content, site and funnel to feel like one system.",
-    price: "Quoted after a 15-minute call",
+    price: "Landing page RM 1,399 · Company profile RM 699",
   },
 ];
 
@@ -258,7 +276,7 @@ function Footer() {
           </div>
           <div className="ft-bottom">
             <span>© 2026 nxtte, a sub-brand of Aurexis Solution</span>
-            <span>SSM No. TODO_SSM_NUMBER</span>
+            <span>SSM NS0315281-P</span>
             <a className="ft-top-btn" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Back to top <ArrowUp size={14} /></a>
           </div>
         </div>
@@ -333,9 +351,9 @@ function HeroBackground() {
 
 
 const heroPromises = [
-  { icon: Clock3, label: "Calendar in 72 hours" },
+  { icon: Clock3, label: "First calendar in 5 working days" },
   { icon: BarChart3, label: "Published pricing" },
-  { icon: Check, label: "No lock-in" },
+  { icon: Check, label: "Month to month after 3 months" },
   { icon: MessageCircle, label: "Reply within 24 hours" },
 ];
 
@@ -510,9 +528,9 @@ const PATH_STATIONS = [
 ];
 
 const WHY_PROOFS = [
-  { icon: Zap, title: "Fast turnaround", body: "Calendar in 72 hours." },
+  { icon: Zap, title: "Fast turnaround", body: "First calendar in 5 working days." },
   { icon: BarChart3, title: "Published pricing", body: "Costs known before the call." },
-  { icon: Clock3, title: "No lock-in", body: "Good work earns the next month." },
+  { icon: Clock3, title: "Flexible terms", body: "3-month minimum, then month to month." },
 ];
 
 function WhySection() {
@@ -561,21 +579,21 @@ function WhySection() {
           </div>
           <div className="why3-tile art-step" style={delay(120)}>
             <span className="why3-tile-icon"><Timer size={17} /></span>
-            <div className="why3-big">72<span>h</span></div>
+            <div className="why3-big">5<span> days</span></div>
             <strong>To your first content calendar</strong>
-            <small>Clear next steps from day one.</small>
+            <small>Working days from the day you start.</small>
           </div>
           <div className="why3-tile art-step" style={delay(200)}>
             <span className="why3-tile-icon"><Receipt size={17} /></span>
             <div className="why3-big">3</div>
             <strong>Published price tiers</strong>
-            <small>RM 890 · RM 1,590 · RM 2,890</small>
+            <small>RM 1,199 · RM 2,299 · RM 3,399</small>
           </div>
           <div className="why3-tile art-step" style={delay(280)}>
-            <span className="why3-tile-icon"><Unlock size={17} /></span>
-            <div className="why3-big">0</div>
-            <strong>Lock-in contracts</strong>
-            <small>Good work earns the next month.</small>
+            <span className="why3-tile-icon"><Tag size={17} /></span>
+            <div className="why3-big">15<span>%</span></div>
+            <strong>Off the whole menu</strong>
+            <small>For every package client.</small>
           </div>
           <div className="why3-tile why3-tile-team art-step" style={delay(360)}>
             <div className="why3-lockup"><span className="why3-mark">n.</span><Plus size={14} /><span className="why3-aurexis">Aurexis Solution</span></div>
@@ -592,16 +610,16 @@ function WhySection() {
 // never publish a tile without a result). Steps mirror the site's own FAQ answer
 // to "What actually happens in the first month?".
 const FIRST_MONTH = [
-  { icon: Handshake, when: "Day 1", title: "Kickoff", body: "We align on your offer, your audience and the one next step every post should drive." },
-  { icon: CalendarRange, when: "Within 72 hours", title: "First content calendar", body: "A month of ideas, hooks and formats, ready for you to approve." },
-  { icon: Send, when: "After you approve", title: "Publishing starts", body: "Posts go live on a steady rhythm. Your pace depends on the package and your approvals." },
-  { icon: FileBarChart, when: "End of month", title: "Report and next moves", body: "What worked, what did not, and what we change next month." },
-];
+  { icon: Handshake, when: "Day 1", title: "Onboarding call", body: "We learn your business, customers, offers and brand." },
+  { icon: CalendarRange, when: "Days 2 to 5", title: "First content calendar", body: "The month planned around local festivals, payday and sale days, for you to approve." },
+  { icon: Send, when: "Week 2", title: "First posts go live", body: "We schedule and publish everything you approve." },
+  { icon: FileBarChart, when: "End of month", title: "Report and next moves", body: "What brought enquiries and what changes. Growth and Pro also get a strategy call." },
+]
 
 // Days of the first month each step lands on, and an example posting rhythm
 // (Growth: 12 posts). Shown as an example, not a fixed schedule.
-const FM_DAYS = [1, 3, 5, 30];
-const FM_POST_DAYS = new Set([5, 7, 9, 12, 14, 16, 19, 21, 23, 26, 28, 29]);
+const FM_DAYS = [1, 5, 8, 30];
+const FM_POST_DAYS = new Set([8, 10, 12, 15, 17, 19, 22, 24, 26, 29]);
 const FM_WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function FirstMonth() {
@@ -623,7 +641,7 @@ function FirstMonth() {
               </li>
             ))}
           </ol>
-          <SecondaryButton href="/audit">Start with the RM 299 audit</SecondaryButton>
+          <SecondaryButton href="/audit">Start with the RM 199 audit</SecondaryButton>
         </div>
         <div className="fm2-cal art-step" style={delay(60)} aria-label="First month calendar: kickoff on day 1, content calendar by day 3, publishing from day 5, report on day 30.">
           <div className="fm2-cal-head"><span className="fm2-cal-title">Month 1</span><span className="fm2-cal-sub">with nxtte</span></div>
@@ -691,11 +709,11 @@ function FinalCTA() {
           <span className="cta2-found"><ScanSearch size={13} /> 3 gaps found</span>
         </div>
         <div className="cta2-actions">
-          <Link className="cta-btn cta-btn-primary" href="/audit">Book the RM 299 audit <ArrowUpRight size={17} /></Link>
+          <Link className="cta-btn cta-btn-primary" href="/audit">Book the RM 199 audit <ArrowUpRight size={17} /></Link>
           <a className="cta-btn cta-btn-ghost" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}><MessageCircle size={16} /> WhatsApp us</a>
         </div>
         <ul className="cta2-facts">
-          <li><Ticket size={14} /> RM 299, credited to month one if you sign within 14 days</li>
+          <li><Ticket size={14} /> RM 199, credited to month one if you sign within 14 days</li>
           <li><Clock3 size={14} /> Delivered in five working days</li>
           <li><MapIcon size={14} /> 90-day roadmap, week by week</li>
         </ul>
@@ -849,6 +867,268 @@ function useInView<T extends HTMLElement>() {
 }
 
 
+// /services hero: one full screen. A tilted 3D wall of mini mock-ups of what
+// nxtte makes, each tagged with its menu price; columns glide in opposite
+// directions. Paused off-screen, still for reduced-motion users.
+type Deliverable = "carousel" | "reel" | "ads" | "landing" | "chat" | "calendar" | "profile" | "namecard";
+const DELIVERABLES: { kind: Deliverable; label: string; price: string }[] = [
+  { kind: "carousel", label: "Carousel", price: "RM 89" },
+  { kind: "reel", label: "Reel editing", price: "RM 99" },
+  { kind: "landing", label: "Landing page", price: "RM 1,399" },
+  { kind: "chat", label: "WhatsApp setup", price: "RM 299" },
+  { kind: "ads", label: "Meta ads", price: "RM 1,200/mo" },
+  { kind: "calendar", label: "Content calendar", price: "RM 299" },
+  { kind: "namecard", label: "Name card", price: "RM 19" },
+  { kind: "profile", label: "Company profile", price: "RM 699" },
+];
+const WALL_COLUMNS = [
+  { offset: 0, dur: 46, up: true },
+  { offset: 3, dur: 58, up: false },
+  { offset: 5, dur: 50, up: true },
+];
+
+function DeliverableArt({ kind }: { kind: Deliverable }) {
+  switch (kind) {
+    case "carousel":
+      return <div className="dv dv-carousel"><small>Slide 1 / 5</small><b>5 reasons your post is not booking</b><span className="dv-dots"><i /><i /><i /><i /><i /></span></div>;
+    case "reel":
+      return <div className="dv dv-reel"><span className="dv-play"><Play size={18} fill="currentColor" /></span><span className="dv-reel-bar"><i /></span><small>0:15</small></div>;
+    case "landing":
+      return <div className="dv dv-landing"><span className="dv-browser"><i /><i /><i /></span><b className="dv-l1" /><b className="dv-l2" /><span className="dv-btn">Book now</span><span className="dv-thumbs"><i /><i /><i /></span></div>;
+    case "chat":
+      return <div className="dv dv-chat"><span className="dv-them">Hi, can I book for Saturday?</span><span className="dv-me">Yes, 3pm is free. Shall I lock it in?</span><span className="dv-them">Yes please</span></div>;
+    case "ads":
+      return <div className="dv dv-ads"><small><TrendingUp size={12} /> Enquiries</small><span className="dv-bars">{[30, 42, 38, 56, 64, 82].map((h, k) => <i key={k} style={{ height: `${h}%` }} />)}</span></div>;
+    case "calendar":
+      return <div className="dv dv-cal">{Array.from({ length: 21 }, (_, k) => <i key={k} className={[1, 3, 6, 9, 11, 14, 17, 19].includes(k) ? "on" : ""} />)}</div>;
+    case "namecard":
+      return <div className="dv dv-card"><span className="dv-mark">n.</span><b /><b /></div>;
+    case "profile":
+      return <div className="dv dv-profile"><small>Company profile</small><b>Your brand, on one page.</b><span /></div>;
+  }
+}
+
+function ServicesHero() {
+  const [ref, inView] = useInView<HTMLElement>();
+  return (
+    <section ref={ref} className={`sh shw ${inView ? "" : "loop-paused"}`}>
+      <div className="shw-bg" aria-hidden="true">
+        <div className="shw-plane">
+          {WALL_COLUMNS.map((col, c) => {
+            const items = Array.from({ length: DELIVERABLES.length }, (_, k) => DELIVERABLES[(k + col.offset) % DELIVERABLES.length]);
+            return (
+              <div key={c} className="shw-col">
+                <div className={`shw-track ${col.up ? "shw-up" : "shw-down"}`} style={{ animationDuration: `${col.dur}s` }}>
+                  {[...items, ...items].map((d, k) => (
+                    <div key={k} className="shw-card">
+                      <DeliverableArt kind={d.kind} />
+                      <span className="shw-tag"><b>{d.label}</b>{d.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="shw-veil" />
+      </div>
+      <div className="site-shell sh-grid">
+        <div className="sh-copy">
+          <div className="rise"><Eyebrow>Services and pricing</Eyebrow></div>
+          <h1 className="rise" style={{ animationDelay: "60ms" }}>Fixed prices <em>for everything.</em></h1>
+          <p className="rise" style={{ animationDelay: "120ms" }}>Three monthly packages, or pick exactly what you need from the menu. What you see is what you pay.</p>
+          <div className="sh-actions rise" style={{ animationDelay: "180ms" }}>
+            <a className="sh-btn sh-btn-dark" href="#packages">See the packages <ArrowDownRight size={16} /></a>
+            <a className="sh-btn" href="#menu">Browse the menu</a>
+          </div>
+          <ul className="sh-trust rise" style={{ animationDelay: "240ms" }}>
+            <li><Check size={14} /> No &ldquo;from RM&rdquo;</li>
+            <li><Tag size={14} /> 15% off the menu with any package</li>
+            <li><Clock3 size={14} /> Month to month after 3 months</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// /services: "Built for Malaysia" (from Services & Pricing 2026, "How we're
+// different" + "Who we work best with"). A year of a client's feed on a phone:
+// one post a month, festival months in their own colours. Months are a typical
+// year; festival dates move, which the note says plainly. Loops pause off-screen
+// and everything is still for reduced-motion users.
+type YearPostKind = "cny" | "raya" | "merdeka" | "deepavali" | "sale" | "payday";
+
+// lucide has no lantern; same 24px grid and stroke as the other icons.
+function Lantern({ size = 24 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 2h6" /><path d="M12 2v2" /><rect x="6" y="4" width="12" height="15" rx="6" /><path d="M12 19v3" /><path d="M6 11.5h12" />
+    </svg>
+  );
+}
+
+const YEAR_POST_ICON: Record<YearPostKind, React.ComponentType<{ size?: number }>> = {
+  cny: Lantern, raya: Moon, merdeka: Flag, deepavali: Flame, sale: Tag, payday: Wallet,
+};
+const YEAR_POSTS: { m: string; kind: YearPostKind; title: string; extra?: string }[] = [
+  { m: "Jan", kind: "payday", title: "Payday picks" },
+  { m: "Feb", kind: "cny", title: "Gong Xi Fa Cai" },
+  { m: "Mar", kind: "raya", title: "Selamat Hari Raya" },
+  { m: "Apr", kind: "payday", title: "Payday picks" },
+  { m: "May", kind: "payday", title: "Payday picks" },
+  { m: "Jun", kind: "payday", title: "Payday picks" },
+  { m: "Jul", kind: "payday", title: "Payday picks" },
+  { m: "Aug", kind: "merdeka", title: "Selamat Hari Merdeka" },
+  { m: "Sep", kind: "sale", title: "9.9" },
+  { m: "Oct", kind: "sale", title: "10.10" },
+  { m: "Nov", kind: "deepavali", title: "Happy Deepavali", extra: "+ 11.11" },
+  { m: "Dec", kind: "sale", title: "12.12" },
+];
+const YEAR_KEYS: { kind: YearPostKind; label: string }[] = [
+  { kind: "cny", label: "CNY" },
+  { kind: "raya", label: "Raya" },
+  { kind: "merdeka", label: "Merdeka" },
+  { kind: "deepavali", label: "Deepavali" },
+  { kind: "sale", label: "9.9 to 12.12 sales" },
+  { kind: "payday", label: "Payday, every month" },
+];
+const YEAR_BADGES = [
+  { kind: "raya" as const, title: "Raya post", sub: "Scheduled" },
+  { kind: "sale" as const, title: "11.11 sale", sub: "Scheduled" },
+  { kind: "payday" as const, title: "Payday picks", sub: "Every month" },
+];
+const BEST_WITH = [
+  { icon: Coffee, label: "Cafés and F&B" },
+  { icon: Scissors, label: "Salons and beauty" },
+  { icon: Wrench, label: "Home services" },
+  { icon: GraduationCap, label: "Tuition centres" },
+  { icon: ShoppingBag, label: "Retail and online sellers" },
+];
+
+function YearOfPostsSection() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  let payday = 0;
+  return (
+    <section ref={secRef} className={`yp ${inView ? "" : "loop-paused"}`}>
+      <div className="yp-blobs" aria-hidden="true"><i className="yp-blob yp-b1" /><i className="yp-blob yp-b2" /><i className="yp-blob yp-b3" /><i className="yp-blob yp-b4" /></div>
+      <div ref={ref} className={`site-shell yp-shell ${motion}`}>
+        <div className="yp-grid">
+          <div className="yp-copy">
+            <div className="art-step" style={delay(0)}>
+              <SectionHeading eyebrow="Built for Malaysia" title={<>Planned around your<br /><em>customers&rsquo; calendar.</em></>} body="Your content runs on the local calendar, planned weeks ahead, so you are ready before your customers are." />
+            </div>
+            <ul className="yp-keys" aria-label="What the colours mean">
+              {YEAR_KEYS.map(({ kind, label }, i) => <li key={kind} data-k={kind} className="art-step" style={delay(160 + i * 50)}><i className={`yp-sw yp-sw-${kind}`} />{label}</li>)}
+            </ul>
+            <span className="yp-lang art-step" style={delay(480)}><Languages size={16} /> In English, BM or both</span>
+            <p className="yp-note art-step" style={delay(540)}>A typical year of posts. Festival dates move every year, and we plan to the actual dates.</p>
+            <div className="yp-best art-step" style={delay(620)}>
+              <span className="footer-label yp-best-label">Who we work best with</span>
+              <ul>{BEST_WITH.map(({ icon: Icon, label }) => <li key={label}><Icon size={15} strokeWidth={1.9} />{label}</li>)}</ul>
+            </div>
+          </div>
+          <div className="yp-stage">
+            <div className="yp-phone art-step" style={delay(200)} role="img" aria-label="A year of posts on a phone: Payday posts every month, CNY in February, Raya in March, Merdeka in August, the 9.9, 10.10, 11.11 and 12.12 sales, and Deepavali in November.">
+              <div className="yp-screen" aria-hidden="true">
+                <div className="yp-profile">
+                  <span className="yp-avatar"><b>YB</b></span>
+                  <span><strong>your.business</strong><small>12 months of posts, planned</small></span>
+                </div>
+                <div className="yp-tabs"><span>Posts</span><span>Reels</span><span>Tagged</span></div>
+                <div className="yp-feed">
+                  {YEAR_POSTS.map(({ m, kind, title, extra }, i) => {
+                    const Icon = YEAR_POST_ICON[kind];
+                    const tone = kind === "payday" ? ` yp-q${(payday++ % 4) + 1}` : "";
+                    return (
+                      <div key={m} className={`yp-post yp-${kind}${tone} art-step`} style={delay(420 + i * 70)}>
+                        <span className="yp-post-bg"><Icon size={64} /></span>
+                        <span className="yp-m">{m}</span>
+                        {extra && <span className="yp-extra">{extra}</span>}
+                        <span className="yp-t">{title}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+            {YEAR_BADGES.map(({ kind, title, sub }, i) => {
+              const Icon = YEAR_POST_ICON[kind];
+              return (
+                <span key={title} className={`yp-badge yp-badge-${i + 1} art-step`} style={delay(1350 + i * 180)} aria-hidden="true">
+                  <span className="yp-badge-in"><i className={`yp-badge-ic yp-${kind}`}><Icon size={14} /></i><span>{title}<small>{sub}</small></span></span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// /services closing section: what happens after someone gets in touch, from
+// the first message to the first posts (timings from the FAQ and first-month
+// plan). The line fills and the steps rise once on scroll.
+const NEXT_STEPS = [
+  { icon: MessageCircle, title: "You message us", body: "Tell us your business and which package or menu items you have in mind.", when: "Today" },
+  { icon: Phone, title: "Onboarding call", body: "We learn your customers, your offer and your goals for the next three months.", when: "Day 1" },
+  { icon: CalendarCheck, title: "Your content calendar", body: "A month of posts planned around your customers and local dates.", when: "Within 5 working days" },
+  { icon: Send, title: "First posts go live", body: "Then a plain-language report at the end of the month.", when: "Week 2" },
+];
+
+function NextStepsCTA() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section ref={secRef} className={`nx dark-band ${inView ? "" : "loop-paused"}`}>
+      <div className="nx-blobs" aria-hidden="true"><i className="nx-b1" /><i className="nx-b2" /></div>
+      <div ref={ref} className={`site-shell nx-grid ${motion}`}>
+        <div className="nx-copy">
+          <div className="art-step" style={delay(0)}>
+            <Eyebrow light>What happens next</Eyebrow>
+            <h2>From one message <em>to your first posts.</em></h2>
+            <p>No long forms and no pitch deck. Here is exactly what happens after you get in touch.</p>
+          </div>
+          <div className="nx-actions art-step" style={delay(140)}>
+            <a className="nx-btn nx-btn-primary" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click", { source: "services_cta" })}>WhatsApp us <MessageCircle size={16} /></a>
+            <Link className="nx-btn nx-btn-ghost" href="/audit">Book the RM 199 audit <ArrowUpRight size={16} /></Link>
+          </div>
+          <p className="nx-note art-step" style={delay(200)}>Minimum 3 months, then month to month.</p>
+        </div>
+        <ol className="nx-steps">
+          <span className="nx-line" aria-hidden="true" />
+          {NEXT_STEPS.map(({ icon: Icon, title, body, when }, i) => (
+            <li key={title} className={`nx-step art-step ${i === 0 ? "is-first" : ""}`} style={delay(220 + i * 140)}>
+              <span className="nx-dot" aria-hidden="true"><Icon size={20} /></span>
+              <div><strong>{title}</strong><p>{body}</p></div>
+              <span className="nx-when">{when}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+// /services: what each service is, the three packages, and THE MENU.
+export function ServicesPageContent() {
+  return (
+    <PageShell>
+      <main>
+        <ServicesHero />
+        <YearOfPostsSection />
+        <PricingTableSection />
+        <MenuSection />
+        <NextStepsCTA />
+      </main>
+    </PageShell>
+  );
+}
+
 export default function HomePage() {
   return (
     <PageShell>
@@ -903,8 +1183,8 @@ function PackagesSection({ compact = false }: { compact?: boolean }) {
             <ul>{PACKAGE_INCLUDES.map(({ icon: Icon, label }) => <li key={label}><span className="pk-includes-icon"><Icon size={15} /></span>{label}</li>)}</ul>
           </div>
           <div className="pk-side">
-            <p className="ad-note"><span>+</span>Ad spend is always separate from management fees. Ads management is RM 800/month or 18% of ad spend, whichever is higher, on a minimum RM 2,000 spend.</p>
-            <Link className="pk-audit-link" href="/audit">Not sure which? Start with the RM 299 audit <ArrowUpRight size={15} /></Link>
+            <p className="ad-note"><span>+</span>Ad spend is paid by you directly to Meta or TikTok. Pro manages up to RM 3,000 a month on one platform. Minimum 3 months, then month to month.</p>
+            <Link className="pk-audit-link" href="/audit">Not sure which? Start with the RM 199 audit <ArrowUpRight size={15} /></Link>
           </div>
         </div>
       </div>
@@ -912,13 +1192,218 @@ function PackagesSection({ compact = false }: { compact?: boolean }) {
   );
 }
 
+// /services pricing: every package side by side as a real table, Growth lit.
+// Rows rise in once on scroll; a cursor glow follows the pointer over the table.
+const PLAN_ROWS: { label: string; values: (string | boolean)[] }[] = [
+  { label: "Platforms", values: ["1", "2", "3"] },
+  { label: "Posts a month", values: ["12", "12", "16"] },
+  { label: "Reels or TikToks a month", values: [false, "4", "6"] },
+  { label: "Captions and hashtags", values: [true, true, true] },
+  { label: "Monthly content calendar", values: [true, true, true] },
+  { label: "Monthly report", values: [true, true, true] },
+  { label: "Monthly strategy call", values: [false, true, true] },
+  { label: "Ads management", values: [false, false, "1 platform"] },
+  { label: "Half-day weekend shoot", values: [false, false, "Every quarter"] },
+];
+
+function PlanCell({ value }: { value: string | boolean }) {
+  if (value === true) return <span className="pt-yes"><Check size={17} strokeWidth={2.4} aria-hidden="true" /><span className="pt-sr">Included</span></span>;
+  if (value === false) return <span className="pt-no"><Minus size={16} aria-hidden="true" /><span className="pt-sr">Not included</span></span>;
+  return <span className="pt-val">{value}</span>;
+}
+
+function PricingTableSection() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  const onMove = (event: React.MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    event.currentTarget.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+    event.currentTarget.style.setProperty("--my", `${event.clientY - rect.top}px`);
+  };
+  const cta = (name: string, featured?: boolean) => (
+    <a href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")} className={`pt-cta ${featured ? "pt-cta-featured" : ""}`}>Talk about {name} <ArrowUpRight size={15} /></a>
+  );
+  return (
+    <section id="packages" ref={secRef} className={`pt dark-band ${inView ? "" : "loop-paused"}`}>
+      <div className="pt-glow" aria-hidden="true" />
+      <div ref={ref} className={`site-shell pt-shell ${motion}`}>
+        <div className="pt-head art-step" style={delay(0)}>
+          <div><Eyebrow light>Published pricing</Eyebrow><h2>Pick the pace <em>that fits now.</em></h2></div>
+          <p>Same team, same standards on every package. The difference is how much we make and where it goes.</p>
+        </div>
+        <div className="pt-wrap art-step" style={delay(120)} onMouseMove={onMove}>
+          <table className="pt-table">
+            <caption className="pt-sr">Compare the Starter, Growth and Pro packages</caption>
+            <thead>
+              <tr>
+                <td className="pt-corner"><span>Compare</span></td>
+                {packages.map((item) => (
+                  <th key={item.name} scope="col" className={`pt-plan ${item.featured ? "pt-feat" : ""}`}>
+                    <span className="pt-name">{item.name}{item.featured && <span className="pt-pop"><Sparkles size={12} /> Most popular</span>}</span>
+                    <span className="pt-price">{item.price}<small>/mo</small></span>
+                    <span className="pt-detail">{item.detail}</span>
+                    <span className="pt-head-cta">{cta(item.name, item.featured)}</span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {PLAN_ROWS.map(({ label, values }, r) => (
+                <tr key={label} className="art-step" style={delay(260 + r * 60)}>
+                  <th scope="row">{label}</th>
+                  {values.map((value, c) => <td key={c} className={`${packages[c].featured ? "pt-feat" : ""} ${r === PLAN_ROWS.length - 1 ? "pt-last" : ""}`}><PlanCell value={value} /></td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="pt-mobile-ctas">{packages.map((item) => <span key={item.name}>{cta(item.name, item.featured)}</span>)}</div>
+        <div className="pt-includes art-step" style={delay(900)}>
+          <span className="pt-includes-label">Every package includes</span>
+          <ul>{PACKAGE_INCLUDES.map(({ icon: Icon, label }) => <li key={label}><Icon size={15} />{label}</li>)}</ul>
+        </div>
+        <div className="pt-foot art-step" style={delay(980)}>
+          <p><span>+</span>Ad spend is paid by you directly to Meta or TikTok. Pro manages up to RM 3,000 a month on one platform. Minimum 3 months, then month to month.</p>
+          <Link className="pt-audit" href="/audit">Not sure which? Start with the RM 199 audit <ArrowUpRight size={15} /></Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// THE MENU: fixed prices for single pieces of work, from Services & Pricing 2026.
+// `amount` is set only for one-off fixed prices, so the order total never guesses.
+type MenuItem = { name: string; note?: string; price: string; time: string; amount?: number };
+const MENU: { key: string; label: string; items: MenuItem[] }[] = [
+  { key: "start", label: "Start here", items: [
+    { name: "Social media audit", note: "Full review of your accounts, content and competitors, with a 90-day plan. Credited to your first month if you sign a package within 14 days.", price: "RM 199", time: "5 working days", amount: 199 },
+    { name: "Profile makeover", note: "New bio, highlight covers, post templates and a clean grid.", price: "RM 399", time: "5 working days", amount: 399 },
+    { name: "WhatsApp Business setup", note: "Catalogue, quick replies, greeting and away messages, and labels to track enquiries.", price: "RM 299", time: "3 working days", amount: 299 },
+  ] },
+  { key: "content", label: "Content", items: [
+    { name: "Static post design", note: "Feed post or story", price: "RM 39", time: "3 working days", amount: 39 },
+    { name: "Carousel design", note: "Minimum 3 slides", price: "RM 89", time: "3 to 5 working days", amount: 89 },
+    { name: "Reel or TikTok scriptwriting", note: "Scene by scene", price: "RM 59", time: "3 working days", amount: 59 },
+    { name: "Reel or TikTok editing", price: "RM 99", time: "5 working days", amount: 99 },
+    { name: "Captions and hashtags", note: "Search and AI-search optimised", price: "RM 29 per post", time: "2 working days" },
+    { name: "Monthly content calendar", price: "RM 299", time: "5 working days", amount: 299 },
+    { name: "Content strategy", price: "RM 499", time: "7 working days", amount: 499 },
+    { name: "Videography", note: "Weekends only, plus RM 100 transport", price: "Quoted per shoot", time: "Booked in advance" },
+  ] },
+  { key: "growth", label: "Marketing & growth", items: [
+    { name: "Meta Ads management", note: "Facebook and Instagram. Or 15% of ad spend if higher", price: "RM 1,200/month", time: "Monthly" },
+    { name: "TikTok Ads management", note: "Or 15% of ad spend if higher", price: "RM 1,200/month", time: "Monthly" },
+    { name: "Monthly performance report", note: "Included free in every package", price: "RM 250/month", time: "Monthly" },
+    { name: "Meta Ads campaign setup", note: "One-off, per campaign", price: "RM 499", time: "One-off", amount: 499 },
+    { name: "TikTok Ads campaign setup", note: "One-off, per campaign", price: "RM 499", time: "One-off", amount: 499 },
+    { name: "Basic landing page", note: "One page with your offer, WhatsApp button and enquiry form", price: "RM 1,399", time: "10 to 14 working days", amount: 1399 },
+  ] },
+  { key: "brand", label: "Brand & business", items: [
+    { name: "Company profile design", note: "Booklet or presentation, in portrait and landscape", price: "RM 699", time: "7 to 10 working days", amount: 699 },
+    { name: "Digital name card", price: "RM 19", time: "2 working days", amount: 19 },
+  ] },
+];
+
+// THE MENU as an order builder: tap items onto a receipt, toggle the package
+// discount, send the list on WhatsApp. Only one-off fixed prices are summed;
+// monthly, per-post and quoted items are listed and confirmed on the call.
+const MENU_ITEMS = MENU.flatMap((group) => group.items);
+const PACKAGE_DISCOUNT = 0.15;
+const formatRM = (value: number) => `RM ${value.toLocaleString("en-MY")}`;
+
+function menuOrderMessage(items: MenuItem[], total: number, onPackage: boolean) {
+  if (items.length === 0) return "Hi nxtte, I have a question about the menu.";
+  const lines = items.map((it) => `- ${it.name} (${it.price})`).join("\n");
+  const discount = onPackage ? " with the 15% package discount" : "";
+  return `Hi nxtte, I'd like to order from the menu:\n${lines}\nEstimated total${discount}: ${formatRM(total)}`;
+}
+
+function MenuSection() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  const [tab, setTab] = useState(0);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [onPackage, setOnPackage] = useState(false);
+  const active = MENU[tab];
+  const toggle = (name: string) => setPicked((prev) => (prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]));
+  const order = MENU_ITEMS.filter((it) => picked.includes(it.name));
+  const subtotal = order.reduce((sum, it) => sum + (it.amount ?? 0), 0);
+  const total = onPackage ? Math.round(subtotal * (1 - PACKAGE_DISCOUNT)) : subtotal;
+  const hasUnpriced = order.some((it) => it.amount === undefined);
+  const orderHref = buildWhatsAppLink(menuOrderMessage(order, total, onPackage));
+  const send = () => trackEvent("whatsapp_click", { source: "menu", items: String(order.length) });
+  return (
+    <section id="menu" ref={secRef} className={`mn ${inView ? "" : "loop-paused"}`}>
+      <div className="mn-blobs" aria-hidden="true"><i className="mn-b1" /><i className="mn-b2" /><i className="mn-b3" /></div>
+      <div ref={ref} className={`site-shell ${motion}`}>
+        <div className="mn-head art-step" style={delay(0)}>
+          <SectionHeading eyebrow="The menu" title={<>Need one <em>specific thing?</em></>} body="Fixed prices for single pieces of work. Tap what you need and send the list on WhatsApp." />
+        </div>
+        <div className="mn-grid">
+          <div>
+            <div className="mn-tabs art-step" style={delay(120)} role="tablist" aria-label="Menu categories">
+              {MENU.map((m, i) => (
+                <button key={m.key} type="button" role="tab" id={`menu-tab-${m.key}`} aria-selected={tab === i} aria-controls="menu-panel" className={`mn-tab ${tab === i ? "is-active" : ""}`} onClick={() => setTab(i)}>
+                  {m.label}<span>{m.items.length}</span>
+                </button>
+              ))}
+            </div>
+            <div id="menu-panel" role="tabpanel" aria-labelledby={`menu-tab-${active.key}`} className="mn-list art-step" style={delay(200)} key={active.key}>
+              {active.items.map((it, i) => {
+                const on = picked.includes(it.name);
+                return (
+                  <button key={it.name} type="button" aria-pressed={on} className={`mn-item ${on ? "is-on" : ""}`} style={{ "--i": i } as React.CSSProperties} onClick={() => toggle(it.name)}>
+                    <span className="mn-add" aria-hidden="true">{on ? <Check size={15} strokeWidth={2.6} /> : <Plus size={15} strokeWidth={2.6} />}</span>
+                    <strong>{it.name}</strong>
+                    {it.note && <small>{it.note}</small>}
+                    <span className="mn-meta"><b>{it.price}</b><span>{it.time}</span></span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <aside id="menu-order" className="mn-receipt art-step" style={delay(280)} aria-label="Your order">
+            <h3>Your order</h3>
+            <p className="mn-sub">nxtte, the menu</p>
+            <div className="mn-lines">
+              {order.length === 0
+                ? <p className="mn-empty">Nothing yet. Tap an item to add it.</p>
+                : order.map((it) => (
+                  <div key={it.name} className="mn-line">
+                    <span>{it.name}</span><b>{it.price}</b>
+                    <button type="button" className="mn-remove" onClick={() => toggle(it.name)} aria-label={`Remove ${it.name}`}><X size={14} /></button>
+                  </div>
+                ))}
+            </div>
+            <label className="mn-toggle"><input type="checkbox" checked={onPackage} onChange={(e) => setOnPackage(e.target.checked)} /> I am on a package (15% off)</label>
+            <div className="mn-total" aria-live="polite">
+              <span>Estimated total{hasUnpriced ? ", fixed items" : ""}</span>
+              <b key={total}>{formatRM(total)}</b>
+            </div>
+            <a className="mn-send" href={orderHref} target="_blank" rel="noreferrer" onClick={send}>
+              <MessageCircle size={17} /> {order.length ? `Send ${order.length} item${order.length > 1 ? "s" : ""} on WhatsApp` : "Ask on WhatsApp"}
+            </a>
+            {order.length > 0 && <button type="button" className="mn-clear" onClick={() => setPicked([])}>Clear order</button>}
+            <p className="mn-fine">Monthly, per-post and quoted items are confirmed on the call. Ad spend is paid by you directly to the platform.</p>
+          </aside>
+        </div>
+      </div>
+      {order.length > 0 && (
+        <a className="mn-bar" href="#menu-order"><span>{order.length} item{order.length > 1 ? "s" : ""} &middot; {formatRM(total)}</span><b>View order</b></a>
+      )}
+    </section>
+  );
+}
+
 // Shared inclusions, taken from the spec and the site's own FAQ answers.
 const PACKAGE_INCLUDES = [
-  { icon: Check, label: "No lock-in contract" },
-  { icon: Clock3, label: "Content calendar in 72 hours" },
-  { icon: BarChart3, label: "Regular performance reports" },
+  { icon: Clock3, label: "First calendar in 5 working days" },
+  { icon: BarChart3, label: "Plain-language monthly report" },
+  { icon: Tag, label: "15% off everything on the menu" },
   { icon: ShieldCheck, label: "You own all the content" },
-];
+]
 
 // Cursor-following glow on hover (a hover state, not a looping animation).
 function PackageCard({ item, index }: { item: (typeof packages)[number]; index: number }) {
@@ -942,12 +1427,12 @@ function PackageCard({ item, index }: { item: (typeof packages)[number]; index: 
 }
 
 const FAQ_ITEMS = [
-    ["How long is the contract, and can I stop?", "There is no lock-in. Good work should earn the next month. We will always give you clear notice of what is in progress."],
-    ["What actually happens in the first month?", "We align on the offer, build your first content calendar within 72 hours, then publish, learn and report on what changes."],
-    ["Who owns the content you produce?", "You do. Your brand, channels and finished content stay yours."],
-    ["Is ad spend included in the management fee?", "No. Ad spend is separate and paid directly to the platform. Management starts at RM 800/month or 18% of ad spend, whichever is higher, on a minimum RM 2,000 spend."],
-    ["How fast is turnaround once I sign?", "We share the first calendar in 72 hours. The exact publishing rhythm depends on the package and the speed of your approvals."],
-  ];
+    ["How long is the contract, and can I stop?", "Packages have a 3-month minimum, then run month to month. After that you can stop with 30 days' notice."],
+    ["What actually happens in the first month?", "Day 1 is an onboarding call. Your first content calendar arrives within 5 working days, first posts go live in week 2, and the month ends with a report (plus a strategy call on Growth and Pro)."],
+    ["Who owns the content you produce?", "You do. Everything we create for you belongs to your business once paid."],
+    ["Is ad spend included in the management fee?", "No. Ad spend goes directly from you to Meta or TikTok, so you keep full control. Pro includes managing up to RM 3,000 a month on one platform. On its own, ads management is RM 1,200/month, or 15% of ad spend if higher."],
+    ["How fast is turnaround once I sign?", "Your first content calendar arrives within 5 working days. Timelines count from when we have your approvals, files and account access."],
+  ]
 
 const FAQ_BUBBLES = [
   { left: "43%", text: "Can I stop anytime?", size: "fb-md", dur: 24, delay: -3, side: "fb-left" },
