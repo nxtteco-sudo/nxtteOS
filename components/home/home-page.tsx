@@ -16,6 +16,7 @@ import {
   BarChart3,
   Bookmark,
   CalendarCheck,
+  Camera,
   CalendarX,
   CalendarRange,
   Check,
@@ -26,6 +27,7 @@ import {
   FileBarChart,
   Handshake,
   Ghost,
+  Globe,
   FileText,
   Heart,
   IdCard,
@@ -1111,6 +1113,300 @@ function NextStepsCTA() {
         </ol>
       </div>
     </section>
+  );
+}
+
+// /about hero: the founders as staff ID badges on nxtte lanyards, over a slow
+// brand-pink aurora. Photo frames are placeholders until the real founder
+// photos arrive (AGENTS.md content gaps): no stock, no illustrations.
+const FOUNDERS = [
+  { name: "Ms. Nemila", role: "CEO, co-founder", initial: "N" },
+  { name: "Mr. Jay", role: "CTO, co-founder", initial: "J" },
+];
+
+function AboutHero() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section ref={secRef} className={`ab-hero ${inView ? "" : "loop-paused"}`}>
+      <div className="ab-aurora" aria-hidden="true"><div className="ab-aurora-light"><i className="ab-c1" /><i className="ab-c2" /></div></div>
+      <div ref={ref} className={`site-shell ab-grid ${motion}`}>
+        <div className="ab-copy">
+          <div className="art-step" style={delay(0)}><Eyebrow>About nxtte</Eyebrow></div>
+          <h1 className="art-step" style={delay(80)}>Meet the team <em>on your account.</em></h1>
+          <p className="art-step" style={delay(180)}>nxtte is run by Ms. Nemila and Mr. Jay. Behind them, the Aurexis Solution team builds the sites and funnels your content feeds. You always know who is doing the work.</p>
+          <div className="ab-actions art-step" style={delay(260)}>
+            <a className="ab-btn ab-btn-primary" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click", { source: "about_hero" })}>WhatsApp us <MessageCircle size={16} /></a>
+            <a className="ab-btn ab-btn-ghost" href="#why-we-started">Why we started <ArrowDown size={16} /></a>
+          </div>
+        </div>
+        <ul className="ab-badges" aria-label="Founders">
+          {FOUNDERS.map(({ name, role, initial }, i) => (
+            <li key={name} className={`ab-badge ab-badge-${i + 1}`}>
+              <span className="ab-strap" aria-hidden="true" />
+              <span className="ab-clip" aria-hidden="true" />
+              <div className="ab-card">
+                <span className="ab-hole" aria-hidden="true" />
+                <div className="ab-photo">
+                  <span className="ab-initial" aria-hidden="true">{initial}</span>
+                  <span className="ab-todo"><Camera size={12} /> TODO: photo of {name}</span>
+                </div>
+                <strong>{name}</strong>
+                <small>{role}</small>
+                <span className="ab-card-foot" aria-hidden="true"><span>nxtte</span><b>Aurexis</b></span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+// /about: Why we started. Copy supplied by the founders (do not rewrite
+// without them). Each paragraph gets a small scene; no proof row until real
+// numbers exist. The report figures are deliberately not numbers.
+function WhyWeStartedSection() {
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section id="why-we-started" className="ws">
+      <div className="ws-blob" aria-hidden="true" />
+      <div ref={ref} className={`site-shell ${motion}`}>
+        <div className="ws-head art-step" style={delay(0)}>
+          <SectionHeading align="center" eyebrow="Why we started" title={<>A website with <em>nobody sent to it.</em></>} />
+        </div>
+        <ol className="ws-scenes">
+          <li className="ws-scene art-step" style={delay(120)}>
+            <div className="ws-art ws-art-1" aria-hidden="true">
+              <div className="ws-browser"><span className="ws-dots"><i /><i /><i /></span><div><strong>Your new website</strong><i className="ws-ln" /><i className="ws-ln ws-ln-70" /><i className="ws-ln ws-ln-50" /></div></div>
+              <span className="ws-count">Visitors today: <b>0</b></span>
+            </div>
+            <div className="ws-text">
+              <span className="ws-num"><b>01</b>The problem</span>
+              <p>We didn&rsquo;t start nxtte to make pretty posts. We started it because of a problem we kept seeing at Aurexis: a business would launch a new website, and then nothing happened. The site was ready, but nobody was sending people to it.</p>
+            </div>
+          </li>
+          <li className="ws-scene art-step" style={delay(240)}>
+            <div className="ws-art ws-art-2" aria-hidden="true">
+              <div className="ws-report"><small>Monthly report</small><span><em>Likes</em><b>Lots</b></span><span><em>Reach</em><b>Lots</b></span><span className="ws-q"><em>Customers</em><b>?</b></span></div>
+              <span className="ws-stamp">Month 2: no reply</span>
+            </div>
+            <div className="ws-text">
+              <span className="ws-num"><b>02</b>What we saw</span>
+              <p>When we looked at what they&rsquo;d tried before, the story was always the same. An agency that sent nice designs and a report full of likes, or a freelancer who went quiet after month two. Nobody could tell the owner whether any of it brought in a single customer.</p>
+            </div>
+          </li>
+          <li className="ws-scene art-step" style={delay(360)}>
+            <div className="ws-art ws-art-3" aria-hidden="true">
+              <div className="ws-chat"><span className="ws-msg ws-out">Hi, saw your post. Is Saturday free?</span><span className="ws-msg ws-in">Yes, booked for 3pm.</span></div>
+              <span className="ws-team">One team</span>
+            </div>
+            <div className="ws-text">
+              <span className="ws-num"><b>03</b>What we do instead</span>
+              <p>So nxtte works differently. Every post is planned around the Malaysian calendar and one question: <mark>will this bring someone to your WhatsApp, your counter or your booking page?</mark> Nemila leads the content and strategy. Jay builds the systems behind it through Aurexis. One team, from the first post to the first booking.</p>
+            </div>
+          </li>
+        </ol>
+        <ul className="ws-roles art-step" style={delay(520)}>
+          <li><b>Nemila</b> leads nxtte: content, strategy and clients</li>
+          <li><b>Jay</b> leads the tech through Aurexis: websites, landing pages and WhatsApp systems</li>
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+// /about: How we work. Four promises (AGENTS.md section 4), each shown with a
+// small visual that plays once on scroll. Commitment wording follows the
+// 2026 pricing: 3-month minimum, then month to month with 30 days' notice.
+const WORK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const MONTHS_12 = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
+function HowWeWorkSection() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  return (
+    <section ref={secRef} className={`hw dark-band ${inView ? "" : "loop-paused"}`}>
+      <div className="hw-glow" aria-hidden="true"><i className="hw-g1" /><i className="hw-g2" /><i className="hw-g3" /></div>
+      <div ref={ref} className={`site-shell ${motion}`}>
+        <div className="hw-head art-step" style={delay(0)}>
+          <SectionHeading eyebrow="How we work" title={<>Four promises we keep<br /><em>every month.</em></>} />
+          <p>The same rules for every client, on every package. No fine print to find later.</p>
+        </div>
+        <ol className="hw-grid">
+          <li className="hw-card hw-fast art-step" style={delay(120)}>
+            <span className="hw-num">01</span>
+            <div className="hw-vis" aria-hidden="true">
+              <div className="hw-days">{WORK_DAYS.map((d, i) => <span key={d} style={{ "--i": i } as React.CSSProperties}>{d}</span>)}</div>
+              <span className="hw-ready"><Check size={14} strokeWidth={3} /> Calendar ready</span>
+            </div>
+            <h3>Fast turnaround</h3>
+            <p>Your first content calendar arrives within 5 working days of onboarding.</p>
+          </li>
+          <li className="hw-card hw-price art-step" style={delay(200)}>
+            <span className="hw-num">02</span>
+            <div className="hw-vis" aria-hidden="true">
+              <div className="hw-list">
+                {packages.map((pk, i) => <span key={pk.name} className={pk.featured ? "is-feat" : ""} style={{ "--i": i } as React.CSSProperties}><b>{pk.name}</b><i>{pk.price}</i></span>)}
+              </div>
+              <span className="hw-url">/services</span>
+            </div>
+            <h3>Published pricing</h3>
+            <p>Every package and menu price is on this site. You know the cost before you message.</p>
+          </li>
+          <li className="hw-card hw-report art-step" style={delay(280)}>
+            <span className="hw-num">03</span>
+            <div className="hw-vis" aria-hidden="true">
+              <div className="hw-doc">
+                <span className="hw-doc-top"><FileBarChart size={14} /> Monthly report</span>
+                <div className="hw-bars">{[46, 62, 54, 78, 90].map((h, i) => <i key={i} style={{ "--h": `${h}%`, "--i": i } as React.CSSProperties} />)}</div>
+                <span className="hw-doc-line" /><span className="hw-doc-line hw-doc-line-short" />
+              </div>
+            </div>
+            <h3>Monthly reporting</h3>
+            <p>A plain-language report every month: what worked, what did not, and what we change next.</p>
+          </li>
+          <li className="hw-card hw-commit art-step" style={delay(360)}>
+            <span className="hw-num">04</span>
+            <div className="hw-vis" aria-hidden="true">
+              <div className="hw-months">{MONTHS_12.map((m, i) => <span key={i} className={i < 3 ? "is-min" : ""} style={{ "--i": i } as React.CSSProperties}>{m}</span>)}</div>
+              <div className="hw-legend"><span><i className="is-min" /> 3-month minimum</span><span><i /> Month to month</span></div>
+            </div>
+            <h3>Short commitment</h3>
+            <p>3 months, then month to month. After that, stop any time with 30 days&rsquo; notice.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+// /about: the Aurexis connection (AGENTS.md: "the strongest block on the
+// page"). The client's post at the centre, wired to everything Aurexis
+// Solution builds around it. Pulses run along the wires; paused off-screen.
+const ENGINE_TILES = [
+  { icon: Globe, title: "Website", body: "Where people check you are real", side: "left" },
+  { icon: Inbox, title: "WhatsApp capture", body: "Every enquiry lands in one place", side: "left" },
+  { icon: LayoutTemplate, title: "Landing page", body: "One offer, one button", side: "right" },
+  { icon: Workflow, title: "Automation", body: "Replies and follow-ups that do not forget", side: "right" },
+] as const;
+
+function EngineTile({ tile, i }: { tile: (typeof ENGINE_TILES)[number]; i: number }) {
+  const Icon = tile.icon;
+  return (
+    <li className={`ax-tile ax-tile-${tile.side} art-step`} style={delay(260 + i * 110)}>
+      <span className="ax-wire" aria-hidden="true"><i /></span>
+      <span className="ax-tile-ic" aria-hidden="true"><Icon size={20} /></span>
+      <strong>{tile.title}</strong>
+      <small>{tile.body}</small>
+      <span className="ax-who">Aurexis</span>
+    </li>
+  );
+}
+
+function AurexisSection() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  const left = ENGINE_TILES.filter((t) => t.side === "left");
+  const right = ENGINE_TILES.filter((t) => t.side === "right");
+  return (
+    <section ref={secRef} className={`ax ${inView ? "" : "loop-paused"}`}>
+      <div className="ax-glow" aria-hidden="true"><i /></div>
+      <div ref={ref} className={`site-shell ${motion}`}>
+        <div className="ax-head art-step" style={delay(0)}>
+          <SectionHeading align="center" eyebrow="The Aurexis connection" title={<>Most agencies stop at the post.<br /><em>We build what comes after.</em></>} body="nxtte is part of Aurexis Solution. Your post sits at the centre, and the same team builds everything it connects to." />
+        </div>
+        <div className="ax-engine">
+          <ul className="ax-col">{left.map((t, i) => <EngineTile key={t.title} tile={t} i={i * 2} />)}</ul>
+          <div className="ax-core art-step" style={delay(160)}>
+            <div className="ax-post">
+              <span className="ax-post-tag">Your post</span>
+              <strong>Made to get the right people to stop.</strong>
+            </div>
+            <div className="ax-core-row">
+              <span><Heart size={15} /> Liked, saved, shared</span>
+              <span className="ax-who ax-who-nxtte">nxtte</span>
+            </div>
+          </div>
+          <ul className="ax-col">{right.map((t, i) => <EngineTile key={t.title} tile={t} i={i * 2 + 1} />)}</ul>
+        </div>
+        <div className="ax-result art-step" style={delay(800)}>
+          <span>All connected, one team <ArrowRight size={16} /> more bookings</span>
+          <Link className="ax-link" href="/services#menu">Need a landing page? See the menu <ArrowUpRight size={15} /></Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// /about closing CTA: pick a starter message, it drops into the chat, and the
+// WhatsApp button opens with that exact text. Black band per the spec's
+// final-CTA rule; the glow and typing dots pause off-screen.
+const ABOUT_STARTERS = [
+  "Hi nxtte, I want more bookings from my social media.",
+  "Hi nxtte, which package fits my business?",
+  "Hi nxtte, can you build my landing page as well as the content?",
+  "Hi nxtte, tell me about the RM 199 audit.",
+];
+const ABOUT_CHIPS = ["I want more bookings", "Which package fits me?", "I need a landing page too", "Tell me about the RM 199 audit"];
+
+function AboutCTA() {
+  const [secRef, inView] = useInView<HTMLElement>();
+  const [ref, state] = useRevealOnce<HTMLDivElement>();
+  const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
+  const [pick, setPick] = useState(0);
+  const message = ABOUT_STARTERS[pick];
+  return (
+    <section ref={secRef} className={`ac dark-band ${inView ? "" : "loop-paused"}`}>
+      <div className="ac-glow" aria-hidden="true"><i className="ac-g1" /><i className="ac-g2" /></div>
+      <div ref={ref} className={`site-shell ac-grid ${motion}`}>
+        <div className="ac-copy art-step" style={delay(0)}>
+          <Eyebrow light>Say hello</Eyebrow>
+          <h2>Talk to the people <em>who will do the work.</em></h2>
+          <p>No sales team and no pitch deck. Pick a question or write your own, and it goes straight to us on WhatsApp.</p>
+          <div className="ac-chips" role="group" aria-label="Choose a message to start with">
+            {ABOUT_CHIPS.map((chip, i) => (
+              <button key={chip} type="button" aria-pressed={pick === i} className={`ac-chip ${pick === i ? "is-on" : ""}`} onClick={() => setPick(i)}>{chip}</button>
+            ))}
+          </div>
+          <Link className="ac-alt" href="/audit">Not ready to talk yet? Book the RM 199 audit <ArrowUpRight size={15} /></Link>
+        </div>
+        <div className="ac-phone art-step" style={delay(160)}>
+          <div className="ac-bar">
+            <span className="ac-av" aria-hidden="true">n.</span>
+            <span><strong>nxtte</strong><small>Ms. Nemila and Mr. Jay</small></span>
+          </div>
+          <div className="ac-thread" aria-live="polite">
+            <div className="ac-msg ac-in">Hi, this is nxtte. Ask us anything about your business and your content.</div>
+            <div className="ac-msg ac-out" key={pick}>{message}</div>
+            <div className="ac-typing" aria-hidden="true"><i /><i /><i /></div>
+          </div>
+          <a className="ac-send" href={buildWhatsAppLink(message)} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click", { source: "about_cta" })}>
+            <MessageCircle size={18} /> Send on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// /about: built section by section. Next up: why we started, how we work,
+// the Aurexis connection, WhatsApp CTA (AGENTS.md section 4).
+export function AboutPageContent() {
+  return (
+    <PageShell>
+      <main>
+        <AboutHero />
+        <HowWeWorkSection />
+        <WhyWeStartedSection />
+        <AurexisSection />
+        <AboutCTA />
+      </main>
+    </PageShell>
   );
 }
 
