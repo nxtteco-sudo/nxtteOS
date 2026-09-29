@@ -128,7 +128,7 @@ const services = [
     title: "Social Media Management",
     body: "A calm, consistent operating rhythm across your channels — publishing, replying and reporting without the noise.",
     audience: "For owners who want a reliable presence without another thing on their plate.",
-    price: "In every package, from RM 1,199/month",
+    price: "Included in every package",
   },
   {
     index: "03",
@@ -944,7 +944,7 @@ function ServicesHero() {
             <a className="sh-btn" href="#menu">Browse the menu</a>
           </div>
           <ul className="sh-trust rise" style={{ animationDelay: "240ms" }}>
-            <li><Check size={14} /> No &ldquo;from RM&rdquo;</li>
+            <li><Check size={14} /> Every price is published</li>
             <li><Tag size={14} /> 15% off the menu with any package</li>
             <li><Clock3 size={14} /> Month to month after 3 months</li>
           </ul>
