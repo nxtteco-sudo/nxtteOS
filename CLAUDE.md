@@ -19,7 +19,7 @@ Growth RM 2,299 (recommended), Pro RM 3,399 a month · RM 199 audit, credited to
 within 14 days · 3-month minimum, then month to month (30 days' notice) · first calendar
 in 5 working days · 15% off the menu for package clients · ads management RM 1,200/month
 or 15% of ad spend, whichever is higher · campaign setup RM 499. Package and menu data
-live in `components/home/home-page.tsx` (`packages`, `MENU`). See the note at the top of
+live in `lib/pricing.ts` (`packages`, `MENU`). See the note at the top of
 AGENTS.md.
 
 Full spec: [`AGENTS.md`](./AGENTS.md). Original source PDF: `nxtte_website_spec.pdf`
@@ -132,7 +132,8 @@ The marketing spec has no accounts. The client asked for two dashboards on top o
   private link and signs them in. No passwords: a long random token (only its SHA-256 hash
   is stored, `audit_tokens`) held in an httpOnly cookie; `/my/open/[token]` opens a link.
   Email is asked on the dashboard, after which "email me my link" works. Screens: overview
-  with tracker, details, payment (bank/DuitNow, customer claims, admin confirms), messages,
+  with six-step tracker, details, payment (locked until nxtte approves the details in admin;
+  then bank/DuitNow, customer claims, admin confirms), messages,
   report download + 14-day credit countdown. Code: `app/my`, `components/my`, `lib/customer.ts`.
 - **Admin, `/admin`.** Supabase Auth + `admin_users` allowlist. Overview, Leads (contact
   form), Audits (mark paid, start, upload report, reply, customer link), Insights, Work,
@@ -145,7 +146,12 @@ The marketing spec has no accounts. The client asked for two dashboards on top o
   set `payment_status = 'paid'` from a signature-verified webhook, never from the redirect.
 - **Interpretation to confirm with the client:** the 14-day credit counts from the day the
   report is delivered (`creditDeadline` in `types/audit.ts`).
-- Migrations `0001` to `0006` must be run in order. `/privacy` describes all of this; update
+- **Case studies** have a service category (`SERVICE_CATEGORIES` in `lib/pricing.ts`: packages plus
+  each menu group), a services-used picker built from the real menu, a gallery (up to 8) and an
+  optional before/after pair. `/work` filters by category.
+- **Customer sign-in:** email + password (scrypt hash on `audit_requests`, set on the details step,
+  5 wrong attempts locks for 15 minutes), with the emailed link as the forgot-password path.
+- Migrations `0001` to `0009` must be run in order. `/privacy` describes all of this; update
   it whenever a form, tool or provider changes.
 
 ## Repo structure to build toward

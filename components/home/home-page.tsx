@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT } from "@/lib/site";
-import { packages } from "@/lib/pricing";
+import { MENU, packages, type MenuItem } from "@/lib/pricing";
 import { BrandMark } from "@/components/brand-mark";
 import { trackEvent } from "@/lib/analytics";
 import { siFacebook, siInstagram, siPinterest, siThreads, siTiktok, siWhatsapp, siX, siYoutube } from "simple-icons";
@@ -78,6 +78,7 @@ import {
   Wrench,
   Scissors,
   Coffee,
+  CircleUserRound,
 } from "lucide-react";
 
 const whatsappHref = buildWhatsAppLink("Hi nxtte, I'd like to talk about turning my content into bookings.");
@@ -201,13 +202,17 @@ function Nav({ stripped = false }: { stripped?: boolean }) {
             <span className={`nav-pill ${pill.on ? "is-on" : ""}`} style={{ transform: `translateX(${pill.x}px)`, width: pill.w }} aria-hidden="true" />
             {navItems.map(([label, href]) => <Link key={href} href={href} className={location === href ? "active" : ""} aria-current={location === href ? "page" : undefined} onMouseEnter={(e) => movePill(e.currentTarget)} onFocus={(e) => movePill(e.currentTarget)}>{label}</Link>)}
           </nav>
-          <a className="nav-whatsapp" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}><MessageCircle size={15} /> WhatsApp us <ArrowUpRight size={15} className="nav-wa-arrow" /></a>
+          <div className="nav-actions">
+            <Link className="nav-login" href="/my"><CircleUserRound size={16} /> Customer login</Link>
+            <a className="nav-whatsapp" href={whatsappHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click")}><MessageCircle size={15} /> WhatsApp us <ArrowUpRight size={15} className="nav-wa-arrow" /></a>
+          </div>
           <button className="mobile-menu-btn" aria-label="Open menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><Menu size={20} /></button>
         </div>
       </header>
       <div className={`mobile-menu ${menuOpen ? "mobile-menu-open" : ""}`} aria-hidden={!menuOpen}>
         <div className="mobile-menu-top"><Logo /><button onClick={() => setMenuOpen(false)} aria-label="Close menu"><X /></button></div>
         <div className="mobile-links">{navItems.map(([label, href], index) => <Link key={href} href={href}><span>0{index + 1}</span>{label}<ArrowUpRight size={22} /></Link>)}</div>
+        <Link className="mobile-login" href="/my"><CircleUserRound size={18} /> Customer login</Link>
         <div className="mobile-menu-bottom"><span>Built for bookings.</span><a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp us <ArrowUpRight size={17} /></a></div>
       </div>
     </>
@@ -257,7 +262,7 @@ function Footer() {
           </div>
           <div className="ft-bottom">
             <span>© 2026 nxtte, a sub-brand of Aurexis Solution</span>
-            <span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link></span>
+            <span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link> &middot; <Link className="ft-legal" href="/my">Customer login</Link></span>
             <a className="ft-top-btn" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Back to top <ArrowUp size={14} /></a>
           </div>
         </div>
@@ -1576,39 +1581,6 @@ function PricingTableSection() {
   );
 }
 
-// THE MENU: fixed prices for single pieces of work, from Services & Pricing 2026.
-// `amount` is set only for one-off fixed prices, so the order total never guesses.
-type MenuItem = { name: string; note?: string; price: string; time: string; amount?: number };
-const MENU: { key: string; label: string; items: MenuItem[] }[] = [
-  { key: "start", label: "Start here", items: [
-    { name: "Social media audit", note: "Full review of your accounts, content and competitors, with a 90-day plan. Credited to your first month if you sign a package within 14 days.", price: "RM 199", time: "5 working days", amount: 199 },
-    { name: "Profile makeover", note: "New bio, highlight covers, post templates and a clean grid.", price: "RM 399", time: "5 working days", amount: 399 },
-    { name: "WhatsApp Business setup", note: "Catalogue, quick replies, greeting and away messages, and labels to track enquiries.", price: "RM 299", time: "3 working days", amount: 299 },
-  ] },
-  { key: "content", label: "Content", items: [
-    { name: "Static post design", note: "Feed post or story", price: "RM 39", time: "3 working days", amount: 39 },
-    { name: "Carousel design", note: "Minimum 3 slides", price: "RM 89", time: "3 to 5 working days", amount: 89 },
-    { name: "Reel or TikTok scriptwriting", note: "Scene by scene", price: "RM 59", time: "3 working days", amount: 59 },
-    { name: "Reel or TikTok editing", price: "RM 99", time: "5 working days", amount: 99 },
-    { name: "Captions and hashtags", note: "Search and AI-search optimised", price: "RM 29 per post", time: "2 working days" },
-    { name: "Monthly content calendar", price: "RM 299", time: "5 working days", amount: 299 },
-    { name: "Content strategy", price: "RM 499", time: "7 working days", amount: 499 },
-    { name: "Videography", note: "Weekends only, plus RM 100 transport", price: "Quoted per shoot", time: "Booked in advance" },
-  ] },
-  { key: "growth", label: "Marketing & growth", items: [
-    { name: "Meta Ads management", note: "Facebook and Instagram. Or 15% of ad spend if higher", price: "RM 1,200/month", time: "Monthly" },
-    { name: "TikTok Ads management", note: "Or 15% of ad spend if higher", price: "RM 1,200/month", time: "Monthly" },
-    { name: "Monthly performance report", note: "Included free in every package", price: "RM 250/month", time: "Monthly" },
-    { name: "Meta Ads campaign setup", note: "One-off, per campaign", price: "RM 499", time: "One-off", amount: 499 },
-    { name: "TikTok Ads campaign setup", note: "One-off, per campaign", price: "RM 499", time: "One-off", amount: 499 },
-    { name: "Basic landing page", note: "One page with your offer, WhatsApp button and enquiry form", price: "RM 1,399", time: "10 to 14 working days", amount: 1399 },
-  ] },
-  { key: "brand", label: "Brand & business", items: [
-    { name: "Company profile design", note: "Booklet or presentation, in portrait and landscape", price: "RM 699", time: "7 to 10 working days", amount: 699 },
-    { name: "Digital name card", price: "RM 19", time: "2 working days", amount: 19 },
-  ] },
-];
-
 // THE MENU as an order builder: tap items onto a receipt, toggle the package
 // discount, send the list on WhatsApp. Only one-off fixed prices are summed;
 // monthly, per-post and quoted items are listed and confirmed on the call.
@@ -1808,4 +1780,4 @@ function FAQSection() {
 }
 
 // Shared with the Insights views (client components only).
-export { PageShell, StrippedShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref, FAQ_ITEMS };
+export { PageShell, StrippedShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref, FAQ_ITEMS, HeroBackground };

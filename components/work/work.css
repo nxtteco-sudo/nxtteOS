@@ -88,3 +88,20 @@
   .wk-part { grid-template-columns: 1fr; gap: 6px; }
   .wk-part-n { font-size: 32px; }
 }
+/* Service filter, category label, before/after and gallery */
+.wk-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.wk-filter button { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 999px; background: #fff; color: #3d2530; font-size: 14.5px; font-weight: 700; box-shadow: 0 12px 24px -18px rgba(120,30,70,.5); transition: background .2s ease, color .2s ease, translate .2s var(--ease-out); }
+.wk-filter button:hover { translate: 0 -2px; }
+.wk-filter button span { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--pink-tint); color: #a83963; font-size: 12px; }
+.wk-filter button.is-on { background: var(--ink); color: #fff; }
+.wk-filter button.is-on span { background: var(--pink); color: #fff; }
+.wk-filter button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wk-tile-cat { align-self: flex-start; color: #a83963; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.wk-ba { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 900px; margin: 12px auto 0; }
+.wk-ba figure, .wk-gallery figure { position: relative; margin: 0; overflow: hidden; border-radius: 22px; background: var(--pink-tint); box-shadow: 0 24px 46px -34px rgba(120,30,70,.55); }
+.wk-ba img, .wk-gallery img { display: block; width: 100%; height: auto; }
+.wk-ba-tag { position: absolute; top: 12px; left: 12px; z-index: 1; padding: 6px 12px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; box-shadow: 0 8px 18px -10px rgba(10,10,10,.5); }
+.wk-ba-tag.is-after { background: var(--pink); color: #fff; }
+.wk-gallery { columns: 2; column-gap: 14px; max-width: 900px; margin: 14px auto 0; }
+.wk-gallery figure { margin-bottom: 14px; break-inside: avoid; }
+@media (max-width: 700px) { .wk-ba { grid-template-columns: 1fr; } .wk-gallery { columns: 1; } }

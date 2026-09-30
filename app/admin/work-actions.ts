@@ -19,6 +19,7 @@ const caseSchema = z.object({
   clientName: z.string().trim().max(100),
   clientType: z.string().trim().max(100),
   caseType: z.enum(['client', 'own', 'trial']),
+  category: z.enum(['social', 'content', 'growth', 'brand', 'start']),
   resultValue: z.string().trim().max(20),
   resultLabel: z.string().trim().max(80),
   resultPeriod: z.string().trim().max(60),
@@ -26,7 +27,10 @@ const caseSchema = z.object({
   whatWeDid: z.string(),
   whatChanged: z.string(),
   metrics: z.array(metric).max(3),
-  services: z.array(z.string().trim().min(1).max(40)).max(8),
+  services: z.array(z.string().trim().min(1).max(60)).max(12),
+  gallery: z.array(z.object({ url: z.string().url(), alt: z.string().trim().max(200) })).max(8),
+  beforeImageUrl: z.string().url().nullable(),
+  afterImageUrl: z.string().url().nullable(),
   testimonialQuote: z.string().trim().max(400),
   testimonialAuthor: z.string().trim().max(100),
   coverImageUrl: z.string().url().nullable(),
@@ -45,6 +49,8 @@ function publishProblem(v: z.output<typeof caseSchema>) {
   if (!v.situation.trim() || !v.whatWeDid.trim() || !v.whatChanged.trim()) return 'Fill in all three parts of the story before publishing.'
   if (!v.coverImageUrl) return 'Add a cover image before publishing.'
   if (!v.coverAlt) return 'Describe the cover image (alt text) before publishing.'
+  if (v.gallery.some((g) => !g.alt)) return 'Describe every gallery image before publishing.'
+  if (Boolean(v.beforeImageUrl) !== Boolean(v.afterImageUrl)) return 'Add both a before and an after image, or neither.'
   return null
 }
 
@@ -78,6 +84,7 @@ export async function saveCaseStudy(input: CaseInput): Promise<Result<{ id: stri
     client_name: v.clientName,
     client_type: v.clientType,
     case_type: v.caseType,
+    category: v.category,
     result_value: v.resultValue,
     result_label: v.resultLabel,
     result_period: v.resultPeriod,
@@ -86,6 +93,9 @@ export async function saveCaseStudy(input: CaseInput): Promise<Result<{ id: stri
     what_changed: v.whatChanged,
     metrics: v.metrics.filter((m) => m.value && m.label),
     services: v.services,
+    gallery: v.gallery,
+    before_image_url: v.beforeImageUrl,
+    after_image_url: v.afterImageUrl,
     testimonial_quote: v.testimonialQuote,
     testimonial_author: v.testimonialAuthor,
     cover_image_url: v.coverImageUrl,

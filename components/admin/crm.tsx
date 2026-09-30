@@ -4,8 +4,8 @@
 // thread and the payment settings form.
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, ExternalLink, FileUp, Loader2, MessageCircle, SendHorizontal, Undo2 } from "lucide-react";
-import { createCustomerLink, markCustomerMessagesRead, saveAuditNotes, savePaymentSettings, sendAdminMessage, setPaid, setWorkStarted, updateLead, uploadReport } from "@/app/admin/crm-actions";
+import { Check, Copy, ExternalLink, FileUp, Loader2, MessageCircle, SendHorizontal, Undo2, X } from "lucide-react";
+import { createCustomerLink, markCustomerMessagesRead, reviewAudit, saveAuditNotes, savePaymentSettings, sendAdminMessage, setPaid, setWorkStarted, updateLead, uploadReport } from "@/app/admin/crm-actions";
 import { buildWhatsAppLinkTo } from "@/lib/whatsapp";
 import { formatDate, type AdminAudit, type AuditMessage, type PaymentSettings } from "@/types/audit";
 
@@ -73,6 +73,9 @@ export function AuditControls({ audit, proofUrl, reportUrl }: { audit: AdminAudi
   const [link, setLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [declining, setDeclining] = useState(false);
+  const [reason, setReason] = useState("");
+  const reviewState = audit.approved_at ? "approved" : audit.declined_at ? "declined" : audit.details_submitted_at ? "waiting" : "none";
   const firstName = audit.name.trim().split(/\s+/)[0];
 
   async function makeLink() {
@@ -84,6 +87,36 @@ export function AuditControls({ audit, proofUrl, reportUrl }: { audit: AdminAudi
 
   return (
     <div className="crm-controls">
+      <section className={`adm-card ${reviewState === "waiting" ? "crm-review-due" : ""}`}>
+        <h2 className="crm-h">Review <span className={`adm-pill ${reviewState === "approved" ? "is-live" : reviewState === "waiting" ? "is-wait" : ""}`}>{reviewState === "approved" ? "Approved" : reviewState === "declined" ? "Declined" : reviewState === "waiting" ? "Waiting for you" : "No details yet"}</span></h2>
+        <p className="adm-muted">
+          {reviewState === "approved" ? `Approved ${formatDate(audit.approved_at as string)}. The customer can now pay.`
+            : reviewState === "declined" ? `Declined ${formatDate(audit.declined_at as string)}: ${audit.decline_reason}`
+            : reviewState === "waiting" ? "Read their details on the left. Approving opens the Payment step and emails them."
+            : "The customer has not added their details yet. Payment stays locked until you approve."}
+        </p>
+        {reviewState === "waiting" && !declining && (
+          <div className="crm-row">
+            <button type="button" className="adm-btn adm-btn-primary" disabled={pending} onClick={() => run(() => reviewAudit(audit.id, "approve"), "Approved. Payment is open.")}><Check size={16} /> Approve, open payment</button>
+            <button type="button" className="adm-btn adm-btn-danger" disabled={pending} onClick={() => setDeclining(true)}><X size={15} /> Decline</button>
+          </div>
+        )}
+        {reviewState === "waiting" && declining && (
+          <div className="crm-decline">
+            <label className="adm-field"><span>Reason the customer will see</span>
+              <textarea rows={2} maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="For example: we are not the right fit for this type of business yet." />
+            </label>
+            <div className="crm-row">
+              <button type="button" className="adm-btn adm-btn-danger" disabled={pending || !reason.trim()} onClick={() => run(() => reviewAudit(audit.id, "decline", reason), "Declined. Customer emailed.")}>Decline audit</button>
+              <button type="button" className="adm-btn adm-btn-ghost" onClick={() => setDeclining(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
+        {(reviewState === "approved" || reviewState === "declined") && audit.payment_status === "unpaid" && (
+          <div className="crm-row"><button type="button" className="adm-btn adm-btn-ghost" disabled={pending} onClick={() => run(() => reviewAudit(audit.id, null), "Back to waiting for review")}><Undo2 size={15} /> Undo</button></div>
+        )}
+      </section>
+
       <section className="adm-card">
         <h2 className="crm-h">Payment <span className={`adm-pill ${audit.payment_status === "paid" ? "is-live" : audit.payment_status === "claimed" ? "is-wait" : ""}`}>{audit.payment_status === "paid" ? "Paid" : audit.payment_status === "claimed" ? "Customer says paid" : "Unpaid"}</span></h2>
         <p className="adm-muted">RM {audit.amount} · reference {audit.reference ?? "none"}{audit.paid_at ? ` · paid ${formatDate(audit.paid_at)}` : audit.payment_claimed_at ? ` · claimed ${formatDate(audit.payment_claimed_at)}` : ""}</p>

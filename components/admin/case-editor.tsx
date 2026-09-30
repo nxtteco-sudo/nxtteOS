@@ -5,12 +5,13 @@
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Eye, Loader2, Plus, Sparkles, Trash2, X } from "lucide-react";
+import { ArrowLeft, Check, Eye, ImagePlus, Loader2, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { deleteCaseStudy, saveCaseStudy } from "@/app/admin/work-actions";
 import { PostBody } from "@/components/insights/post-body";
-import { ImageUpload } from "./image-upload";
+import { ImageUpload, uploadFile } from "./image-upload";
+import { SERVICE_CATEGORIES, type ServiceCategory } from "@/lib/pricing";
 import { slugify } from "./insight-editor";
-import { CASE_TYPE_LABEL, type CaseMetric, type CaseStudy, type CaseType } from "@/types/work";
+import { CASE_TYPE_LABEL, type CaseMetric, type CaseStudy, type CaseType, type GalleryImage } from "@/types/work";
 
 type Draft = {
   headline: string; slug: string; clientName: string; clientType: string; caseType: CaseType;
@@ -18,8 +19,21 @@ type Draft = {
   situation: string; whatWeDid: string; whatChanged: string;
   metrics: CaseMetric[]; services: string[]; testimonialQuote: string; testimonialAuthor: string;
   coverImageUrl: string | null; coverAlt: string; sortOrder: number;
+  category: ServiceCategory; gallery: GalleryImage[]; beforeImageUrl: string | null; afterImageUrl: string | null;
 };
 type Toast = { kind: "ok" | "error"; text: string } | null;
+const ALL_SERVICES = new Set<string>(SERVICE_CATEGORIES.flatMap((c) => [...c.services]));
+
+// Example results per service, so design and setup work is not forced into a
+// sales metric. Placeholders only: the real number must be true and checkable.
+const RESULT_EXAMPLES: Record<ServiceCategory, [string, string, string]> = {
+  social: ["+38%", "more profile visits", "in the first 30 days"],
+  content: ["12", "posts and 4 reels delivered", "every month"],
+  growth: ["RM 17", "cost per enquiry", "over 30 days of ads"],
+  brand: ["24 pages", "company profile redesigned", "in 7 working days"],
+  start: ["5", "gaps found and fixed", "in 5 working days"],
+};
+const MAX_GALLERY = 8;
 
 const STORY_FIELDS = [
   { key: "situation", n: "01", title: "The situation", hint: "Where was the business before? What was not working?" },
@@ -35,12 +49,14 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
     situation: c?.situation ?? "", whatWeDid: c?.what_we_did ?? "", whatChanged: c?.what_changed ?? "",
     metrics: c?.metrics ?? [], services: c?.services ?? [], testimonialQuote: c?.testimonial_quote ?? "", testimonialAuthor: c?.testimonial_author ?? "",
     coverImageUrl: c?.cover_image_url ?? null, coverAlt: c?.cover_alt ?? "", sortOrder: c?.sort_order ?? 100,
+    category: c?.category ?? "social", gallery: c?.gallery ?? [], beforeImageUrl: c?.before_image_url ?? null, afterImageUrl: c?.after_image_url ?? null,
   };
   const [d, setD] = useState<Draft>(initial);
   const [saved, setSaved] = useState(JSON.stringify(initial));
   const [status, setStatus] = useState<"draft" | "published">(c?.status ?? "draft");
   const [slugTouched, setSlugTouched] = useState(Boolean(c));
   const [serviceInput, setServiceInput] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [pending, start] = useTransition();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
@@ -80,11 +96,24 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  const toggleService = (name: string) => set("services", d.services.includes(name) ? d.services.filter((x) => x !== name) : d.services.length < 12 ? [...d.services, name] : d.services);
   function addService() {
     const v = serviceInput.trim();
-    if (!v || d.services.includes(v) || d.services.length >= 8) return;
+    if (!v || d.services.includes(v) || d.services.length >= 12) return;
     set("services", [...d.services, v]);
     setServiceInput("");
+  }
+  async function addGallery(files: FileList | null) {
+    if (!files?.length) return;
+    setUploading(true);
+    let next = d.gallery;
+    for (const file of Array.from(files).slice(0, MAX_GALLERY - d.gallery.length)) {
+      const res = await uploadFile(file, "work");
+      if (!res.ok) { setToast({ kind: "error", text: res.error }); break; }
+      next = [...next, { url: res.url, alt: "" }];
+    }
+    setUploading(false);
+    setD((x) => ({ ...x, gallery: next }));
   }
   const setMetric = (i: number, k: keyof CaseMetric, v: string) => set("metrics", d.metrics.map((m, j) => (j === i ? { ...m, [k]: v } : m)));
 
@@ -121,14 +150,24 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
             <input value={d.slug} className="adm-mono" placeholder="your-case-url" onChange={(e) => { setSlugTouched(true); set("slug", slugify(e.target.value)); }} />
           </label>
 
+          <fieldset className="adm-card">
+            <legend>Service <em>what kind of work this was</em></legend>
+            <div className="adm-seg adm-seg-wrap" role="radiogroup" aria-label="Service category">
+              {SERVICE_CATEGORIES.map((cat) => (
+                <button key={cat.key} type="button" role="radio" aria-checked={d.category === cat.key} className={d.category === cat.key ? "is-on" : ""} onClick={() => set("category", cat.key)}>{cat.label}</button>
+              ))}
+            </div>
+            <p className="adm-hint">Visitors can filter the Work page by this.</p>
+          </fieldset>
+
           <fieldset className="adm-card adm-card-result">
             <legend>The result <em>required to publish</em></legend>
             <div className="adm-grid-3">
-              <label className="adm-field"><span>Number</span><input value={d.resultValue} maxLength={20} placeholder="+38%" onChange={(e) => set("resultValue", e.target.value)} /></label>
-              <label className="adm-field"><span>What it measures</span><input value={d.resultLabel} maxLength={80} placeholder="more profile visits" onChange={(e) => set("resultLabel", e.target.value)} /></label>
-              <label className="adm-field"><span>When or over what period</span><input value={d.resultPeriod} maxLength={60} placeholder="in the first 30 days" onChange={(e) => set("resultPeriod", e.target.value)} /></label>
+              <label className="adm-field"><span>Number</span><input value={d.resultValue} maxLength={20} placeholder={RESULT_EXAMPLES[d.category][0]} onChange={(e) => set("resultValue", e.target.value)} /></label>
+              <label className="adm-field"><span>What it measures</span><input value={d.resultLabel} maxLength={80} placeholder={RESULT_EXAMPLES[d.category][1]} onChange={(e) => set("resultLabel", e.target.value)} /></label>
+              <label className="adm-field"><span>When or over what period</span><input value={d.resultPeriod} maxLength={60} placeholder={RESULT_EXAMPLES[d.category][2]} onChange={(e) => set("resultPeriod", e.target.value)} /></label>
             </div>
-            <p className="adm-hint">Use a real, checkable number. The spec: one real number outperforms ten mockups.</p>
+            <p className="adm-hint">Use a real, checkable number. For design or setup work it can be what was delivered and how fast, not only sales.</p>
           </fieldset>
 
           <fieldset className="adm-card">
@@ -173,15 +212,57 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
           </fieldset>
 
           <fieldset className="adm-card">
-            <legend>What we used <em>packages or menu items</em></legend>
-            {d.services.length > 0 && (
+            <legend>What we used <em>tap every service that was part of this job</em></legend>
+            {[...SERVICE_CATEGORIES].sort((a, b) => Number(b.key === d.category) - Number(a.key === d.category)).map((cat) => (
+              <div key={cat.key} className="adm-svc-group">
+                <p>{cat.label}</p>
+                <div className="adm-svc">
+                  {cat.services.map((name) => {
+                    const on = d.services.includes(name);
+                    return <button key={name} type="button" aria-pressed={on} className={on ? "is-on" : ""} onClick={() => toggleService(name)}>{on && <Check size={13} strokeWidth={3} />}{name}</button>;
+                  })}
+                </div>
+              </div>
+            ))}
+            {d.services.filter((x) => !ALL_SERVICES.has(x)).length > 0 && (
               <ul className="adm-chips">
-                {d.services.map((s) => <li key={s}>{s}<button type="button" aria-label={`Remove ${s}`} onClick={() => set("services", d.services.filter((x) => x !== s))}><X size={13} /></button></li>)}
+                {d.services.filter((x) => !ALL_SERVICES.has(x)).map((x) => <li key={x}>{x}<button type="button" aria-label={`Remove ${x}`} onClick={() => toggleService(x)}><X size={13} /></button></li>)}
               </ul>
             )}
             <div className="adm-inline">
-              <input aria-label="Add a service" value={serviceInput} maxLength={40} placeholder="Growth package" onChange={(e) => setServiceInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }} />
+              <input aria-label="Add something not on the list" value={serviceInput} maxLength={60} placeholder="Something not on the list" onChange={(e) => setServiceInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }} />
               <button type="button" className="adm-btn" onClick={addService}>Add</button>
+            </div>
+          </fieldset>
+
+          <fieldset className="adm-card">
+            <legend>Gallery <em>optional, up to {MAX_GALLERY} images</em></legend>
+            {d.gallery.length > 0 && (
+              <ul className="adm-gallery">
+                {d.gallery.map((g, i) => (
+                  <li key={g.url}>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- admin thumbnail */}
+                    <img src={g.url} alt="" />
+                    <input aria-label={`Describe image ${i + 1}`} value={g.alt} maxLength={200} placeholder="Describe this image" onChange={(e) => set("gallery", d.gallery.map((x, k) => (k === i ? { ...x, alt: e.target.value } : x)))} />
+                    <button type="button" className="adm-icon-btn" aria-label={`Remove image ${i + 1}`} onClick={() => set("gallery", d.gallery.filter((_, k) => k !== i))}><X size={16} /></button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {d.gallery.length < MAX_GALLERY && (
+              <label className="adm-btn adm-gallery-add">
+                {uploading ? <Loader2 size={16} className="adm-spin" /> : <ImagePlus size={16} />} Add images
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple hidden onChange={(e) => { void addGallery(e.target.files); e.target.value = ""; }} />
+              </label>
+            )}
+            <p className="adm-hint">Good for pages of a company profile, a set of posts, or screens of a landing page.</p>
+          </fieldset>
+
+          <fieldset className="adm-card">
+            <legend>Before and after <em>optional, for redesigns</em></legend>
+            <div className="adm-grid-2">
+              <div className="adm-field"><span>Before</span><ImageUpload folder="work" label="Add the before image" value={d.beforeImageUrl} onChange={(u) => set("beforeImageUrl", u)} onError={(text) => setToast({ kind: "error", text })} /></div>
+              <div className="adm-field"><span>After</span><ImageUpload folder="work" label="Add the after image" value={d.afterImageUrl} onChange={(u) => set("afterImageUrl", u)} onError={(text) => setToast({ kind: "error", text })} /></div>
             </div>
           </fieldset>
 

@@ -24,7 +24,7 @@ export default async function ReportPage({ searchParams }: { searchParams: Promi
   return (
     <div className="my-page">
       <header className="my-head">
-        <p className="my-kicker">Step 5 of 5</p>
+        <p className="my-kicker">Step 6 of 6</p>
         <h1>Your report<span>.</span></h1>
         <p>{ready ? "Your audit and 90-day roadmap, ready to download." : "Your audit and 90-day roadmap will appear here as soon as they are done."}</p>
       </header>

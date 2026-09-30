@@ -1594,3 +1594,15 @@ button { border: 0; }
 .ab-photo-img { object-fit: cover; object-position: center 30%; }
 .ab-badge-2 .ab-photo-img { object-position: center 25%; }
 .ft-legal { text-decoration: underline; text-underline-offset: 3px; } .ft-legal:hover { color: #fff; }
+/* Nav: quiet customer login beside the WhatsApp button (desktop), inside the menu (mobile) */
+.nav-actions { display: flex; align-items: center; gap: 6px; }
+.nav-login { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 14px; border-radius: 999px; color: var(--ink); font-size: 12px; font-weight: 700; transition: background .18s ease, color .18s ease; }
+.nav-login svg { color: var(--pink); }
+.nav-login:hover { background: rgba(201,80,123,.1); }
+.mobile-login { display: none; }
+@media (max-width: 900px) {
+  .nav-actions { margin-left: auto; }
+  .nav-login { display: none; }
+  .mobile-login { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; margin: 0 0 18px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); color: #fff; font-size: 15px; font-weight: 700; }
+  .mobile-login svg { color: var(--pink-soft); }
+}

@@ -66,11 +66,14 @@ export default async function AdminOverview() {
   const peak = Math.max(1, ...days.map((d) => d.leads + d.audits));
   const chartTotal = days.reduce((s, d) => s + d.leads + d.audits, 0);
 
+  const open = audits.filter((a) => !a.report_ready_at && !a.declined_at);
+  const toReview = open.filter((a) => a.details_submitted_at && !a.approved_at);
   const pipeline = [
-    { label: "Waiting for details", count: audits.filter((a) => !a.details_submitted_at && !a.report_ready_at).length, tone: "soft" },
-    { label: "Waiting for payment", count: audits.filter((a) => a.details_submitted_at && a.payment_status === "unpaid" && !a.report_ready_at).length, tone: "soft" },
+    { label: "Waiting for details", count: open.filter((a) => !a.details_submitted_at).length, tone: "soft" },
+    { label: "Details to review", count: toReview.length, tone: "hot" },
+    { label: "Waiting for payment", count: open.filter((a) => a.approved_at && a.payment_status === "unpaid").length, tone: "soft" },
     { label: "Payment to confirm", count: toConfirm.length, tone: "hot" },
-    { label: "In progress", count: audits.filter((a) => a.payment_status === "paid" && a.details_submitted_at && !a.report_ready_at).length, tone: "ink" },
+    { label: "In progress", count: open.filter((a) => a.payment_status === "paid").length, tone: "ink" },
     { label: "Delivered", count: audits.filter((a) => a.report_ready_at).length, tone: "done" },
   ];
   const pipePeak = Math.max(1, ...pipeline.map((p) => p.count));
@@ -99,9 +102,9 @@ export default async function AdminOverview() {
 
   const tiles = [
     { icon: Inbox, label: "New enquiries", value: String(newLeads), hot: newLeads > 0, href: "/admin/leads" },
+    { icon: PenLine, label: "Details to review", value: String(toReview.length), hot: toReview.length > 0, href: "/admin/audits" },
     { icon: CreditCard, label: "Payments to confirm", value: String(toConfirm.length), hot: toConfirm.length > 0, href: "/admin/audits" },
     { icon: MessagesSquare, label: "Unread messages", value: String(unreadTotal), hot: unreadTotal > 0, href: "/admin/audits" },
-    { icon: ClipboardCheck, label: "Audits booked", value: String(audits.length), hot: false, href: "/admin/audits" },
   ];
 
   const today = new Date().toLocaleDateString("en-MY", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });

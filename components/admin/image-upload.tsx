@@ -17,7 +17,7 @@ export async function uploadFile(file: File, folder: "insights" | "work" = "insi
 }
 
 // Cover image picker: click or drag an image in, replace or remove it.
-export function ImageUpload({ value, onChange, onError, folder = "insights" }: { value: string | null; onChange: (url: string | null) => void; onError: (text: string) => void; folder?: "insights" | "work" }) {
+export function ImageUpload({ value, onChange, onError, folder = "insights", label = "Add a cover image" }: { value: string | null; onChange: (url: string | null) => void; onError: (text: string) => void; folder?: "insights" | "work"; label?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [over, setOver] = useState(false);
@@ -61,7 +61,7 @@ export function ImageUpload({ value, onChange, onError, folder = "insights" }: {
       disabled={busy}
     >
       {busy ? <Loader2 size={20} className="adm-spin" /> : <ImagePlus size={20} />}
-      <strong>{busy ? "Uploading" : "Add a cover image"}</strong>
+      <strong>{busy ? "Uploading" : label}</strong>
       <small>Drag it here or click. JPG, PNG, WebP or AVIF, up to 5 MB. 16:9 works best.</small>
     </button>
     {picker}

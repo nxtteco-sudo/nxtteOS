@@ -64,6 +64,8 @@ export function validateField(form: FormKey, name: string, value: string): strin
 // Customer dashboard: the details a customer adds after booking the audit.
 export const auditDetailsSchema = z.object({
   email: z.string().trim().toLowerCase().email('Enter a valid email address').max(254),
+  // Empty means "keep my current password"; the server requires one the first time.
+  password: z.string().max(200).refine((v) => v === '' || v.length >= 8, 'Use at least 8 characters'),
   goals: z.string().trim().min(1, 'Tell us what you want from your social media').max(1500),
   ideal_customer: z.string().trim().max(800),
   best_sellers: z.string().trim().max(800),

@@ -2,7 +2,7 @@ import 'server-only'
 import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createHash, randomBytes } from 'node:crypto'
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto'
 import { isAdminConfigured } from '@/lib/auth/admin'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { SITE_URL } from '@/lib/site'
@@ -15,7 +15,7 @@ export const MY_COOKIE = 'nx_my'
 const NINETY_DAYS = 60 * 60 * 24 * 90
 
 export const CUSTOMER_AUDIT_COLUMNS =
-  'id, reference, name, business, instagram, whatsapp, email, goals, ideal_customer, best_sellers, competitors, other_platforms, notes, details_submitted_at, payment_status, payment_claimed_at, payment_proof_path, paid_at, amount, work_started_at, report_path, report_ready_at, created_at'
+  'id, reference, name, business, instagram, whatsapp, email, goals, ideal_customer, best_sellers, competitors, other_platforms, notes, details_submitted_at, approved_at, declined_at, decline_reason, payment_status, payment_claimed_at, payment_proof_path, paid_at, amount, work_started_at, report_path, report_ready_at, created_at'
 
 export const hashToken = (token: string) => createHash('sha256').update(token).digest('hex')
 
@@ -86,4 +86,27 @@ export function newReference() {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   const bytes = randomBytes(6)
   return `NX-${Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('')}`
+}
+
+// ---- Passwords ---------------------------------------------------------------
+// scrypt with a random salt per password; stored as "scrypt$<salt>$<key>" (hex).
+export const MIN_PASSWORD = 8
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16)
+  return `scrypt$${salt.toString('hex')}$${scryptSync(password, salt, 64).toString('hex')}`
+}
+
+export function verifyPassword(password: string, stored: string | null): boolean {
+  if (!stored) return false
+  const [scheme, saltHex, keyHex] = stored.split('$')
+  if (scheme !== 'scrypt' || !saltHex || !keyHex) return false
+  const expected = Buffer.from(keyHex, 'hex')
+  const actual = scryptSync(password, Buffer.from(saltHex, 'hex'), expected.length)
+  return actual.length === expected.length && timingSafeEqual(actual, expected)
+}
+
+export async function hasPassword(auditId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin().from('audit_requests').select('password_hash').eq('id', auditId).maybeSingle()
+  return Boolean(data?.password_hash)
 }

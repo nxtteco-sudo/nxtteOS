@@ -19,7 +19,7 @@ export default async function MyLayout({ children }: { children: React.ReactNode
   const unread = (await getMessages(audit.id)).filter((m) => m.sender === "nxtte" && !m.read_at).length;
   const nav: NavState = {
     details: audit.details_submitted_at ? { text: "Done", tone: "done" } : { text: "To do", tone: "todo" },
-    payment: audit.payment_status === "paid" ? { text: "Paid", tone: "done" } : audit.payment_status === "claimed" ? { text: "Checking", tone: "wait" } : { text: "To do", tone: "todo" },
+    payment: audit.payment_status === "paid" ? { text: "Paid", tone: "done" } : audit.payment_status === "claimed" ? { text: "Checking", tone: "wait" } : audit.approved_at ? { text: "To do", tone: "todo" } : { text: "Locked", tone: "lock" },
     messages: unread ? { text: String(unread), tone: "new" } : null,
     report: audit.report_ready_at ? { text: "Ready", tone: "new" } : null,
   };

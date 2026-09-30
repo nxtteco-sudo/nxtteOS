@@ -1,4 +1,5 @@
-import { CheckCircle2, Clock3, Ticket } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, Clock3, Lock, Ticket } from "lucide-react";
 import { PaymentPanel } from "@/components/my/my-ui";
 import { getPaymentSettings, requireMyAudit } from "@/lib/customer";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
@@ -12,7 +13,7 @@ export default async function PaymentPage() {
   return (
     <div className="my-page">
       <header className="my-head">
-        <p className="my-kicker">Step 3 of 5</p>
+        <p className="my-kicker">Step 4 of 6</p>
         <h1>Payment<span>.</span></h1>
         <p>One payment of RM {audit.amount}. No subscription, nothing else to pay for the audit.</p>
       </header>
@@ -36,6 +37,17 @@ export default async function PaymentPage() {
               <h2>We are confirming your payment</h2>
               <p>You told us you paid on {audit.payment_claimed_at ? formatDate(audit.payment_claimed_at) : "today"}. We check it within one working day and this page updates as soon as it is confirmed.</p>
               <p className="my-hint">Reference {audit.reference} · RM {audit.amount}.00</p>
+            </section>
+          ) : !audit.approved_at ? (
+            <section className="my-card my-receipt is-lock">
+              <span className="my-receipt-ok"><Lock size={24} /></span>
+              <h2>{audit.declined_at ? "Payment is not needed" : "Payment opens after our review"}</h2>
+              <p>{audit.declined_at
+                ? "We are not going ahead with this audit, so there is nothing to pay."
+                : audit.details_submitted_at
+                  ? "We are reviewing your details to make sure the audit is a good fit. This usually takes one working day. You will get an email the moment payment opens."
+                  : "First tell us about your business. Once we have reviewed your details, payment opens here."}</p>
+              {!audit.details_submitted_at && <Link className="my-btn my-btn-dark" href="/my/details">Add my details</Link>}
             </section>
           ) : (
             <PaymentPanel audit={audit} settings={settings} helpHref={helpHref} />

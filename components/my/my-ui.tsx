@@ -6,12 +6,12 @@ import { useActionState, useEffect, useRef, useState, useTransition } from "reac
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Check, ClipboardList, Copy, CreditCard, FileText, LayoutDashboard, Loader2, LogOut, MessageCircle, MessagesSquare, Paperclip, SendHorizontal } from "lucide-react";
-import { claimPayment, markMessagesRead, requestLink, saveDetails, sendMessage, signOutCustomer } from "@/app/my/actions";
+import { Check, ClipboardList, Copy, CreditCard, FileText, KeyRound, LayoutDashboard, Loader2, Store, LogOut, MessageCircle, MessagesSquare, Paperclip, SendHorizontal } from "lucide-react";
+import { claimPayment, markMessagesRead, requestLink, saveDetails, sendMessage, signInCustomer, signOutCustomer } from "@/app/my/actions";
 import { auditDetailsSchema } from "@/lib/validation/forms";
 import { formatDate, type Audit, type AuditMessage, type PaymentSettings } from "@/types/audit";
 
-export type NavBadge = { text: string; tone: "done" | "todo" | "wait" | "new" } | null;
+export type NavBadge = { text: string; tone: "done" | "todo" | "wait" | "new" | "lock" } | null;
 export type NavState = { details: NavBadge; payment: NavBadge; messages: NavBadge; report: NavBadge };
 
 const NAV = [
@@ -60,30 +60,52 @@ export function MyShell({ business, reference, nav, helpHref, children }: { busi
 }
 
 export function SignInForm() {
-  const [state, action, pending] = useActionState(requestLink, null);
-  if (state?.sent) {
+  const [mode, setMode] = useState<"password" | "link">("password");
+  const [login, loginAction, loginPending] = useActionState(signInCustomer, null);
+  const [link, linkAction, linkPending] = useActionState(requestLink, null);
+
+  if (mode === "link" && link?.sent) {
     return (
       <div className="my-sent" role="status">
         <span><Check size={22} strokeWidth={3} /></span>
         <strong>Check your email.</strong>
-        <p>If that address has an audit with us, your private link is on its way.</p>
+        <p>If that address has an audit with us, a link to your dashboard is on its way.</p>
       </div>
     );
   }
+
+  if (mode === "link") {
+    return (
+      <form action={linkAction} className="my-signin-form">
+        <label htmlFor="my-link-email">Your email</label>
+        <input id="my-link-email" name="email" type="email" autoComplete="email" placeholder="you@business.com" required />
+        {link?.error && <p className="my-error" role="alert">{link.error}</p>}
+        <button type="submit" className="my-btn my-btn-dark my-btn-wide" disabled={linkPending}>
+          {linkPending && <Loader2 size={17} className="my-spin" />} Email me a sign-in link
+        </button>
+        <button type="button" className="my-textbtn" onClick={() => setMode("password")}>Back to password sign-in</button>
+      </form>
+    );
+  }
+
   return (
-    <form action={action} className="my-signin-form">
-      <label htmlFor="my-email">Your email</label>
+    <form action={loginAction} className="my-signin-form">
+      <label htmlFor="my-email">Email</label>
       <input id="my-email" name="email" type="email" autoComplete="email" placeholder="you@business.com" required />
-      {state?.error && <p className="my-error" role="alert">{state.error}</p>}
-      <button type="submit" className="my-btn my-btn-dark my-btn-wide" disabled={pending}>
-        {pending && <Loader2 size={17} className="my-spin" />} Email me my link
+      <label htmlFor="my-password">Password</label>
+      <input id="my-password" name="password" type="password" autoComplete="current-password" required />
+      {login?.error && <p className="my-error" role="alert">{login.error}</p>}
+      <button type="submit" className="my-btn my-btn-dark my-btn-wide" disabled={loginPending}>
+        {loginPending && <Loader2 size={17} className="my-spin" />} Sign in
       </button>
+      <button type="button" className="my-textbtn" onClick={() => setMode("link")}>Forgot your password? Email me a link</button>
     </form>
   );
 }
 
 const DETAIL_FIELDS = [
-  { name: "email", label: "Your email", hint: "We send your dashboard link and updates here.", type: "email", required: true, rows: 0, placeholder: "you@business.com" },
+  { name: "email", label: "Your email", hint: "You sign in with this, and we send updates here.", type: "email", required: true, rows: 0, placeholder: "you@business.com" },
+  { name: "password", label: "Create a password", hint: "At least 8 characters. You use it with your email to sign in again.", type: "password", required: true, rows: 0, placeholder: "" },
   { name: "goals", label: "What do you want from your social media?", hint: "More bookings, more walk-ins, more online orders? Say it in your own words.", required: true, rows: 3, placeholder: "" },
   { name: "ideal_customer", label: "Who is your best customer?", hint: "Age, area, what they usually buy.", rows: 2, placeholder: "" },
   { name: "best_sellers", label: "What do you most want to sell more of?", hint: "Your best sellers, or what makes you the most money.", rows: 2, placeholder: "" },
@@ -92,9 +114,12 @@ const DETAIL_FIELDS = [
   { name: "notes", label: "Anything else we should know?", hint: "What you have tried before, what did not work.", rows: 3, placeholder: "" },
 ] as const;
 
-export function DetailsForm({ audit }: { audit: Audit }) {
+type DetailField = (typeof DETAIL_FIELDS)[number];
+const LOGIN_FIELDS: readonly string[] = ["email", "password"];
+
+export function DetailsForm({ audit, hasPassword }: { audit: Audit; hasPassword: boolean }) {
   const router = useRouter();
-  const initial = Object.fromEntries(DETAIL_FIELDS.map((f) => [f.name, (audit[f.name] as string | null) ?? ""])) as Record<string, string>;
+  const initial = Object.fromEntries(DETAIL_FIELDS.map((f) => [f.name, f.name === "password" ? "" : ((audit[f.name] as string | null) ?? "")])) as Record<string, string>;
   const [values, setValues] = useState(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -124,40 +149,69 @@ export function DetailsForm({ audit }: { audit: Audit }) {
         return;
       }
       setSaved(true);
+      setValues((v) => ({ ...v, password: "" }));
       router.refresh();
     });
   }
 
+  const renderField = (f: DetailField, n?: number) => {
+    const id = `d-${f.name}`;
+    const error = errors[f.name];
+    const common = {
+      id,
+      name: f.name,
+      value: values[f.name],
+      placeholder: f.placeholder,
+      "aria-invalid": error ? true : undefined,
+      "aria-describedby": `${id}-hint${error ? ` ${id}-error` : ""}`,
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setValues((v) => ({ ...v, [f.name]: e.target.value })); setSaved(false); if (error) check(f.name, e.target.value); },
+      onBlur: () => check(f.name),
+    };
+    const isPassword = f.name === "password";
+    const required = "required" in f && f.required && !(isPassword && hasPassword);
+    const filled = !isPassword && values[f.name].trim() !== "";
+    return (
+      <div key={f.name} className={`my-field ${error ? "has-error" : ""} ${filled ? "is-filled" : ""}`}>
+        <label htmlFor={id}>
+          {n !== undefined && <b className="my-qn" aria-hidden="true">{filled ? <Check size={14} strokeWidth={3} /> : String(n).padStart(2, "0")}</b>}
+          <span>{isPassword && hasPassword ? "Change your password" : f.label}{required ? <i aria-hidden="true"> *</i> : <em> optional</em>}</span>
+        </label>
+        <p id={`${id}-hint`} className="my-hint">{isPassword && hasPassword ? "Leave this empty to keep your current password." : f.hint}</p>
+        {f.rows ? <textarea rows={f.rows} {...common} /> : <input type={"type" in f ? f.type : "text"} autoComplete={f.name === "email" ? "email" : isPassword ? "new-password" : "off"} {...common} />}
+        {error && <p id={`${id}-error`} className="my-error">{error}</p>}
+      </div>
+    );
+  };
+
+  const loginFields = DETAIL_FIELDS.filter((f) => LOGIN_FIELDS.includes(f.name));
+  const businessFields = DETAIL_FIELDS.filter((f) => !LOGIN_FIELDS.includes(f.name));
+  const answered = businessFields.filter((f) => values[f.name].trim() !== "").length;
+
   return (
     <form className="my-form" onSubmit={submit} noValidate>
-      {DETAIL_FIELDS.map((f) => {
-        const id = `d-${f.name}`;
-        const error = errors[f.name];
-        const common = {
-          id,
-          name: f.name,
-          value: values[f.name],
-          placeholder: f.placeholder,
-          "aria-invalid": error ? true : undefined,
-          "aria-describedby": `${id}-hint${error ? ` ${id}-error` : ""}`,
-          onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setValues((v) => ({ ...v, [f.name]: e.target.value })); setSaved(false); if (error) check(f.name, e.target.value); },
-          onBlur: () => check(f.name),
-        };
-        return (
-          <div key={f.name} className={`my-field ${error ? "has-error" : ""}`}>
-            <label htmlFor={id}>{f.label}{"required" in f && f.required ? <i aria-hidden="true"> *</i> : <em> optional</em>}</label>
-            <p id={`${id}-hint`} className="my-hint">{f.hint}</p>
-            {f.rows ? <textarea rows={f.rows} {...common} /> : <input type={"type" in f ? f.type : "text"} autoComplete={f.name === "email" ? "email" : "off"} {...common} />}
-            {error && <p id={`${id}-error`} className="my-error">{error}</p>}
-          </div>
-        );
-      })}
+      <fieldset className="my-fs my-fs-login">
+        <legend className="my-fs-head">
+          <span className="my-fs-ic"><KeyRound size={19} /></span>
+          <span><strong>Your login</strong><small>How you get back into this dashboard</small></span>
+        </legend>
+        <div className="my-fs-grid">{loginFields.map((f) => renderField(f))}</div>
+      </fieldset>
+
+      <fieldset className="my-fs my-fs-biz">
+        <legend className="my-fs-head">
+          <span className="my-fs-ic"><Store size={19} /></span>
+          <span><strong>About your business</strong><small>{answered} of {businessFields.length} answered</small></span>
+        </legend>
+        <div className="my-fs-bar" aria-hidden="true"><i style={{ "--p": answered / businessFields.length } as React.CSSProperties} /></div>
+        {businessFields.map((f, i) => renderField(f, i + 1))}
+      </fieldset>
+
       {formError && <p className="my-error my-error-box" role="alert">{formError}</p>}
       <div className="my-form-foot">
-        <button type="submit" className="my-btn my-btn-dark" disabled={pending}>
+        <button type="submit" className="my-btn my-btn-pink" disabled={pending}>
           {pending ? <Loader2 size={17} className="my-spin" /> : <Check size={17} />} {audit.details_submitted_at ? "Save changes" : "Send my details"}
         </button>
-        {saved && <span className="my-saved" role="status"><Check size={15} strokeWidth={3} /> Saved</span>}
+        {saved ? <span className="my-saved" role="status"><Check size={15} strokeWidth={3} /> Saved</span> : <span className="my-foot-note">You can change these any time before we start.</span>}
       </div>
     </form>
   );

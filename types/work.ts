@@ -1,4 +1,7 @@
+import type { ServiceCategory } from '@/lib/pricing'
+
 export type CaseType = 'client' | 'own' | 'trial'
+export type GalleryImage = { url: string; alt: string }
 export type CaseMetric = { value: string; label: string }
 
 export type CaseSummary = {
@@ -7,6 +10,7 @@ export type CaseSummary = {
   headline: string
   client_type: string
   case_type: CaseType
+  category: ServiceCategory
   result_value: string
   result_label: string
   result_period: string
@@ -21,6 +25,9 @@ export type CaseStudy = CaseSummary & {
   what_changed: string
   metrics: CaseMetric[]
   services: string[]
+  gallery: GalleryImage[]
+  before_image_url: string | null
+  after_image_url: string | null
   testimonial_quote: string
   testimonial_author: string
   status: 'draft' | 'published'

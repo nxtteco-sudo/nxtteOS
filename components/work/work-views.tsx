@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, MessageCircle, Quote, Sparkles } from "lucide-react";
 import { PageShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref } from "@/components/home/home-page";
 import { trackEvent } from "@/lib/analytics";
+import { CATEGORY_LABEL, SERVICE_CATEGORIES, type ServiceCategory } from "@/lib/pricing";
 import { CASE_TYPE_LABEL, type CaseStudy, type CaseSummary } from "@/types/work";
 
 // Spec (AGENTS.md section 4): 3 to 6 tiles (image, client type, one result
@@ -36,6 +38,7 @@ function CaseTile({ c, i }: { c: CaseSummary; i: number }) {
           </span>
         </span>
         <span className="wk-tile-text">
+          <span className="wk-tile-cat">{CATEGORY_LABEL[c.category]}</span>
           <span className="wk-tile-meta"><span className={`wk-badge wk-badge-${c.case_type}`}>{CASE_TYPE_LABEL[c.case_type]}</span>{c.client_type}</span>
           <strong>{c.headline}</strong>
           <span className="wk-read">Read the story <ArrowUpRight size={15} /></span>
@@ -65,6 +68,10 @@ function WorkCTA() {
 export function WorkIndexView({ cases }: { cases: CaseSummary[] }) {
   const [heroRef, heroMotion] = useMotion();
   const [listRef, listMotion] = useMotion();
+  const [filter, setFilter] = useState<ServiceCategory | "all">("all");
+  // Only offer categories that have at least one case, so no tab is ever empty.
+  const tabs = SERVICE_CATEGORIES.filter((cat) => cases.some((c) => c.category === cat.key));
+  const shown = filter === "all" ? cases : cases.filter((c) => c.category === filter);
   const [secRef, inView] = useInView<HTMLElement>();
   return (
     <PageShell>
@@ -98,7 +105,19 @@ export function WorkIndexView({ cases }: { cases: CaseSummary[] }) {
                 <Link className="ip-btn ip-btn-primary" href="/audit">Book the RM 199 audit <ArrowUpRight size={16} /></Link>
               </div>
             ) : (
-              <ul className="wk-grid">{cases.map((c, i) => <CaseTile key={c.id} c={c} i={i} />)}</ul>
+              <>
+                {tabs.length > 1 && (
+                  <div className="wk-filter art-step" style={delay(0)} role="group" aria-label="Filter work by service">
+                    <button type="button" aria-pressed={filter === "all"} className={filter === "all" ? "is-on" : ""} onClick={() => setFilter("all")}>All work<span>{cases.length}</span></button>
+                    {tabs.map((cat) => (
+                      <button key={cat.key} type="button" aria-pressed={filter === cat.key} className={filter === cat.key ? "is-on" : ""} onClick={() => setFilter(cat.key)}>
+                        {cat.label}<span>{cases.filter((c) => c.category === cat.key).length}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <ul className="wk-grid" key={filter}>{shown.map((c, i) => <CaseTile key={c.id} c={c} i={i} />)}</ul>
+              </>
             )}
           </div>
         </section>
@@ -130,7 +149,7 @@ export function CaseStudyView({ c, more, situation, whatWeDid, whatChanged }: {
               <Link href="/work" className="ip-back art-step" style={delay(0)}><ArrowLeft size={15} /> All work</Link>
               <div className="wk-case-grid">
                 <div>
-                  <span className="wk-tile-meta art-step" style={delay(40)}><span className={`wk-badge wk-badge-${c.case_type}`}>{CASE_TYPE_LABEL[c.case_type]}</span>{c.client_type}</span>
+                  <span className="wk-tile-meta art-step" style={delay(40)}><span className="wk-tile-cat">{CATEGORY_LABEL[c.category]}</span><span className={`wk-badge wk-badge-${c.case_type}`}>{CASE_TYPE_LABEL[c.case_type]}</span>{c.client_type}</span>
                   <h1 className="art-step" style={delay(80)}>{c.headline}</h1>
                   {c.client_name && <p className="wk-client art-step" style={delay(120)}>{c.client_name}</p>}
                 </div>
@@ -158,6 +177,32 @@ export function CaseStudyView({ c, more, situation, whatWeDid, whatChanged }: {
                   </li>
                 ))}
               </ol>
+
+              {c.before_image_url && c.after_image_url && (
+                <section className="wk-ba" aria-label="Before and after">
+                  <figure>
+                    <span className="wk-ba-tag">Before</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- CMS image of unknown size */}
+                    <img src={c.before_image_url} alt={`Before: ${c.headline}`} loading="lazy" decoding="async" />
+                  </figure>
+                  <figure>
+                    <span className="wk-ba-tag is-after">After</span>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- CMS image of unknown size */}
+                    <img src={c.after_image_url} alt={`After: ${c.headline}`} loading="lazy" decoding="async" />
+                  </figure>
+                </section>
+              )}
+
+              {c.gallery.length > 0 && (
+                <section className="wk-gallery" aria-label="More from this project">
+                  {c.gallery.map((g) => (
+                    <figure key={g.url}>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- CMS image of unknown size */}
+                      <img src={g.url} alt={g.alt} loading="lazy" decoding="async" />
+                    </figure>
+                  ))}
+                </section>
+              )}
 
               {c.metrics.length > 0 && (
                 <ul className="wk-metrics" aria-label="Results">

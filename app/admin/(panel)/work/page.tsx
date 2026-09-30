@@ -2,18 +2,19 @@ import Link from "next/link";
 import { ImageOff, PenLine, Plus } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/admin";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { CATEGORY_LABEL, type ServiceCategory } from "@/lib/pricing";
 import { CASE_TYPE_LABEL, type CaseType } from "@/types/work";
 
 // AGENTS.md: /work goes in the site nav only once three cases with a result are live.
 const NAV_THRESHOLD = 3;
 
-type Row = { id: string; slug: string; headline: string; client_type: string; case_type: CaseType; result_value: string; status: "draft" | "published"; cover_image_url: string | null; sort_order: number };
+type Row = { id: string; slug: string; headline: string; client_type: string; case_type: CaseType; category: ServiceCategory; result_value: string; status: "draft" | "published"; cover_image_url: string | null; sort_order: number };
 
 export default async function WorkAdminPage() {
   await requireAdmin();
   const { data, error } = await supabaseAdmin()
     .from("case_studies")
-    .select("id, slug, headline, client_type, case_type, result_value, status, cover_image_url, sort_order")
+    .select("id, slug, headline, client_type, case_type, category, result_value, status, cover_image_url, sort_order")
     .order("sort_order", { ascending: true })
     .order("updated_at", { ascending: false });
   const cases = (data ?? []) as Row[];
@@ -59,7 +60,7 @@ export default async function WorkAdminPage() {
                 </span>
                 <span className="adm-row-text">
                   <strong>{c.result_value ? `${c.result_value} · ` : ""}{c.headline}</strong>
-                  <small>{CASE_TYPE_LABEL[c.case_type]}{c.client_type ? ` · ${c.client_type}` : ""} · order {c.sort_order}</small>
+                  <small>{CATEGORY_LABEL[c.category] ?? "Uncategorised"} · {CASE_TYPE_LABEL[c.case_type]}{c.client_type ? ` · ${c.client_type}` : ""} · order {c.sort_order}</small>
                 </span>
                 <span className={`adm-pill ${c.status === "published" ? "is-live" : ""}`}>{c.status === "published" ? "Published" : "Draft"}</span>
                 <PenLine size={16} className="adm-row-go" aria-hidden="true" />

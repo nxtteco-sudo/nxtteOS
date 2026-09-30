@@ -1,4 +1,4 @@
--- nxtte: full database setup (migrations 0001 to 0006 in order).
+-- nxtte: full database setup (migrations 0001 to 0008 in order).
 -- GENERATED from supabase/migrations/ for one-time setup; the migration files
 -- are the source of truth. Paste into Supabase > SQL Editor and press Run.
 -- It runs as one transaction: if anything fails, nothing is changed.
@@ -312,5 +312,39 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values ('nxtte-private', 'nxtte-private', false, 10485760,
         array['application/pdf', 'image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do nothing;
+
+-- ===== 0007_case_study_services.sql =====
+-- Case studies can be filed under any nxtte service, and can show more than one
+-- image: a gallery, and a before / after pair for redesign work.
+alter table public.case_studies
+  add column if not exists category text not null default 'social'
+    check (category in ('social', 'content', 'growth', 'brand', 'start')),
+  -- [{ "url": "https://...", "alt": "Page 3, services spread" }], up to 8
+  add column if not exists gallery jsonb not null default '[]'::jsonb,
+  add column if not exists before_image_url text,
+  add column if not exists after_image_url text;
+
+create index if not exists case_studies_category_idx on public.case_studies (category);
+
+-- ===== 0008_customer_password.sql =====
+-- Customer login with email and password (in addition to the private link).
+-- Only a salted scrypt hash is stored. Failed attempts are counted so a login
+-- can be locked for a while after too many wrong passwords.
+alter table public.audit_requests
+  add column if not exists password_hash text,
+  add column if not exists login_failed_count integer not null default 0,
+  add column if not exists login_locked_until timestamptz;
+
+-- 0009_audit_review
+-- nxtte reviews a customer's details before payment opens. Approving unlocks
+-- the Payment step; declining closes the audit with a reason shown to the customer.
+alter table public.audit_requests
+  add column if not exists approved_at timestamptz,
+  add column if not exists declined_at timestamptz,
+  add column if not exists decline_reason text not null default '' check (char_length(decline_reason) <= 500);
+
+-- Audits that were already paid or claimed before this step existed stay usable.
+update public.audit_requests set approved_at = coalesce(paid_at, payment_claimed_at, now())
+where approved_at is null and payment_status in ('claimed', 'paid');
 
 commit;

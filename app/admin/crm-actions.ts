@@ -64,6 +64,30 @@ export async function saveAuditNotes(id: string, notes: string): Promise<Result>
   return { ok: true }
 }
 
+// Approving the customer's details opens the Payment step for them. Declining
+// closes the audit and shows the reason. Passing null undoes either.
+export async function reviewAudit(id: string, decision: 'approve' | 'decline' | null, reason = ''): Promise<Result> {
+  await requireAdmin()
+  const audit = await loadAudit(id)
+  if (!audit) return FAILED
+  const text = reason.trim().slice(0, 500)
+  if (decision === 'decline' && !text) return { ok: false, error: 'Write a short reason the customer will see.' }
+  const now = new Date().toISOString()
+  const patch =
+    decision === 'approve' ? { approved_at: now, declined_at: null, decline_reason: '' }
+    : decision === 'decline' ? { approved_at: null, declined_at: now, decline_reason: text }
+    : { approved_at: null, declined_at: null, decline_reason: '' }
+  const { error } = await supabaseAdmin().from('audit_requests').update(patch).eq('id', id)
+  if (error) return FAILED
+  if (decision === 'approve') {
+    await notifyCustomer(audit, 'Your audit is approved: payment is open', 'You are approved. Payment is open.', [`We have reviewed your details for ${esc(audit.business)} and we are a good fit.`, `Pay RM ${audit.amount} in your dashboard and we start your audit.`], 'Pay for my audit')
+  } else if (decision === 'decline') {
+    await notifyCustomer(audit, 'About your nxtte audit request', 'We cannot take this audit on', [esc(text), 'You have not been charged. Reply to this email or message us on WhatsApp if you have questions.'])
+  }
+  refresh(id)
+  return { ok: true }
+}
+
 export async function setPaid(id: string, paid: boolean): Promise<Result> {
   await requireAdmin()
   const audit = await loadAudit(id)

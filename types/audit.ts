@@ -16,6 +16,9 @@ export type Audit = {
   other_platforms: string
   notes: string
   details_submitted_at: string | null
+  approved_at: string | null
+  declined_at: string | null
+  decline_reason: string
   payment_status: PaymentStatus
   payment_claimed_at: string | null
   payment_proof_path: string | null
@@ -52,24 +55,33 @@ export const DELIVERY_WORKING_DAYS = 5
 export const CREDIT_DAYS = 14
 
 export type StepState = 'done' | 'current' | 'waiting' | 'todo'
-export type AuditStep = { key: 'booked' | 'details' | 'payment' | 'audit' | 'report'; label: string; state: StepState; hint: string }
+export type AuditStep = { key: 'booked' | 'details' | 'review' | 'payment' | 'audit' | 'report'; label: string; state: StepState; hint: string }
 
+// Booked -> details -> nxtte's review -> payment -> audit -> report.
+// Payment only opens once nxtte has approved the details.
 export function auditSteps(a: Audit): AuditStep[] {
   const details = Boolean(a.details_submitted_at)
+  const approved = Boolean(a.approved_at)
+  const declined = Boolean(a.declined_at)
   const paid = a.payment_status === 'paid'
   const ready = Boolean(a.report_ready_at)
   return [
     { key: 'booked', label: 'Booked', state: 'done', hint: 'We have your request' },
     { key: 'details', label: 'Your details', state: details ? 'done' : 'current', hint: details ? 'Received' : 'Tell us about your business' },
     {
+      key: 'review', label: 'Our review',
+      state: approved ? 'done' : details ? 'waiting' : 'todo',
+      hint: approved ? 'Approved' : declined ? 'Not going ahead' : details ? 'We are checking the fit' : 'We check the fit first',
+    },
+    {
       key: 'payment', label: 'Payment',
-      state: paid ? 'done' : a.payment_status === 'claimed' ? 'waiting' : details ? 'current' : 'todo',
-      hint: paid ? 'Paid' : a.payment_status === 'claimed' ? 'We are confirming it' : `RM ${a.amount}`,
+      state: paid ? 'done' : a.payment_status === 'claimed' ? 'waiting' : approved ? 'current' : 'todo',
+      hint: paid ? 'Paid' : a.payment_status === 'claimed' ? 'We are confirming it' : approved ? `RM ${a.amount}` : 'Opens after our review',
     },
     {
       key: 'audit', label: 'Audit',
       state: ready ? 'done' : a.work_started_at ? 'current' : 'todo',
-      hint: ready ? 'Complete' : a.work_started_at ? 'In progress' : 'Starts once we have both',
+      hint: ready ? 'Complete' : a.work_started_at ? 'In progress' : 'Starts once you have paid',
     },
     { key: 'report', label: 'Report', state: ready ? 'done' : 'todo', hint: ready ? 'Ready to download' : 'With your 90-day roadmap' },
   ]
