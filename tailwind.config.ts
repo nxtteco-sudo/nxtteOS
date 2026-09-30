@@ -22,7 +22,7 @@ const config: Config = {
         'ink-section': '#0A0A0A', // full-bleed dark sections: Packages, Final CTA
       },
       fontFamily: {
-        sans: ['var(--font-primary)', 'Inter', '-apple-system', 'Segoe UI', 'sans-serif'],
+        sans: ['var(--font-body)', 'DM Sans', '-apple-system', 'Segoe UI', 'sans-serif'],
       },
       borderRadius: {
         button: '12px',

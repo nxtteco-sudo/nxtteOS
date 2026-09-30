@@ -47,14 +47,14 @@ Full spec: [`AGENTS.md`](./AGENTS.md). Original source PDF: `nxtte_website_spec.
 10. **Don't fabricate placeholder content** for the items listed in "Content gaps" below
     (SSM number, founder photos, real prices, real metrics, case studies). Use visible
     `TODO:` markers instead of inventing numbers or photos.
-11. **`/work` only goes into the nav once 3 real case studies with a result exist.**
+11. **Client decision (1 Oct 2026): Work and Insights stay in the nav** even before there is content. (Original
+    spec rule, kept for reference:) **`/work` only goes into the nav once 3 real case studies with a result exist.**
     `/insights` only goes into the nav once 6 posts exist. Both pages can be built, just
     kept unlinked until then (see Sitemap, AGENTS.md §2).
 12. ⚠️ **Known spec inconsistency to resolve before implementing the secondary button:**
     AGENTS.md §6 flags a contradiction between the component table (white text) and the
-    colour-system prose (ink text) for the secondary button. Default to **ink-bordered
-    outline, ink text, transparent fill** per the prose rule, but confirm with the client
-    before finalizing.
+    colour-system prose (ink text) for the secondary button. **Resolved (client, 1 Oct 2026):**
+    keep the built version: ink text, transparent fill, hairline outline, fills ink on hover.
 
 ## Tech stack & conventions
 
@@ -67,7 +67,7 @@ Full spec: [`AGENTS.md`](./AGENTS.md). Original source PDF: `nxtte_website_spec.
 | Forms | Server Action → Zod validation → Supabase insert → email alert. No third-party form service. |
 | Hosting | Vercel |
 | Images | `next/image`, WebP, compressed (source imagery is Instagram-sourced and heavy) |
-| Fonts | Self-hosted `.woff2` (Satoshi primary, General Sans alt, system fallback: `Inter, -apple-system, Segoe UI, sans-serif`) — no third-party font CDN |
+| Fonts | Space Grotesk (display) + DM Sans (body) via `next/font`, self-hosted at build, no runtime font CDN. Client decision (1 Oct 2026): keep these, no switch to Satoshi |
 | Analytics | Vercel Analytics + Meta Pixel only. No other third-party scripts. |
 
 ### Architecture defaults
@@ -153,8 +153,8 @@ The marketing spec has no accounts. The client asked for two dashboards on top o
   5 wrong attempts locks for 15 minutes), with the emailed link as the forgot-password path.
 - **Legal pages:** `/terms`, `/refunds`, `/privacy` (`components/legal`). Client decisions (1 Oct 2026): audit
   refundable until the report is delivered; monthly fees due 1st to 7th, work pauses after the 7th; client owns
-  content once paid, portfolio use unless they object. Refunds for started months/menu work and the 14-day refund
-  window are defaults to confirm. Not yet reviewed by a lawyer; no BM version yet.
+  content once paid, portfolio use unless they object. No refund for a month already started; menu
+  services refundable only before work starts; refunds paid within 14 days (confirmed by the client). Not yet reviewed by a lawyer; no BM version yet.
 - **Spam protection** (`lib/spam-guard.ts`): hidden trap field + 2.5s minimum fill time on the audit and
   contact forms (bots get a fake success), and per-IP limits (SHA-256 hash, kept 24h, `form_attempts`) on
   those forms, customer sign-in and "email me my link". Fails open if the table is missing. The contact

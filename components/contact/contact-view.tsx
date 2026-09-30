@@ -73,16 +73,16 @@ export function ContactView() {
             {/* The whole pink half is one WhatsApp link: the largest object on the page. */}
             <a className="ct-wa-panel" href={waHref} target="_blank" rel="noreferrer" onClick={() => trackEvent("whatsapp_click", { source: "contact_hero" })}>
               <span className="ct-glow" aria-hidden="true"><i /><i /><i /></span>
-              <span className="ct-wa-inner">
+              <div className="ct-wa-inner">
                 <span className="art-step" style={delay(0)}><Eyebrow light>Contact</Eyebrow></span>
-                <span className="ct-wa-title art-step" style={delay(80)} role="heading" aria-level={1}>Let&rsquo;s talk <em>on WhatsApp.</em></span>
+                <h1 className="ct-wa-title art-step" style={delay(80)}>Let&rsquo;s talk <em>on WhatsApp.</em></h1>
                 <span className="ct-wa-sub art-step" style={delay(160)}>The fastest way to reach us. Tell us what your business does and what you need, and a real person replies.</span>
                 <span className="ct-promise art-step" style={delay(220)}><Clock3 size={17} /> We reply within 24 hours.</span>
                 <span className="ct-wa-btn art-step" style={delay(300)}>
                   <span><strong>Chat on WhatsApp</strong><small>Opens WhatsApp with a message ready to send</small></span>
                   <i aria-hidden="true"><MessageCircle size={32} /></i>
                 </span>
-              </span>
+              </div>
             </a>
 
             <div className="ct-ways">

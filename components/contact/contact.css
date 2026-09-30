@@ -89,7 +89,7 @@ a.ct-reach-card:focus-visible { outline: 3px solid var(--pink); outline-offset: 
 .ct-wa-panel:focus-visible { outline: 4px solid var(--ink); outline-offset: -8px; }
 .ct-wa-inner { display: flex; flex-direction: column; align-items: flex-start; max-width: 720px; }
 .ct-wa-panel .eyebrow { color: #fff; } .ct-wa-panel .eyebrow-dot { background: #fff; box-shadow: 0 0 0 5px rgba(255,255,255,.2); }
-.ct-wa-title { display: block; margin-top: 16px; color: #fff; font: 700 clamp(54px, 7.2vw, 116px)/.92 var(--display); letter-spacing: -.06em; }
+.ct-wa-title { display: block; margin: 16px 0 0; color: #fff; font: 700 clamp(54px, 7.2vw, 116px)/.92 var(--display); letter-spacing: -.06em; }
 .ct-wa-title em { display: block; color: var(--ink); font-style: normal; }
 .ct-wa-sub { display: block; max-width: 480px; margin-top: 22px; color: #fff; font-size: 18px; line-height: 1.55; }
 .ct-wa-btn { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; max-width: 640px; margin-top: 32px; padding: 22px 22px 22px 30px; border-radius: 30px; background: #fff; color: var(--ink); box-shadow: 0 30px 60px -24px rgba(60,5,30,.6); transition: translate .35s var(--ease-out), box-shadow .35s ease; }

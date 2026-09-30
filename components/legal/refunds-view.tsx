@@ -1,8 +1,7 @@
 import { LegalDoc, type LegalSection } from "@/components/legal/legal-doc";
 import { AUDIT_PRICE } from "@/lib/pricing";
 
-// Refund policy. The audit rule was confirmed by the client on 1 Oct 2026;
-// the package, menu and timing rules are defaults awaiting client confirmation.
+// Refund policy. All rules confirmed by the client on 1 Oct 2026.
 const SECTIONS: LegalSection[] = [
   {
     title: "The RM 199 audit",
