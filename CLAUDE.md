@@ -151,7 +151,15 @@ The marketing spec has no accounts. The client asked for two dashboards on top o
   optional before/after pair. `/work` filters by category.
 - **Customer sign-in:** email + password (scrypt hash on `audit_requests`, set on the details step,
   5 wrong attempts locks for 15 minutes), with the emailed link as the forgot-password path.
-- Migrations `0001` to `0009` must be run in order. `/privacy` describes all of this; update
+- **Legal pages:** `/terms`, `/refunds`, `/privacy` (`components/legal`). Client decisions (1 Oct 2026): audit
+  refundable until the report is delivered; monthly fees due 1st to 7th, work pauses after the 7th; client owns
+  content once paid, portfolio use unless they object. Refunds for started months/menu work and the 14-day refund
+  window are defaults to confirm. Not yet reviewed by a lawyer; no BM version yet.
+- **Spam protection** (`lib/spam-guard.ts`): hidden trap field + 2.5s minimum fill time on the audit and
+  contact forms (bots get a fake success), and per-IP limits (SHA-256 hash, kept 24h, `form_attempts`) on
+  those forms, customer sign-in and "email me my link". Fails open if the table is missing. The contact
+  form saves through the service role; the public key has no insert policy. Security headers: `next.config.ts`.
+- Migrations `0001` to `0010` must be run in order. `/privacy` describes all of this; update
   it whenever a form, tool or provider changes.
 
 ## Repo structure to build toward

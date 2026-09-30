@@ -20,15 +20,18 @@ type Props = {
   submitLabel: string;
   fine: string;
   redirectTo?: string;
+  legal?: React.ReactNode;
 };
 
-export function LeadForm({ formKey, fields, choice, action, event, submitLabel, fine, redirectTo = "/thanks" }: Props) {
+export function LeadForm({ formKey, fields, choice, action, event, submitLabel, fine, redirectTo = "/thanks", legal }: Props) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const names = [...fields.map((f) => f.name), ...(choice ? [choice.name] : [])];
   const [values, setValues] = useState<Record<string, string>>(() => Object.fromEntries(names.map((n) => [n, ""])));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  // Spam trap: when the form appeared, sent with the hidden field below.
+  const [startedAt] = useState(() => Date.now());
 
   const setValue = (name: string, value: string) => setValues((v) => ({ ...v, [name]: value }));
   const check = (name: string, value = values[name] ?? "") => {
@@ -56,6 +59,8 @@ export function LeadForm({ formKey, fields, choice, action, event, submitLabel, 
     }
     const data = new FormData();
     Object.entries(values).forEach(([k, v]) => data.set(k, v));
+    data.set("started", String(startedAt));
+    data.set("website", (e.currentTarget.elements.namedItem("website") as HTMLInputElement | null)?.value ?? "");
     start(async () => {
       const res = await action(data);
       if (res.success) {
@@ -71,6 +76,7 @@ export function LeadForm({ formKey, fields, choice, action, event, submitLabel, 
   const choiceError = choice ? errors[choice.name] : undefined;
   return (
     <form className="lf-form" onSubmit={submit} noValidate>
+      <div className="lf-trap" aria-hidden="true"><label>Leave this empty<input type="text" name="website" tabIndex={-1} autoComplete="off" defaultValue="" /></label></div>
       <div className="lf-fields">
         {fields.map((f) => {
           const error = errors[f.name];
@@ -115,6 +121,7 @@ export function LeadForm({ formKey, fields, choice, action, event, submitLabel, 
         {pending ? <Loader2 size={18} className="adm-spin" /> : <SendHorizontal size={18} />} {pending ? "Sending" : submitLabel}
       </button>
       <p className="lf-fine"><Clock3 size={14} /> {fine}</p>
+      {legal && <p className="lf-legal">{legal}</p>}
     </form>
   );
 }

@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { isAdminConfigured } from '@/lib/auth/admin'
 import { MIN_PASSWORD, MY_COOKIE, PRIVATE_BUCKET, hasPassword, hashPassword, issueToken, privateLink, requireMyAudit, setMyCookie, verifyPassword } from '@/lib/customer'
 import { alertAdmin, esc, sendEmail } from '@/lib/email'
+import { TOO_MANY, overLimit } from '@/lib/spam-guard'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { auditDetailsSchema } from '@/lib/validation/forms'
 
@@ -25,6 +26,7 @@ export async function signInCustomer(_prev: { error: string } | null, formData: 
   const password = String(formData.get('password') ?? '')
   if (!email || !password) return { error: 'Enter your email and password.' }
   if (!isAdminConfigured()) return { error: 'The dashboard is not connected yet. Message us on WhatsApp instead.' }
+  if (await overLimit('signin')) return { error: TOO_MANY }
 
   const db = supabaseAdmin()
   const { data } = await db
@@ -65,6 +67,7 @@ export async function requestLink(_prev: { sent: boolean; error?: string } | nul
   const email = String(formData.get('email') ?? '').trim().toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return { sent: false, error: 'Enter a valid email address.' }
   if (!isAdminConfigured()) return { sent: false, error: 'The dashboard is not connected yet. Message us on WhatsApp instead.' }
+  if (await overLimit('link')) return { sent: false, error: TOO_MANY }
 
   const { data } = await supabaseAdmin()
     .from('audit_requests')

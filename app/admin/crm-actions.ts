@@ -53,6 +53,19 @@ export async function updateLead(input: z.input<typeof leadSchema>): Promise<Res
   return { ok: true }
 }
 
+// Permanently deletes a lead (for spam and test entries).
+export async function deleteLead(id: string): Promise<Result> {
+  await requireAdmin()
+  if (!UUID_RE.test(id)) return FAILED
+  const { error } = await supabaseAdmin().from('contact_submissions').delete().eq('id', id)
+  if (error) {
+    console.error('[admin] deleteLead failed', error.message)
+    return { ok: false, error: 'Could not delete. Try again.' }
+  }
+  refresh()
+  return { ok: true }
+}
+
 // ---- Audits ------------------------------------------------------------------
 
 export async function saveAuditNotes(id: string, notes: string): Promise<Result> {
@@ -61,6 +74,28 @@ export async function saveAuditNotes(id: string, notes: string): Promise<Result>
   const { error } = await supabaseAdmin().from('audit_requests').update({ admin_notes: notes }).eq('id', id)
   if (error) return FAILED
   refresh(id)
+  return { ok: true }
+}
+
+// Permanently deletes an audit with its sign-in links, messages (both cascade),
+// receipt and report. The customer's dashboard stops working at once.
+export async function deleteAudit(id: string): Promise<Result> {
+  await requireAdmin()
+  if (!UUID_RE.test(id)) return FAILED
+  const db = supabaseAdmin()
+  const { data } = await db.from('audit_requests').select('payment_proof_path, report_path').eq('id', id).maybeSingle()
+  if (!data) return { ok: false, error: 'That audit no longer exists.' }
+  const files = [data.payment_proof_path, data.report_path].filter((f): f is string => Boolean(f))
+  if (files.length) {
+    const { error: fileError } = await db.storage.from(PRIVATE_BUCKET).remove(files)
+    if (fileError) console.error('[admin] deleteAudit could not remove files', fileError.message)
+  }
+  const { error } = await db.from('audit_requests').delete().eq('id', id)
+  if (error) {
+    console.error('[admin] deleteAudit failed', error.message)
+    return { ok: false, error: 'Could not delete. Try again.' }
+  }
+  refresh()
   return { ok: true }
 }
 

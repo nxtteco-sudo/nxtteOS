@@ -1,6 +1,8 @@
 'use server'
 
-import { createSupabaseClient } from '@/lib/supabase/server'
+import { isAdminConfigured } from '@/lib/auth/admin'
+import { TOO_MANY, looksAutomated, overLimit } from '@/lib/spam-guard'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { alertAdmin, esc } from '@/lib/email'
 import { contactSchema, type ActionResult } from '@/lib/validation/forms'
 
@@ -15,13 +17,16 @@ export async function submitContactForm(formData: FormData): Promise<ActionResul
     return { success: false, error: 'Check the highlighted fields.', fieldErrors }
   }
 
-  const supabase = createSupabaseClient()
-  if (!supabase) {
+  if (!isAdminConfigured()) {
     console.error('[contact] Supabase env vars are not configured')
     return { success: false, error: 'Something went wrong. Message us on WhatsApp instead.' }
   }
+  // Bots get a normal-looking success and nothing is saved.
+  if (looksAutomated(formData)) return { success: true }
+  if (await overLimit('contact')) return { success: false, error: TOO_MANY }
 
-  const { error } = await supabase.from('contact_submissions').insert(parsed.data)
+  // Saved with the server key: the public key cannot write to this table (migration 0010).
+  const { error } = await supabaseAdmin().from('contact_submissions').insert(parsed.data)
   if (error) {
     console.error('[contact] insert failed', error.message)
     return { success: false, error: 'Something went wrong. Message us on WhatsApp instead.' }

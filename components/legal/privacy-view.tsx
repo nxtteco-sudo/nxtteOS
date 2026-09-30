@@ -1,11 +1,8 @@
-"use client";
-
-import { PageShell, Eyebrow } from "@/components/home/home-page";
-import { CONTACT } from "@/lib/site";
+import { LegalDoc, type LegalSection } from "@/components/legal/legal-doc";
 
 // Privacy notice (Personal Data Protection Act 2010). Describes what the site
 // actually does; update it whenever a form, tool or provider changes.
-const SECTIONS: { title: string; body: React.ReactNode }[] = [
+const SECTIONS: LegalSection[] = [
   {
     title: "Who we are",
     body: <p>nxtte is a brand of Aurexis Solution (SSM NS0315281-P), based in Kuala Lumpur, Malaysia. Aurexis Solution is responsible for the personal details described here.</p>,
@@ -15,9 +12,11 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
     body: (
       <ul>
         <li><strong>Contact and audit forms:</strong> your name, business name, Instagram handle, WhatsApp number and what you need help with.</li>
-        <li><strong>Your audit dashboard:</strong> your email address, the answers you give about your business, messages you send us, and a payment receipt if you upload one.</li>
+        <li><strong>Your audit dashboard:</strong> your email address, a password you choose, the answers you give about your business, messages you send us, and a payment receipt if you upload one. Your password is stored scrambled, so we cannot see it.</li>
+        <li><strong>Our notes:</strong> whether we approved your audit, the reason if we could not take it on, and when you paid.</li>
         <li><strong>WhatsApp:</strong> if you message us, WhatsApp shows us your number and what you write.</li>
         <li><strong>Visits:</strong> anonymous page statistics (which pages are viewed). These do not identify you.</li>
+        <li><strong>Spam protection:</strong> when you send a form or sign in, we keep a scrambled form of your IP address for up to 24 hours, only to stop automated spam and repeated sign-in attempts. We do not use it to identify you.</li>
       </ul>
     ),
   },
@@ -26,7 +25,7 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
     body: (
       <ul>
         <li>To reply to you and answer your enquiry.</li>
-        <li>To carry out your audit and deliver your report.</li>
+        <li>To check the audit is a good fit, carry it out and deliver your report.</li>
         <li>To confirm your payment and keep a record of it.</li>
         <li>To send you updates about work you have booked with us.</li>
       </ul>
@@ -55,26 +54,5 @@ const SECTIONS: { title: string; body: React.ReactNode }[] = [
 ];
 
 export function PrivacyView() {
-  return (
-    <PageShell>
-      <main className="lg">
-        <div className="site-shell lg-shell">
-          <Eyebrow>Privacy</Eyebrow>
-          <h1>Privacy notice</h1>
-          <p className="lg-lead">What we collect when you use this site, why, and what you can ask us to do with it.</p>
-          <p className="lg-date">Last updated 30 September 2026</p>
-          {SECTIONS.map((s) => (
-            <section key={s.title}>
-              <h2>{s.title}</h2>
-              {s.body}
-            </section>
-          ))}
-          <section>
-            <h2>Contact us about your details</h2>
-            <p>Email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> or message us on WhatsApp. We reply within 24 hours.</p>
-          </section>
-        </div>
-      </main>
-    </PageShell>
-  );
+  return <LegalDoc eyebrow="Privacy" title="Privacy notice" lead="What we collect when you use this site, why, and what you can ask us to do with it." updated="1 October 2026" current="/privacy" sections={SECTIONS} />;
 }

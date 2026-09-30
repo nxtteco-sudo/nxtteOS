@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowDown, BarChart3, CalendarRange, Check, Clock3, Crosshair, Search, Ticket, UserRound, X } from "lucide-react";
 import { StrippedShell, Eyebrow, delay, useRevealOnce, useInView } from "@/components/home/home-page";
 import { LeadForm, type LeadField } from "@/components/forms/lead-form";
@@ -186,7 +187,7 @@ export function AuditView() {
               <p>We message you on WhatsApp within 24 hours to confirm and to ask for access to what we need.</p>
             </div>
             <div className="au-form-card">
-              <LeadForm formKey="audit" fields={FIELDS} action={submitAuditRequest} event="audit_submit" submitLabel="Book the RM 199 audit" fine="We will WhatsApp you within 24 hours." />
+              <LeadForm formKey="audit" fields={FIELDS} action={submitAuditRequest} event="audit_submit" submitLabel="Book the RM 199 audit" fine="We will WhatsApp you within 24 hours." legal={<>By booking you agree to our <Link href="/terms">Terms</Link> and <Link href="/refunds">Refund policy</Link>. You pay nothing until we approve your audit.</>} />
             </div>
           </div>
         </section>

@@ -14,3 +14,8 @@
 .lg a { color: #a83963; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .lg a:hover { color: var(--ink); }
 @media (max-width: 900px) { .lg { padding: 118px 0 64px; } }
+.lg-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
+.lg .lg-tabs a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #fff; color: var(--ink); font-size: 14.5px; font-weight: 700; text-decoration: none; box-shadow: inset 0 0 0 1px rgba(201,80,123,.22); }
+.lg .lg-tabs a:hover { background: var(--pink-tint); color: var(--ink); }
+.lg .lg-tabs a[aria-current="page"] { background: var(--ink); color: #fff; box-shadow: none; }
+.lg .lg-tabs a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

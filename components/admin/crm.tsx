@@ -4,8 +4,8 @@
 // thread and the payment settings form.
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, ExternalLink, FileUp, Loader2, MessageCircle, SendHorizontal, Undo2, X } from "lucide-react";
-import { createCustomerLink, markCustomerMessagesRead, reviewAudit, saveAuditNotes, savePaymentSettings, sendAdminMessage, setPaid, setWorkStarted, updateLead, uploadReport } from "@/app/admin/crm-actions";
+import { Check, Copy, ExternalLink, FileUp, Loader2, MessageCircle, SendHorizontal, Trash2, Undo2, X } from "lucide-react";
+import { createCustomerLink, deleteAudit, deleteLead, markCustomerMessagesRead, reviewAudit, saveAuditNotes, savePaymentSettings, sendAdminMessage, setPaid, setWorkStarted, updateLead, uploadReport } from "@/app/admin/crm-actions";
 import { buildWhatsAppLinkTo } from "@/lib/whatsapp";
 import { formatDate, type AdminAudit, type AuditMessage, type PaymentSettings } from "@/types/audit";
 
@@ -29,6 +29,30 @@ function useSaver() {
 function Note({ note }: { note: { ok: boolean; text: string } | null }) {
   if (!note) return null;
   return <span className={note.ok ? "crm-ok" : "adm-error"} role={note.ok ? "status" : "alert"}>{note.ok && <Check size={14} strokeWidth={3} />} {note.text}</span>;
+}
+
+// Two-step delete: the first click asks, the second deletes. Used for spam and test entries.
+function DeleteButton({ label, warning, onDelete, after }: { label: string; warning: string; onDelete: () => Promise<{ ok: boolean; error?: string }>; after?: string }) {
+  const router = useRouter();
+  const [asking, setAsking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+  if (!asking) return <button type="button" className="adm-btn adm-btn-ghost crm-del" onClick={() => setAsking(true)}><Trash2 size={15} /> {label}</button>;
+  return (
+    <div className="crm-del-confirm" role="group" aria-label={label}>
+      <p>{warning} This cannot be undone.</p>
+      <div className="crm-row">
+        <button type="button" className="adm-btn crm-del-yes" disabled={pending} onClick={() => start(async () => {
+          const res = await onDelete();
+          if (!res.ok) return setError(res.error ?? "Could not delete.");
+          if (after) router.push(after);
+          router.refresh();
+        })}>{pending ? <Loader2 size={15} className="adm-spin" /> : <Trash2 size={15} />} Yes, delete</button>
+        <button type="button" className="adm-btn adm-btn-ghost" disabled={pending} onClick={() => { setAsking(false); setError(null); }}>Keep it</button>
+        {error && <span className="adm-error" role="alert">{error}</span>}
+      </div>
+    </div>
+  );
 }
 
 export function LeadCard({ lead }: { lead: Lead }) {
@@ -62,6 +86,7 @@ export function LeadCard({ lead }: { lead: Lead }) {
           <button type="button" className="adm-btn" disabled={pending || !dirty} onClick={() => run(() => updateLead({ id: lead.id, status, notes }))}>{pending && <Loader2 size={15} className="adm-spin" />} Save</button>
           <Note note={note} />
         </div>
+        <DeleteButton label="Delete lead" warning={`This permanently deletes the enquiry from ${lead.business}.`} onDelete={() => deleteLead(lead.id)} />
       </div>
     </li>
   );
@@ -164,6 +189,12 @@ export function AuditControls({ audit, proofUrl, reportUrl }: { audit: AdminAudi
         <div className="crm-row">
           <button type="button" className="adm-btn" disabled={pending || notes === audit.admin_notes} onClick={() => run(() => saveAuditNotes(audit.id, notes))}>Save notes</button>
         </div>
+      </section>
+
+      <section className="adm-card crm-danger">
+        <h2 className="crm-h">Delete this audit</h2>
+        <p className="adm-muted">For test bookings and spam. Real audits, especially paid ones, should be kept as a record.</p>
+        <DeleteButton label="Delete audit" warning={`This permanently deletes the audit for ${audit.business}, with its messages, receipt and report, and their dashboard stops working.${audit.payment_status === "paid" ? " It is marked as paid." : ""}`} onDelete={() => deleteAudit(audit.id)} after="/admin/audits" />
       </section>
       <Note note={note} />
     </div>

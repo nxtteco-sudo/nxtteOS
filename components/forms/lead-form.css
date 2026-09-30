@@ -26,3 +26,8 @@
 .lf-submit:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
 .lf-fine { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 0; color: #55555b; font-size: 13.5px; }
 @media (max-width: 560px) { .lf-fields { grid-template-columns: 1fr; } }
+.lf-legal { margin: -2px 0 0; color: #55555b; font-size: 13px; line-height: 1.5; text-align: center; }
+.lf-legal a { color: #a83963; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.lf-legal a:hover { color: var(--ink); }
+/* Spam trap: off-screen for people, filled in only by bots */
+.lf-trap { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }

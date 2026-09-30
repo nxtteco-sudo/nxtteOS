@@ -262,7 +262,7 @@ function Footer() {
           </div>
           <div className="ft-bottom">
             <span>© 2026 nxtte, a sub-brand of Aurexis Solution</span>
-            <span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link> &middot; <Link className="ft-legal" href="/my">Customer login</Link></span>
+            <span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/terms">Terms</Link> &middot; <Link className="ft-legal" href="/refunds">Refunds</Link> &middot; <Link className="ft-legal" href="/privacy">Privacy</Link> &middot; <Link className="ft-legal" href="/my">Customer login</Link></span>
             <a className="ft-top-btn" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Back to top <ArrowUp size={14} /></a>
           </div>
         </div>
@@ -281,7 +281,7 @@ function StrippedShell({ children }: { children: React.ReactNode }) {
     <div className="page page-stripped">
       <Nav stripped />
       {children}
-      <footer className="stripped-foot"><div className="site-shell"><span>&copy; {new Date().getFullYear()} nxtte, a sub-brand of Aurexis Solution</span><span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link></span></div></footer>
+      <footer className="stripped-foot"><div className="site-shell"><span>&copy; {new Date().getFullYear()} nxtte, a sub-brand of Aurexis Solution</span><span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/terms">Terms</Link> &middot; <Link className="ft-legal" href="/refunds">Refunds</Link> &middot; <Link className="ft-legal" href="/privacy">Privacy</Link></span></div></footer>
     </div>
   );
 }

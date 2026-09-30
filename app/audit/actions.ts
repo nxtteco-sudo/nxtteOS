@@ -3,6 +3,7 @@
 import { isAdminConfigured } from '@/lib/auth/admin'
 import { issueToken, newReference, setMyCookie } from '@/lib/customer'
 import { alertAdmin, esc } from '@/lib/email'
+import { TOO_MANY, looksAutomated, overLimit } from '@/lib/spam-guard'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { auditSchema, type ActionResult } from '@/lib/validation/forms'
 
@@ -25,6 +26,9 @@ export async function submitAuditRequest(formData: FormData): Promise<ActionResu
     console.error('[audit] Supabase env vars are not configured')
     return { success: false, error: FAILED }
   }
+  // Bots get a normal-looking success and nothing is saved.
+  if (looksAutomated(formData)) return { success: true, redirectTo: '/thanks' }
+  if (await overLimit('audit')) return { success: false, error: TOO_MANY }
 
   const { data, error } = await supabaseAdmin()
     .from('audit_requests')
