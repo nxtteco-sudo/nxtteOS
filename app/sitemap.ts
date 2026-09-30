@@ -8,7 +8,7 @@ export const revalidate = 3600
 // Live, indexable pages plus every published insight. /thanks is noindex and
 // /admin is private.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ['/', '/services', '/about', '/work', '/insights', '/audit', '/contact']
+  const routes = ['/', '/services', '/about', '/work', '/insights', '/audit', '/contact', '/privacy']
   const [posts, cases] = await Promise.all([getPublishedInsights(), getPublishedCases()])
   return [
     ...routes.map((route) => ({ url: `${SITE_URL}${route}`, lastModified: new Date() })),

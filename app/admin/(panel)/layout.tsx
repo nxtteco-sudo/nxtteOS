@@ -12,7 +12,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   return (
     <div className="adm-shell">
       <aside className="adm-side">
-        <Link href="/admin/insights" className="adm-brand"><span className="adm-logo" aria-hidden="true"><BrandMark size={18} /></span> nxtte admin</Link>
+        <Link href="/admin" className="adm-brand"><span className="adm-logo" aria-hidden="true"><BrandMark size={18} /></span> nxtte admin</Link>
         <AdminNav />
         <div className="adm-me">
           <span title={admin.email}>{admin.email}</span>

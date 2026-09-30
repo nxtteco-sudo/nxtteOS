@@ -1,0 +1,16 @@
+/* ---- Legal pages (privacy notice) ---- */
+.lg { padding: 140px 0 88px; background: linear-gradient(180deg, var(--pink-tint), #fff9fb 320px); }
+.lg-shell { max-width: 760px; }
+.lg .eyebrow { color: #a83963; } .lg .eyebrow-dot { background: #a83963; }
+.lg h1 { margin: 14px 0 0; color: var(--ink); font: 700 clamp(38px, 5vw, 60px)/1 var(--display); letter-spacing: -.05em; }
+.lg-lead { margin: 16px 0 0; color: #3d2530; font-size: 18px; line-height: 1.55; }
+.lg-date { margin: 10px 0 0; color: var(--muted); font-size: 13.5px; }
+.lg section { margin-top: 34px; padding-top: 26px; border-top: 1px solid rgba(201,80,123,.2); }
+.lg h2 { margin: 0 0 10px; color: var(--ink); font: 700 22px var(--display); letter-spacing: -.025em; }
+.lg p, .lg li { color: #2a1d24; font-size: 16.5px; line-height: 1.65; }
+.lg p { margin: 0; }
+.lg ul { display: grid; gap: 8px; margin: 0; padding-left: 1.2em; list-style: disc; }
+.lg li::marker { color: var(--pink); }
+.lg a { color: #a83963; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.lg a:hover { color: var(--ink); }
+@media (max-width: 900px) { .lg { padding: 118px 0 64px; } }

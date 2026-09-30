@@ -60,7 +60,7 @@ export function LeadForm({ formKey, fields, choice, action, event, submitLabel, 
       const res = await action(data);
       if (res.success) {
         trackEvent(event);
-        router.push(redirectTo);
+        router.push(res.redirectTo ?? redirectTo);
         return;
       }
       if (res.fieldErrors) setErrors(res.fieldErrors);

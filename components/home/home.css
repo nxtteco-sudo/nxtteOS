@@ -1593,3 +1593,4 @@ button { border: 0; }
 @media (max-width: 560px) { .logo-badge { height: 40px; padding: 0 14px; } .logo-badge img { height: 26px; } }
 .ab-photo-img { object-fit: cover; object-position: center 30%; }
 .ab-badge-2 .ab-photo-img { object-position: center 25%; }
+.ft-legal { text-decoration: underline; text-underline-offset: 3px; } .ft-legal:hover { color: #fff; }

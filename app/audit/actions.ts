@@ -1,8 +1,15 @@
 'use server'
 
-import { createSupabaseClient } from '@/lib/supabase/server'
+import { isAdminConfigured } from '@/lib/auth/admin'
+import { issueToken, newReference, setMyCookie } from '@/lib/customer'
+import { alertAdmin, esc } from '@/lib/email'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import { auditSchema, type ActionResult } from '@/lib/validation/forms'
 
+const FAILED = 'Something went wrong. Message us on WhatsApp instead.'
+
+// Books an audit: saves the request, creates the customer's private dashboard
+// link, signs them in to it and alerts nxtte. The customer lands on /my.
 export async function submitAuditRequest(formData: FormData): Promise<ActionResult> {
   const parsed = auditSchema.safeParse(Object.fromEntries(formData))
   if (!parsed.success) {
@@ -14,21 +21,34 @@ export async function submitAuditRequest(formData: FormData): Promise<ActionResu
     return { success: false, error: 'Check the highlighted fields.', fieldErrors }
   }
 
-  const supabase = createSupabaseClient()
-  if (!supabase) {
+  if (!isAdminConfigured()) {
     console.error('[audit] Supabase env vars are not configured')
-    return { success: false, error: 'Something went wrong. Message us on WhatsApp instead.' }
+    return { success: false, error: FAILED }
   }
 
-  const { error } = await supabase.from('audit_requests').insert(parsed.data)
-  if (error) {
-    console.error('[audit] insert failed', error.message)
-    return { success: false, error: 'Something went wrong. Message us on WhatsApp instead.' }
+  const { data, error } = await supabaseAdmin()
+    .from('audit_requests')
+    .insert({ ...parsed.data, reference: newReference() })
+    .select('id, reference')
+    .single()
+  if (error || !data) {
+    console.error('[audit] insert failed', error?.message)
+    return { success: false, error: FAILED }
   }
 
-  // TODO: email alert on new audit request. No email provider or recipient has been
-  // chosen yet (AGENTS.md §9: "Server action -> Supabase -> email alert"). Until then
-  // new rows are only visible in Supabase.
+  try {
+    await setMyCookie(await issueToken(data.id))
+  } catch (e) {
+    console.error('[audit] could not create the private link', e)
+    return { success: true, redirectTo: '/thanks' }
+  }
 
-  return { success: true }
+  const { name, business, instagram, whatsapp } = parsed.data
+  await alertAdmin(
+    `New audit booked: ${business}`,
+    'New audit booked',
+    [`<b>${esc(name)}</b>, ${esc(business)}`, `Instagram: ${esc(instagram)}`, `WhatsApp: ${esc(whatsapp)}`, `Reference: ${esc(data.reference ?? '')}`],
+    `/admin/audits/${data.id}`,
+  )
+  return { success: true, redirectTo: '/my?welcome=1' }
 }

@@ -50,7 +50,7 @@ export type FormKey = keyof typeof formSchemas
 export type FieldErrors = Record<string, string>
 
 export type ActionResult =
-  | { success: true }
+  | { success: true; redirectTo?: string }
   | { success: false; error: string; fieldErrors?: FieldErrors }
 
 export function validateField(form: FormKey, name: string, value: string): string | null {
@@ -60,3 +60,15 @@ export function validateField(form: FormKey, name: string, value: string): strin
   const result = fieldSchema.safeParse(value)
   return result.success ? null : result.error.issues[0]?.message ?? 'Invalid value'
 }
+
+// Customer dashboard: the details a customer adds after booking the audit.
+export const auditDetailsSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Enter a valid email address').max(254),
+  goals: z.string().trim().min(1, 'Tell us what you want from your social media').max(1500),
+  ideal_customer: z.string().trim().max(800),
+  best_sellers: z.string().trim().max(800),
+  competitors: z.string().trim().max(800),
+  other_platforms: z.string().trim().max(400),
+  notes: z.string().trim().max(1500),
+})
+export type AuditDetails = z.infer<typeof auditDetailsSchema>

@@ -26,7 +26,7 @@ export async function signIn(_prev: { error: string } | null, formData: FormData
     await supabase.auth.signOut()
     return { error: 'This account does not have admin access.' }
   }
-  redirect('/admin/insights')
+  redirect('/admin')
 }
 
 export async function signOut() {

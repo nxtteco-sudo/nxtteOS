@@ -1,6 +1,7 @@
 'use server'
 
 import { createSupabaseClient } from '@/lib/supabase/server'
+import { alertAdmin, esc } from '@/lib/email'
 import { contactSchema, type ActionResult } from '@/lib/validation/forms'
 
 export async function submitContactForm(formData: FormData): Promise<ActionResult> {
@@ -26,9 +27,13 @@ export async function submitContactForm(formData: FormData): Promise<ActionResul
     return { success: false, error: 'Something went wrong. Message us on WhatsApp instead.' }
   }
 
-  // TODO: email alert on new contact submission. No email provider or recipient
-  // has been chosen yet (AGENTS.md §9: "Server action -> Supabase -> email alert").
-  // Until then new rows are only visible in Supabase.
+  const d = parsed.data
+  await alertAdmin(
+    `New enquiry: ${d.business}`,
+    'New contact enquiry',
+    [`<b>${esc(d.name)}</b>, ${esc(d.business)}`, `Wants: ${esc(d.service_interest)}`, `Instagram: ${esc(d.instagram)}`, `WhatsApp: ${esc(d.whatsapp)}`],
+    '/admin/leads',
+  )
 
   return { success: true }
 }

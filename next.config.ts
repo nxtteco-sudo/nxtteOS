@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' }],
   },
   experimental: {
-    // Admin image uploads go through a server action; the bucket allows 5 MB.
-    serverActions: { bodySizeLimit: '6mb' },
+    // Uploads go through server actions: images up to 5 MB, audit reports up to 10 MB.
+    serverActions: { bodySizeLimit: '11mb' },
   },
 }
 

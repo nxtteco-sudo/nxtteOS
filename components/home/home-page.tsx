@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT } from "@/lib/site";
+import { packages } from "@/lib/pricing";
 import { BrandMark } from "@/components/brand-mark";
 import { trackEvent } from "@/lib/analytics";
 import { siFacebook, siInstagram, siPinterest, siThreads, siTiktok, siWhatsapp, siX, siYoutube } from "simple-icons";
@@ -90,30 +91,6 @@ const navItems = [
 ];
 
 // Prices and inclusions from nxtte Services & Pricing 2026 (valid from October 2026).
-const packages = [
-  {
-    name: "Starter",
-    price: "RM 1,199",
-    note: "per month",
-    detail: "Show up consistently on one platform.",
-    included: ["1 platform", "12 posts (single image and carousel)", "Captions and hashtags", "Monthly content calendar", "Monthly report"],
-  },
-  {
-    name: "Growth",
-    price: "RM 2,299",
-    note: "per month",
-    detail: "Reels, where most new customers find local businesses today.",
-    included: ["2 platforms", "12 posts + 4 reels or TikToks", "Captions, hashtags and calendar", "Monthly report", "Monthly strategy call"],
-    featured: true,
-  },
-  {
-    name: "Pro",
-    price: "RM 3,399",
-    note: "per month",
-    detail: "Content, ads and shoots handled together.",
-    included: ["3 platforms", "16 posts + 6 reels or TikToks", "Ads management on 1 platform", "Half-day weekend shoot every quarter", "Report and monthly strategy call"],
-  },
-]
 
 const services = [
   {
@@ -280,7 +257,7 @@ function Footer() {
           </div>
           <div className="ft-bottom">
             <span>© 2026 nxtte, a sub-brand of Aurexis Solution</span>
-            <span>SSM NS0315281-P</span>
+            <span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link></span>
             <a className="ft-top-btn" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Back to top <ArrowUp size={14} /></a>
           </div>
         </div>
@@ -299,7 +276,7 @@ function StrippedShell({ children }: { children: React.ReactNode }) {
     <div className="page page-stripped">
       <Nav stripped />
       {children}
-      <footer className="stripped-foot"><div className="site-shell"><span>&copy; {new Date().getFullYear()} nxtte, a sub-brand of Aurexis Solution</span><span>SSM NS0315281-P</span></div></footer>
+      <footer className="stripped-foot"><div className="site-shell"><span>&copy; {new Date().getFullYear()} nxtte, a sub-brand of Aurexis Solution</span><span>SSM NS0315281-P &middot; <Link className="ft-legal" href="/privacy">Privacy</Link></span></div></footer>
     </div>
   );
 }
