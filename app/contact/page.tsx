@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ContactView } from "@/components/contact/contact-view";
 import "@/components/home/home.css";
+import "@/components/forms/lead-form.css";
 import "@/components/contact/contact.css";
 
 export const metadata: Metadata = {

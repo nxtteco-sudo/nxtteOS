@@ -10,9 +10,17 @@ conventions, repo structure, and which installed skill/agent to reach for.
 
 A marketing site for **nxtte** (social-media/content agency, sub-brand of Aurexis
 Solution). The site's only job is to make nxtte look credible enough to justify a
-**RM 1,590/month retainer**. Governing principle: *credibility first, beauty second,
+**monthly retainer** (Growth, RM 2,299/month under the 2026 pricing). Governing principle: *credibility first, beauty second,
 cleverness never.* If an element doesn't help a visitor answer "what do they do / who's
 it for / what does it cost / how do I start" in under 60 seconds, cut it.
+
+**2026 pricing (live on the site; supersedes the v1.1 PDF):** Starter RM 1,199,
+Growth RM 2,299 (recommended), Pro RM 3,399 a month · RM 199 audit, credited to month one
+within 14 days · 3-month minimum, then month to month (30 days' notice) · first calendar
+in 5 working days · 15% off the menu for package clients · ads management RM 1,200/month
+or 15% of ad spend, whichever is higher · campaign setup RM 499. Package and menu data
+live in `components/home/home-page.tsx` (`packages`, `MENU`). See the note at the top of
+AGENTS.md.
 
 Full spec: [`AGENTS.md`](./AGENTS.md). Original source PDF: `nxtte_website_spec.pdf`
 (do not delete — it's the ground truth if this file or AGENTS.md ever drift).
@@ -163,11 +171,12 @@ of these, insert a visible `TODO:` and say so rather than inventing a value:
 - Exact pink sampled from the logo file (we're using the spec's derived `#C9507B` /
   `#F2779F` until the real file is sampled)
 - Founder photos (Ms. Nemila, Mr. Jay)
-- Firm prices for Meta Ads / TikTok Ads management + setup (spec suggests RM
-  800/month or 18% of spend, whichever is higher, min RM 2,000 spend — confirm before using)
+- ~~Firm prices for Meta Ads / TikTok Ads management + setup~~ Resolved in the 2026
+  sheet: RM 1,200/month or 15% of ad spend, whichever is higher; setup RM 499.
 - Real audit-deliverable screenshots
 - Current nxtte account metrics + dates (Proof strip, Proof stat components)
-- SSM registration number + business email
+- Business email (the SSM number, NS0315281-P, is supplied and in use)
+- WhatsApp number, Instagram and TikTok handles, production domain, Meta Pixel ID
 - 3 case studies for `/work` (or an explicit decision to launch without `/work` in nav)
 
 ## Installed skills — what's active in `.claude/skills/`, and when to reach for each

@@ -291,6 +291,17 @@ function PageShell({ children, className = "" }: { children: React.ReactNode; cl
   return <div className={`page ${className}`}><Nav />{children}<Footer /></div>;
 }
 
+// /audit: stripped header, no links out except the logo (AGENTS.md section 5).
+function StrippedShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="page page-stripped">
+      <Nav stripped />
+      {children}
+      <footer className="stripped-foot"><div className="site-shell"><span>&copy; {new Date().getFullYear()} nxtte, a sub-brand of Aurexis Solution</span><span>SSM NS0315281-P</span></div></footer>
+    </div>
+  );
+}
+
 
 
 // Hero background: brand gradient + fine white grid with a few lit cells on the
@@ -855,6 +866,24 @@ function ProblemSection() {
 }
 
 // Runs a decorative loop only while it is on screen.
+// AGENTS.md section 9: package_view fires once per page view, when at least
+// a third of the pricing section is on screen.
+function useTrackView<T extends HTMLElement>(source: string) {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      trackEvent("package_view", { source });
+      io.disconnect();
+    }, { threshold: 0.33 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [source]);
+  return ref;
+}
+
 function useInView<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   const [inView, setInView] = useState(false);
@@ -1454,7 +1483,7 @@ export default function HomePage() {
 
         <FirstMonth />
 
-        <section className="proof-strip"><div className="site-shell proof-strip-inner"><div className="proof-label"><span className="pulse-dot" /> Proof in public</div><div className="proof-stat"><strong>+38%</strong><span>profile actions<br />in 30 days</span></div><div className="proof-stat"><strong>4.6x</strong><span>more saves on<br />campaign posts</span></div><div className="proof-stat"><strong>RM 17</strong><span>cost per qualified<br />enquiry</span></div><div className="proof-end"><span>We show our work.</span><ArrowUpRight size={18} /></div></div></section>
+        {/* Proof strip removed until real, dated account numbers exist (AGENTS.md content gaps). Restore with real figures only. */}
 
         <FAQSection />
 
@@ -1465,8 +1494,9 @@ export default function HomePage() {
 }
 
 function PackagesSection({ compact = false }: { compact?: boolean }) {
+  const viewRef = useTrackView<HTMLElement>("home");
   return (
-    <section id="packages" className={`packages-section dark-band ${compact ? "packages-section-compact" : ""}`}>
+    <section ref={viewRef} id="packages" className={`packages-section dark-band ${compact ? "packages-section-compact" : ""}`}>
       <div className="pk-bg" aria-hidden="true"><div className="pk-aurora" /><div className="pk-grid" /></div>
       <div className="site-shell">
         <div className="pk-head">
@@ -1510,6 +1540,7 @@ function PlanCell({ value }: { value: string | boolean }) {
 
 function PricingTableSection() {
   const [secRef, inView] = useInView<HTMLElement>();
+  const viewRef = useTrackView<HTMLDivElement>("services");
   const [ref, state] = useRevealOnce<HTMLDivElement>();
   const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
   const onMove = (event: React.MouseEvent<HTMLElement>) => {
@@ -1528,7 +1559,7 @@ function PricingTableSection() {
           <div><Eyebrow light>Published pricing</Eyebrow><h2>Pick the pace <em>that fits now.</em></h2></div>
           <p>Same team, same standards on every package. The difference is how much we make and where it goes.</p>
         </div>
-        <div className="pt-wrap art-step" style={delay(120)} onMouseMove={onMove}>
+        <div ref={viewRef} className="pt-wrap art-step" style={delay(120)} onMouseMove={onMove}>
           <table className="pt-table">
             <caption className="pt-sr">Compare the Starter, Growth and Pro packages</caption>
             <thead>
@@ -1800,4 +1831,4 @@ function FAQSection() {
 }
 
 // Shared with the Insights views (client components only).
-export { PageShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref, FAQ_ITEMS };
+export { PageShell, StrippedShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref, FAQ_ITEMS };

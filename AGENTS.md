@@ -6,12 +6,22 @@
 > (Claude, Codex, Cursor, etc.) working in this repo. If this file and the PDF ever
 > disagree, the PDF is authoritative — update this file to match, not the other way around.
 
+> **2026 pricing update (supersedes the prices in the v1.1 PDF).** The client's
+> *Services & Pricing 2026* sheet replaced the original numbers. The site uses:
+> Starter **RM 1,199**/mo, Growth **RM 2,299**/mo (recommended), Pro **RM 3,399**/mo;
+> the audit is **RM 199**, credited to month one if they sign within 14 days;
+> packages are a **3-month minimum, then month to month** (30 days' notice), not
+> "no lock-in"; first content calendar within **5 working days**; package clients get
+> **15% off** the menu; Meta/TikTok Ads management **RM 1,200/month or 15% of ad spend,
+> whichever is higher**; campaign setup **RM 499** each. Every other rule in this
+> document still applies. Where a price below was changed, the old value is noted.
+
 ## 0. What this project is
 
 A marketing website for **nxtte**, a social-media/content agency sub-brand of Aurexis
 Solution. It is **not** a lead magnet on its own — almost nobody discovers an agency
 through its website. The site exists to make nxtte look credible enough to justify a
-**RM 1,590/month retainer** when a prospect (from an Instagram DM, a referral, or an
+**monthly retainer** (Growth, RM 2,299/month; was RM 1,590 in v1.1) when a prospect (from an Instagram DM, a referral, or an
 Aurexis proposal) checks whether the business is real.
 
 **Governing design principle (applies to every decision in this document):**
@@ -52,7 +62,7 @@ Every line of copy on the site must derive from this. **Write nothing that contr
 |---|---|---|
 | Primary | Content that produces bookings, not just likes | Hero, meta title, IG bio |
 | Secondary | Site, funnel and content from one team | Why nxtte section, About |
-| Third | Published pricing, no lock-in, fast turnaround | Packages, FAQ, How we work |
+| Third | Published pricing, short commitment (3 months, then month to month), fast turnaround | Packages, FAQ, How we work |
 | Proof | Our own accounts, built in public, with numbers | Proof strip, Work |
 
 > **Do not write "AI-powered" as a marketing claim.** Every agency in the market now
@@ -62,7 +72,7 @@ Every line of copy on the site must derive from this. **Write nothing that contr
 ### Tone of voice
 
 - Plain over clever. Short sentences. No agency jargon: no "synergy", no "elevate", no "unlock".
-- Specific over vague. Numbers, days, ringgit. "Calendar in 72 hours" beats "fast turnaround".
+- Specific over vague. Numbers, days, ringgit. "First calendar in 5 working days" beats "fast turnaround".
 - Confident, not loud. No exclamation marks. State the price and move on.
 - Second person. Speak to the reader as "you", not about "clients".
 - English first, with natural Malaysian phrasing where it fits. No forced bahasa pasar.
@@ -83,7 +93,7 @@ give visitors somewhere else to wander.
 | 4 | `/about` | About | Yes | Put faces to the brand and explain the Aurexis link |
 | 5 | `/insights` | Insights | Yes | Show ongoing expertise; fed by repurposed content |
 | 6 | `/contact` | Contact | Yes | Remove every obstacle between interest and WhatsApp |
-| 7 | `/audit` | Audit landing page | No | Convert cold traffic into a paid RM 299 audit |
+| 7 | `/audit` | Audit landing page | No | Convert cold traffic into a paid RM 199 audit (was RM 299) |
 | 8 | `/thanks` | Confirmation | No | Set expectations and fire the conversion pixel |
 
 ### Two warnings before you build
@@ -125,7 +135,7 @@ traffic into the deeper pages.
 | 6 | Packages | Three price cards: Starter, Growth (flagged most popular), Scale | Black, full-bleed |
 | 7 | Work preview | Three tiles with one result each, link to `/work` | White |
 | 8 | Proof strip | nxtte's own account growth, real numbers and dates | Surface tint |
-| 9 | Final CTA + footer | RM 299 audit offer, WhatsApp button, SSM number, socials | Black, full-bleed |
+| 9 | Final CTA + footer | RM 199 audit offer, WhatsApp button, SSM number, socials | Black, full-bleed |
 
 ### Hero rules
 
@@ -140,14 +150,14 @@ traffic into the deeper pages.
 
 | Package | Price | Included |
 |---|---|---|
-| Starter | RM 890/mo | 1 platform · 12 posts (static and carousel) · captions · monthly report |
-| Growth | RM 1,590/mo | 2 platforms · 12 posts + 4 reels · content calendar · monthly report |
-| Scale | RM 2,890/mo | 2 platforms + ads management · content + reels · landing page · biweekly reporting |
+| Starter | RM 1,199/mo (was RM 890) | 1 platform · 12 posts (single image and carousel) · captions and hashtags · monthly content calendar · monthly report |
+| Growth | RM 2,299/mo (was RM 1,590) | 2 platforms · 12 posts + 4 reels or TikToks · captions, hashtags and calendar · monthly report · monthly strategy call |
+| Pro (was Scale) | RM 3,399/mo (was RM 2,890) | 3 platforms · 16 posts + 6 reels or TikToks · ads management on 1 platform (up to RM 3,000 ad spend a month) · half-day weekend shoot every quarter · report and monthly strategy call |
 
 - Mark **Growth** as the recommended tier and make its card visually heavier. Most
   buyers take the middle option when three are presented; the layout should encourage
   this. Ad spend is always stated as separate from management fees, directly beneath
-  the Scale card.
+  the Pro card.
 - Packages sits on a full-bleed black section, white text, pink accents — the same
   treatment as the final CTA. On an otherwise white site, these two blocks are the only
   place the original dark brand personality survives, so give them real visual weight
@@ -172,8 +182,9 @@ Purpose: answer "what exactly do I get and what does it cost" without a sales ca
 > buyer the price is soft before they've even asked. State a firm price. Where a job
 > genuinely varies, write "Quoted after a 15-minute call" instead — that signals
 > scoping, not softness. Separately, fill in the four blank prices on the current sheet
-> (Meta Ads, TikTok Ads, both campaign setups). Suggested: **RM 800/month or 18% of ad
-> spend, whichever is higher, on a minimum RM 2,000 spend.** Blank prices mean the
+> (Meta Ads, TikTok Ads, both campaign setups). **Resolved in the 2026 sheet:** ads
+> management **RM 1,200/month or 15% of ad spend, whichever is higher**; each campaign
+> setup **RM 499**. (v1.1 had suggested RM 800/month or 18%.) Blank prices mean the
 > highest-margin line cannot be sold.
 
 ### Work (`/work`)
@@ -196,7 +207,7 @@ logos. This is a selling page, not filler.
 - Hero — both founders, named, with real photographs. Not stock, not illustrations.
 - Why we started nxtte — three short paragraphs. Honest beats polished.
 - How we work — four principles: fast turnaround, published pricing, monthly
-  reporting, no lock-in.
+  reporting, short commitment (3 months, then month to month; was "no lock-in").
 - The Aurexis connection — the strongest block on the page. Explain that the same team
   builds the site and the funnel that the content feeds.
 - CTA — WhatsApp.
@@ -227,19 +238,19 @@ logos. This is a selling page, not filler.
 
 The page most likely to earn money directly. Stripped header, no links out except the logo.
 
-- Hero — "Find out why your content is not converting. RM 299, credited to your first month."
+- Hero — "Find out why your content is not converting. RM 199, credited to your first month." (was RM 299)
 - What you get — profile and bio teardown, content performance review, competitor
   comparison, gap analysis, 90-day roadmap with weekly deliverables.
 - Sample — two or three screenshots of a real audit deliverable. Produce one for a real
   business first, even unpaid, so this section is never empty.
 - Turnaround — delivered in five working days, stated plainly.
-- The offer — RM 299, fully credited against the first month if they sign within 14 days.
+- The offer — RM 199, fully credited against the first month if they sign within 14 days.
 - Form — four fields only: name, business, Instagram handle, WhatsApp number.
 
 > **Why the audit is the most important page on the site.** The audit is not the
 > product. The gap it reveals is the product. Build the deliverable so the final
 > section is a 90-day roadmap with weekly deliverables attached — a document that is
-> obviously useless unless somebody executes it. Crediting the RM 299 against month one
+> obviously useless unless somebody executes it. Crediting the RM 199 against month one
 > removes the last reason to hesitate. Expect 30–40% of audits to convert into a
 > retainer if the roadmap is specific enough.
 

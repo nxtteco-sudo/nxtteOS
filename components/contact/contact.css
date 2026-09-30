@@ -49,30 +49,6 @@
 .ct-next li { display: flex; align-items: center; gap: 12px; color: var(--ink); font-size: 15px; font-weight: 600; }
 .ct-next b { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: var(--ink); color: var(--pink-soft); font: 700 14px var(--display); }
 .ct-form-card { padding: 30px; border-radius: 28px; background: #fff; box-shadow: 0 40px 80px -44px rgba(120,30,70,.55); }
-.ct-form { display: grid; gap: 18px; }
-.ct-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.ct-field { display: grid; gap: 6px; min-width: 0; }
-.ct-field label, .ct-interest legend { color: var(--ink); font-size: 14px; font-weight: 700; }
-.ct-field input { width: 100%; min-height: 50px; padding: 12px 15px; border: 1.5px solid var(--border); border-radius: 14px; background: #fff; color: var(--ink); font: inherit; font-size: 16px; transition: border-color .15s ease; }
-.ct-field input::placeholder { color: #8a8a90; }
-.ct-field input:focus { border-color: var(--pink); outline: 3px solid rgba(201,80,123,.2); }
-.ct-field.has-error input { border-color: #b3261e; }
-.ct-error { margin: 0; color: #b3261e; font-size: 13.5px; font-weight: 600; }
-.ct-interest { min-width: 0; margin: 0; padding: 0; border: 0; }
-.ct-interest legend { margin-bottom: 8px; padding: 0; }
-.ct-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.ct-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--border); border-radius: 999px; background: #fff; color: var(--ink); font-size: 14.5px; font-weight: 600; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
-.ct-chip:hover { border-color: rgba(201,80,123,.5); }
-.ct-chip input { position: absolute; opacity: 0; pointer-events: none; }
-.ct-chip:focus-within { outline: 3px solid rgba(201,80,123,.35); outline-offset: 2px; }
-.ct-chip.is-on { border-color: var(--pink); background: var(--pink); color: #fff; }
-.ct-interest.has-error .ct-chip { border-color: rgba(179,38,30,.45); }
-.ct-form-error { margin: 0; padding: 12px 14px; border-radius: 14px; background: #fff1f1; color: #b3261e; font-size: 14.5px; }
-.ct-submit { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 54px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 16px; font-weight: 700; transition: background .2s ease, translate .2s var(--ease-out); }
-.ct-submit:hover { background: #2a1d24; translate: 0 -2px; }
-.ct-submit:disabled { opacity: .6; cursor: progress; }
-.ct-submit:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-.ct-fine { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 0; color: #55555b; font-size: 13.5px; }
 
 /* Below the fold: email and socials */
 .ct-reach { padding: 0 0 80px; background: #fff9fb; }
@@ -105,7 +81,7 @@ a.ct-reach-card:focus-visible { outline: 3px solid var(--pink); outline-offset: 
   .ct-alt { padding: 60px 0; }
   .ct-form-card { padding: 22px 18px; }
 }
-@media (max-width: 560px) { .ct-fields, .ct-reach-grid { grid-template-columns: 1fr; } .ct-msg { font-size: 15px; } }
+@media (max-width: 560px) { .ct-reach-grid { grid-template-columns: 1fr; } .ct-msg { font-size: 15px; } }
 /* ---- Split hero: the pink half is one WhatsApp link ---- */
 .ct-split { position: relative; background: linear-gradient(180deg, var(--pink-tint), #f7d3e3); }
 .ct-split-grid { display: grid; grid-template-columns: 1.3fr .7fr; min-height: 100vh; min-height: 100svh; }

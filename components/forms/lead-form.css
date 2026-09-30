@@ -1,0 +1,28 @@
+/* ---- Shared lead form (/contact, /audit) ---- */
+.adm-spin { animation: adm-spin .8s linear infinite; }
+@keyframes adm-spin { to { rotate: 360deg; } }
+.lf-form { display: grid; gap: 18px; }
+.lf-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lf-field { display: grid; gap: 6px; min-width: 0; }
+.lf-field label, .lf-choice legend { color: var(--ink); font-size: 14px; font-weight: 700; }
+.lf-field input { width: 100%; min-height: 50px; padding: 12px 15px; border: 1.5px solid var(--border); border-radius: 14px; background: #fff; color: var(--ink); font: inherit; font-size: 16px; transition: border-color .15s ease; }
+.lf-field input::placeholder { color: #8a8a90; }
+.lf-field input:focus { border-color: var(--pink); outline: 3px solid rgba(201,80,123,.2); }
+.lf-field.has-error input { border-color: #b3261e; }
+.lf-error { margin: 0; color: #b3261e; font-size: 13.5px; font-weight: 600; }
+.lf-choice { min-width: 0; margin: 0; padding: 0; border: 0; }
+.lf-choice legend { margin-bottom: 8px; padding: 0; }
+.lf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.lf-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--border); border-radius: 999px; background: #fff; color: var(--ink); font-size: 14.5px; font-weight: 600; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
+.lf-chip:hover { border-color: rgba(201,80,123,.5); }
+.lf-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.lf-chip:focus-within { outline: 3px solid rgba(201,80,123,.35); outline-offset: 2px; }
+.lf-chip.is-on { border-color: var(--pink); background: var(--pink); color: #fff; }
+.lf-choice.has-error .lf-chip { border-color: rgba(179,38,30,.45); }
+.lf-form-error { margin: 0; padding: 12px 14px; border-radius: 14px; background: #fff1f1; color: #b3261e; font-size: 14.5px; }
+.lf-submit { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 54px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 16px; font-weight: 700; transition: background .2s ease, translate .2s var(--ease-out); }
+.lf-submit:hover { background: #2a1d24; translate: 0 -2px; }
+.lf-submit:disabled { opacity: .6; cursor: progress; }
+.lf-submit:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+.lf-fine { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -4px 0 0; color: #55555b; font-size: 13.5px; }
+@media (max-width: 560px) { .lf-fields { grid-template-columns: 1fr; } }

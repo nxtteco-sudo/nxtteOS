@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Building2, Check, Clock3, FileText, Loader2, Mail, MapPin, MessageCircle, Phone, Plus, Receipt, SendHorizontal, Tag, Ticket } from "lucide-react";
+import { ArrowRight, BadgeCheck, Building2, Clock3, FileText, Mail, MapPin, MessageCircle, Phone, Plus, Receipt, Tag, Ticket } from "lucide-react";
 import { siInstagram, siTiktok } from "simple-icons";
 import { PageShell, Eyebrow, delay, useRevealOnce, useInView, FAQ_ITEMS } from "@/components/home/home-page";
 import { submitContactForm } from "@/app/contact/actions";
 import { trackEvent } from "@/lib/analytics";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
-import { contactSchema, SERVICE_INTERESTS, validateField } from "@/lib/validation/forms";
+import { SERVICE_INTERESTS } from "@/lib/validation/forms";
+import { LeadForm, type LeadField } from "@/components/forms/lead-form";
 
 // AGENTS.md section 5: WhatsApp is the hero and the largest object on the page;
 // the form is the fallback (five fields); "We reply within 24 hours" in writing;
@@ -21,12 +20,12 @@ const EMAIL = "TODO_BUSINESS_EMAIL";
 const INSTAGRAM_URL = "https://instagram.com/TODO_HANDLE";
 const TIKTOK_URL = "https://tiktok.com/@TODO_HANDLE";
 
-const FIELDS = [
-  { name: "name", label: "Your name", autoComplete: "name", placeholder: "" },
-  { name: "business", label: "Business name", autoComplete: "organization", placeholder: "" },
+const FIELDS: LeadField[] = [
+  { name: "name", label: "Your name", autoComplete: "name" },
+  { name: "business", label: "Business name", autoComplete: "organization" },
   { name: "instagram", label: "Instagram handle", autoComplete: "off", placeholder: "@yourbrand" },
   { name: "whatsapp", label: "WhatsApp number", autoComplete: "tel", placeholder: "+60 12 345 6789", type: "tel" },
-] as const;
+];
 
 const NEXT = [
   "We read it the same day.",
@@ -56,99 +55,6 @@ function useMotion() {
 
 function BrandIcon({ path, size = 18 }: { path: string; size?: number }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={path} /></svg>;
-}
-
-function ContactForm() {
-  const router = useRouter();
-  const [pending, start] = useTransition();
-  const [values, setValues] = useState<Record<string, string>>({ name: "", business: "", instagram: "", whatsapp: "", service_interest: "" });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
-
-  const setValue = (name: string, value: string) => setValues((v) => ({ ...v, [name]: value }));
-  const check = (name: string, value = values[name] ?? "") => {
-    const message = validateField("contact", name, value);
-    setErrors((prev) => {
-      const next = { ...prev };
-      if (message) next[name] = message;
-      else delete next[name];
-      return next;
-    });
-  };
-
-  function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setFormError(null);
-    const result = contactSchema.safeParse(values);
-    if (!result.success) {
-      const next: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = String(issue.path[0] ?? "");
-        if (key && !next[key]) next[key] = issue.message;
-      }
-      setErrors(next);
-      return;
-    }
-    const data = new FormData();
-    Object.entries(values).forEach(([k, v]) => data.set(k, v));
-    start(async () => {
-      const res = await submitContactForm(data);
-      if (res.success) {
-        trackEvent("contact_submit");
-        router.push("/thanks");
-        return;
-      }
-      if (res.fieldErrors) setErrors(res.fieldErrors);
-      setFormError(res.error);
-    });
-  }
-
-  const interestError = errors.service_interest;
-  return (
-    <form className="ct-form" onSubmit={submit} noValidate>
-      <div className="ct-fields">
-        {FIELDS.map((f) => {
-          const error = errors[f.name];
-          return (
-            <div key={f.name} className={`ct-field ${error ? "has-error" : ""}`}>
-              <label htmlFor={`ct-${f.name}`}>{f.label}</label>
-              <input
-                id={`ct-${f.name}`}
-                name={f.name}
-                type={"type" in f ? f.type : "text"}
-                autoComplete={f.autoComplete}
-                placeholder={f.placeholder}
-                value={values[f.name]}
-                onChange={(e) => { setValue(f.name, e.target.value); if (error) check(f.name, e.target.value); }}
-                onBlur={() => check(f.name)}
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? `ct-${f.name}-error` : undefined}
-              />
-              {error && <p id={`ct-${f.name}-error`} className="ct-error">{error}</p>}
-            </div>
-          );
-        })}
-      </div>
-      <fieldset className={`ct-interest ${interestError ? "has-error" : ""}`} aria-describedby={interestError ? "ct-interest-error" : undefined}>
-        <legend>What do you need help with?</legend>
-        <div className="ct-chips">
-          {SERVICE_INTERESTS.map((s) => (
-            <label key={s} className={`ct-chip ${values.service_interest === s ? "is-on" : ""}`}>
-              <input type="radio" name="service_interest" value={s} checked={values.service_interest === s} onChange={() => { setValue("service_interest", s); check("service_interest", s); }} />
-              {values.service_interest === s && <Check size={14} strokeWidth={3} aria-hidden="true" />}
-              {s}
-            </label>
-          ))}
-        </div>
-        {interestError && <p id="ct-interest-error" className="ct-error">{interestError}</p>}
-      </fieldset>
-      {formError && <p className="ct-form-error" role="alert">{formError}</p>}
-      <button type="submit" className="ct-submit" disabled={pending}>
-        {pending ? <Loader2 size={18} className="adm-spin" /> : <SendHorizontal size={18} />} {pending ? "Sending" : "Send my details"}
-      </button>
-      <p className="ct-fine"><Clock3 size={14} /> We reply within 24 hours, on WhatsApp.</p>
-    </form>
-  );
 }
 
 export function ContactView() {
@@ -216,7 +122,15 @@ export function ContactView() {
               </ol>
             </div>
             <div className="ct-form-card art-step" style={delay(120)}>
-              <ContactForm />
+              <LeadForm
+                formKey="contact"
+                fields={FIELDS}
+                choice={{ name: "service_interest", legend: "What do you need help with?", options: SERVICE_INTERESTS }}
+                action={submitContactForm}
+                event="contact_submit"
+                submitLabel="Send my details"
+                fine="We reply within 24 hours, on WhatsApp."
+              />
             </div>
           </div>
         </section>
