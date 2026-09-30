@@ -1,3 +1,4 @@
+import { BrandMark } from "@/components/brand-mark";
 import { redirect } from "next/navigation";
 import { getAdminUser, isAdminConfigured } from "@/lib/auth/admin";
 import { LoginForm } from "@/components/admin/login-form";
@@ -9,7 +10,7 @@ export default async function LoginPage() {
   return (
     <main className="adm-login">
       <div className="adm-login-card">
-        <span className="adm-logo" aria-hidden="true">n.</span>
+        <span className="adm-logo" aria-hidden="true"><BrandMark size={18} /></span>
         <h1>nxtte admin</h1>
         <p>Sign in to write and publish Insights.</p>
         {isAdminConfigured() ? (

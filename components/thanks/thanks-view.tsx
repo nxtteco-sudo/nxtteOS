@@ -6,13 +6,13 @@ import { siInstagram, siTiktok } from "simple-icons";
 import { PageShell, Eyebrow, delay, useRevealOnce } from "@/components/home/home-page";
 import { trackEvent } from "@/lib/analytics";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { CONTACT } from "@/lib/site";
 
 // AGENTS.md section 5 /thanks: confirmation with a time promise, a WhatsApp
 // button for anyone who wants to start now, Instagram and TikTok links. The
 // conversion pixel is fired by the page (MetaPixelLead).
-// TODO: real nxtte handles (content gap, do not fabricate).
-const INSTAGRAM_URL = "https://instagram.com/TODO_HANDLE";
-const TIKTOK_URL = "https://tiktok.com/@TODO_HANDLE";
+const INSTAGRAM_URL = CONTACT.instagramUrl;
+const TIKTOK_URL = CONTACT.tiktokUrl;
 
 const NEXT = [
   { when: "Within 24 hours", text: "We message you on WhatsApp to confirm and ask any questions." },

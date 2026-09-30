@@ -1,8 +1,5 @@
-// TODO: replace with the real nxtte business WhatsApp number in E.164 format
-// without the leading "+" (e.g. "60123456789"). Not in the spec's own "content
-// gaps" list, but the site cannot go live without it — flagging here rather than
-// inventing a number. See CLAUDE.md "Content gaps".
-const WHATSAPP_NUMBER = 'TODO_WHATSAPP_NUMBER'
+// nxtte business WhatsApp (+60 11-7472 1429), E.164 without the leading "+".
+const WHATSAPP_NUMBER = '601174721429'
 
 export function buildWhatsAppLink(message: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`

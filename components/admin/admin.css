@@ -186,3 +186,4 @@
 .adm-login-card { width: min(100%, 400px); }
 .adm-notice { overflow-wrap: anywhere; }
 .adm-field { grid-template-columns: minmax(0, 1fr); }
+.adm-logo { background: #000; box-shadow: inset 0 0 0 1px rgba(224,180,234,.22); }

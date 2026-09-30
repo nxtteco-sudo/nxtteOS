@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, BarChart3, CalendarRange, Camera, Clock3, Crosshair, Search, Ticket, UserRound } from "lucide-react";
+import { ArrowDown, BarChart3, CalendarRange, Check, Clock3, Crosshair, Search, Ticket, UserRound, X } from "lucide-react";
 import { StrippedShell, Eyebrow, delay, useRevealOnce, useInView } from "@/components/home/home-page";
 import { LeadForm, type LeadField } from "@/components/forms/lead-form";
 import { submitAuditRequest } from "@/app/audit/actions";
@@ -28,6 +28,16 @@ function useMotion() {
   const [ref, state] = useRevealOnce<HTMLDivElement>();
   const motion = state === "static" ? "" : state === "in" ? "anim-ready is-in" : "anim-ready";
   return [ref, motion] as const;
+}
+
+function RpTop({ n, title, dark = false }: { n: string; title: string; dark?: boolean }) {
+  return (
+    <div className={`rp-top ${dark ? "is-dark" : ""}`}>
+      <span className="rp-brand"><b>nxtte</b> Social media audit</span>
+      <span className="rp-ex">Example</span>
+      <strong><i>{n}</i> {title}</strong>
+    </div>
+  );
 }
 
 export function AuditView() {
@@ -97,20 +107,57 @@ export function AuditView() {
 
         <section className="au-sample">
           <div className="site-shell">
-            <div className="au-head">
-              <Eyebrow>Sample pages</Eyebrow>
-              <h2>What the report <em>looks like.</em></h2>
+            <div className="au-head au-sample-head">
+              <div>
+                <Eyebrow>Sample pages</Eyebrow>
+                <h2>What the report <em>looks like.</em></h2>
+              </div>
+              <p>An example report for a fictional café, so you can see the format. Your report uses your own accounts, content and competitors.</p>
             </div>
-            {/* TODO: two or three screenshots of a real audit deliverable (AGENTS.md
-                section 5). Produce one for a real business first, even unpaid. No mockups. */}
+            {/* Illustrative pages for a fictional business, clearly labelled. Replace with
+                screenshots of a real audit once one exists (AGENTS.md section 5). */}
             <div className="au-sample-grid">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="au-shot">
-                  <Camera size={22} aria-hidden="true" />
-                  <span>TODO: real audit screenshot {n}</span>
+              <article className="rp" aria-label="Example page: profile and bio teardown">
+                <RpTop n="02" title="Profile and bio teardown" />
+                <div className="rp-profile">
+                  <span className="rp-av" aria-hidden="true" />
+                  <div className="rp-bio">
+                    <b>sample.cafe</b>
+                    <span className="rp-line rp-bad">Best coffee in town</span>
+                    <span className="rp-line rp-bad">Open daily</span>
+                    <span className="rp-line rp-muted">No link in bio</span>
+                  </div>
                 </div>
-              ))}
+                <ul className="rp-notes">
+                  <li className="is-bad"><X size={13} /> The bio says what you are, not what to do next.</li>
+                  <li className="is-bad"><X size={13} /> No booking or WhatsApp link, so interest has nowhere to go.</li>
+                  <li className="is-good"><Check size={13} /> Fix: area, what you serve, one action. &ldquo;Brunch in Bangsar. Book a table on WhatsApp.&rdquo;</li>
+                </ul>
+              </article>
+
+              <article className="rp" aria-label="Example page: content performance review">
+                <RpTop n="03" title="Content performance review" />
+                <p className="rp-k">Last 30 posts: likes vs enquiries</p>
+                <div className="rp-chart" aria-hidden="true">
+                  {[62, 88, 40, 95, 30, 55, 25, 70].map((h, i) => (
+                    <span key={i} className="rp-col"><i style={{ height: `${h}%` }} /><b style={{ height: `${[8, 6, 30, 4, 38, 10, 34, 5][i]}%` }} /></span>
+                  ))}
+                </div>
+                <div className="rp-legend"><span><i className="rp-l1" /> Likes</span><span><i className="rp-l2" /> Enquiries</span></div>
+                <p className="rp-finding"><b>Finding:</b> the menu and price posts get fewer likes but most of the enquiries. Post more of them.</p>
+              </article>
+
+              <article className="rp rp-dark" aria-label="Example page: 90-day roadmap">
+                <RpTop n="05" title="90-day roadmap" dark />
+                <ol className="rp-road">
+                  {[["W1", "Rewrite bio, add WhatsApp link"], ["W2", "Menu and price highlight"], ["W3", "3 posts: best sellers with prices"], ["W4", "First reel: behind the counter"], ["W5-8", "Weekday offer campaign"], ["W9-12", "Review, keep what brings bookings"]].map(([w, t], i) => (
+                    <li key={w} className={i < 2 ? "is-now" : ""}><b>{w}</b>{t}</li>
+                  ))}
+                </ol>
+                <p className="rp-finding">Every week has one deliverable, so the plan is obvious to act on.</p>
+              </article>
             </div>
+            <p className="au-sample-note">Example report for a fictional business. Illustrative figures only.</p>
           </div>
         </section>
 

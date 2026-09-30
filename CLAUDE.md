@@ -170,13 +170,18 @@ of these, insert a visible `TODO:` and say so rather than inventing a value:
 
 - Exact pink sampled from the logo file (we're using the spec's derived `#C9507B` /
   `#F2779F` until the real file is sampled)
-- Founder photos (Ms. Nemila, Mr. Jay)
+- ~~Founder photos~~ supplied: public/team/*-portrait.jpg (originals in assets/team)
 - ~~Firm prices for Meta Ads / TikTok Ads management + setup~~ Resolved in the 2026
   sheet: RM 1,200/month or 15% of ad spend, whichever is higher; setup RM 499.
-- Real audit-deliverable screenshots
-- Current nxtte account metrics + dates (Proof strip, Proof stat components)
-- Business email (the SSM number, NS0315281-P, is supplied and in use)
-- WhatsApp number, Instagram and TikTok handles, production domain, Meta Pixel ID
+- Real audit-deliverable screenshots: client decision, keep the labelled example report
+  (fictional "sample.cafe") on /audit until a real audit exists.
+- Current nxtte account metrics + dates: client decision, show no metrics anywhere until
+  real, dated numbers exist (the homepage proof strip was removed).
+- Meta Pixel ID: deferred by the client (no ads yet). /thanks already calls fbq("track", "Lead"),
+  which is a no-op until the base script and ID are added. Add a privacy notice at the same time.
+- Supplied and in use (lib/site.ts, lib/whatsapp.ts, public/brand): SSM NS0315281-P,
+  WhatsApp +60 11-7472 1429, contact@nxtte.com, @nxtte.co on Instagram and TikTok,
+  domain nxtte.com, and the logo (original in assets/nxtte-logo-original.jpg)
 - 3 case studies for `/work` (or an explicit decision to launch without `/work` in nav)
 
 ## Installed skills — what's active in `.claude/skills/`, and when to reach for each

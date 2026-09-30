@@ -1,17 +1,17 @@
 import { ImageResponse } from 'next/og'
-import { ogFonts } from '@/lib/og-font'
+import { STAR_PATH } from '@/components/brand-mark'
 
 // Home-screen icon for iPhone (square; iOS rounds the corners itself).
 export const size = { width: 180, height: 180 }
 export const contentType = 'image/png'
 
-export default async function AppleIcon() {
+export default function AppleIcon() {
   return new ImageResponse(
     (
-      <div style={{ fontFamily: 'Space Grotesk', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a' }}>
-        <span style={{ color: '#f2779f', fontSize: 110, fontWeight: 700, letterSpacing: -6, marginTop: -10 }}>n.</span>
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
+        <svg width={76} height={96} viewBox="0 0 80 100"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#e0b4ea" /><stop offset="1" stopColor="#c997d4" /></linearGradient></defs><path d={STAR_PATH} fill="url(#s)" /></svg>
       </div>
     ),
-    { ...size, fonts: await ogFonts() },
+    size,
   )
 }

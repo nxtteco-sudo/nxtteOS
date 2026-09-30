@@ -2,9 +2,12 @@
 
 // Homepage design ported from the Vite prototype (_vite-scaffold-archive).
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { CONTACT } from "@/lib/site";
+import { BrandMark } from "@/components/brand-mark";
 import { trackEvent } from "@/lib/analytics";
 import { siFacebook, siInstagram, siPinterest, siThreads, siTiktok, siWhatsapp, siX, siYoutube } from "simple-icons";
 import {
@@ -16,7 +19,6 @@ import {
   BarChart3,
   Bookmark,
   CalendarCheck,
-  Camera,
   CalendarX,
   CalendarRange,
   Check,
@@ -153,8 +155,8 @@ const services = [
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" className={`logo-lockup ${light ? "logo-lockup-light" : ""}`} aria-label="nxtte home">
-      <span className="logo-mark">n.</span>
-      <span className="logo-word">nxtte</span>
+      {/* The logo is never recoloured; it sits in a solid black container (CLAUDE.md rule 5). */}
+      <span className="logo-badge"><Image src="/brand/nxtte-logo.png" alt="nxtte" width={480} height={204} priority sizes="120px" /></span>
     </Link>
   );
 }
@@ -240,8 +242,8 @@ function Nav({ stripped = false }: { stripped?: boolean }) {
 // (content gaps) until the real details are supplied.
 const FOOTER_SOCIALS = [
   { label: "WhatsApp", logo: siWhatsapp, href: whatsappHref },
-  { label: "Instagram", logo: siInstagram, href: "https://instagram.com/TODO_HANDLE" },
-  { label: "TikTok", logo: siTiktok, href: "https://tiktok.com/@TODO_HANDLE" },
+  { label: "Instagram", logo: siInstagram, href: CONTACT.instagramUrl },
+  { label: "TikTok", logo: siTiktok, href: CONTACT.tiktokUrl },
 ];
 
 function Footer() {
@@ -271,7 +273,7 @@ function Footer() {
             </div>
             <div className="ft-col">
               <span className="footer-label">Find us</span>
-              <a className="ft-line" href="mailto:TODO_BUSINESS_EMAIL"><Mail size={15} /> TODO_BUSINESS_EMAIL</a>
+              <a className="ft-line" href={`mailto:${CONTACT.email}`}><Mail size={15} /> {CONTACT.email}</a>
               <span className="ft-line"><MapPin size={15} /> Kuala Lumpur, Malaysia</span>
             </div>
           </div>
@@ -400,7 +402,7 @@ function HeroStage() {
         <div className="phone-notch" />
         <div className="phone-screen">
           <div className="phone-profile">
-            <span className="phone-avatar">n.</span>
+            <span className="phone-avatar"><BrandMark size={16} /></span>
             <span className="phone-handle">nxtte<small>Kuala Lumpur</small></span>
             <span className="phone-dots">•••</span>
           </div>
@@ -609,7 +611,7 @@ function WhySection() {
             <small>For every package client.</small>
           </div>
           <div className="why3-tile why3-tile-team art-step" style={delay(360)}>
-            <div className="why3-lockup"><span className="why3-mark">n.</span><Plus size={14} /><span className="why3-aurexis">Aurexis Solution</span></div>
+            <div className="why3-lockup"><span className="why3-mark"><BrandMark size={18} /></span><Plus size={14} /><span className="why3-aurexis">Aurexis Solution</span></div>
             <strong>Site, funnel and content from one team</strong>
             <div className="why3-chips">{["Content", "Website", "Lead capture", "Automation"].map((c) => <span key={c}>{c}</span>)}</div>
           </div>
@@ -933,7 +935,7 @@ function DeliverableArt({ kind }: { kind: Deliverable }) {
     case "calendar":
       return <div className="dv dv-cal">{Array.from({ length: 21 }, (_, k) => <i key={k} className={[1, 3, 6, 9, 11, 14, 17, 19].includes(k) ? "on" : ""} />)}</div>;
     case "namecard":
-      return <div className="dv dv-card"><span className="dv-mark">n.</span><b /><b /></div>;
+      return <div className="dv dv-card"><span className="dv-mark"><BrandMark size={12} /></span><b /><b /></div>;
     case "profile":
       return <div className="dv dv-profile"><small>Company profile</small><b>Your brand, on one page.</b><span /></div>;
   }
@@ -1146,11 +1148,10 @@ function NextStepsCTA() {
 }
 
 // /about hero: the founders as staff ID badges on nxtte lanyards, over a slow
-// brand-pink aurora. Photo frames are placeholders until the real founder
-// photos arrive (AGENTS.md content gaps): no stock, no illustrations.
+// brand-pink aurora. Founder photos live in public/team (originals in assets/team).
 const FOUNDERS = [
-  { name: "Ms. Nemila", role: "CEO, co-founder", initial: "N" },
-  { name: "Mr. Jay", role: "CTO, co-founder", initial: "J" },
+  { name: "Ms. Nemila", role: "CEO, co-founder", photo: "/team/nemila-portrait.jpg" },
+  { name: "Mr. Jay", role: "CTO, co-founder", photo: "/team/jay-portrait.jpg" },
 ];
 
 function AboutHero() {
@@ -1171,15 +1172,14 @@ function AboutHero() {
           </div>
         </div>
         <ul className="ab-badges" aria-label="Founders">
-          {FOUNDERS.map(({ name, role, initial }, i) => (
+          {FOUNDERS.map(({ name, role, photo }, i) => (
             <li key={name} className={`ab-badge ab-badge-${i + 1}`}>
               <span className="ab-strap" aria-hidden="true" />
               <span className="ab-clip" aria-hidden="true" />
               <div className="ab-card">
                 <span className="ab-hole" aria-hidden="true" />
                 <div className="ab-photo">
-                  <span className="ab-initial" aria-hidden="true">{initial}</span>
-                  <span className="ab-todo"><Camera size={12} /> TODO: photo of {name}</span>
+                  <Image src={photo} alt={`${name}, ${role}`} fill sizes="(max-width: 900px) 162px, 250px" className="ab-photo-img" priority />
                 </div>
                 <strong>{name}</strong>
                 <small>{role}</small>
@@ -1406,7 +1406,7 @@ function AboutCTA() {
         </div>
         <div className="ac-phone art-step" style={delay(160)}>
           <div className="ac-bar">
-            <span className="ac-av" aria-hidden="true">n.</span>
+            <span className="ac-av" aria-hidden="true"><BrandMark size={20} /></span>
             <span><strong>nxtte</strong><small>Ms. Nemila and Mr. Jay</small></span>
           </div>
           <div className="ac-thread" aria-live="polite">
@@ -1461,7 +1461,7 @@ export default function HomePage() {
         <section className="hero-section">
           <HeroBackground />
           <div className="site-shell hero-center">
-            <div className="hero-badge rise"><span className="hero-badge-mark">n.</span>Content, funnel and site from one team</div>
+            <div className="hero-badge rise"><span className="hero-badge-mark"><BrandMark size={17} /></span>Content, funnel and site from one team</div>
             <h1 className="rise" style={{ animationDelay: "60ms" }}>Your content should bring in <em>bookings</em>, not just likes.</h1>
             <p className="hero-sub rise" style={{ animationDelay: "120ms" }}>We build the content, landing page and follow-up system that turns attention into a reason to get in touch.</p>
             <div className="hero-actions rise" style={{ animationDelay: "180ms" }}><PrimaryButton>Start a conversation</PrimaryButton><a className="text-link" href="#packages">See packages <ArrowDownRight size={16} /></a></div>
@@ -1807,7 +1807,7 @@ function FAQSection() {
         </div>
         <div className="faq2-chat">
           <div className="faq2-chat-head">
-            <span className="faq2-avatar">n.</span>
+            <span className="faq2-avatar"><BrandMark size={18} /></span>
             <span><strong>nxtte</strong><small><i className="faq2-online" /> online · replies within 24 hours</small></span>
           </div>
           <div id="faq2-log" className="faq2-log" aria-live="polite">

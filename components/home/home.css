@@ -1575,3 +1575,21 @@ button { border: 0; }
 }
 @media (max-width: 1000px) { .ws-scenes { grid-template-columns: 1fr; max-width: 560px; margin-left: auto; margin-right: auto; } }
 @media (max-width: 900px) { .ws { padding: 60px 0; } .ws-art { height: 170px; } }
+/* Real logo in a solid black badge (never recoloured). */
+.logo-badge { display: inline-flex; align-items: center; height: 42px; padding: 0 12px; border-radius: 12px; background: #000; }
+.logo-badge img { width: auto; height: 32px; }
+.logo-lockup:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; border-radius: 12px; }
+@media (max-width: 560px) { .logo-badge { height: 38px; padding: 0 10px; } .logo-badge img { height: 28px; } }
+/* Brand star marks sit on black, like the logo. */
+.faq2-avatar, .dv-mark { background: #000; }
+.hero-badge-mark, .phone-avatar, .why3-mark, .faq2-avatar, .dv-mark, .ac-av { background: #000; box-shadow: inset 0 0 0 1px rgba(224,180,234,.22), 0 0 14px -4px rgba(201,151,212,.6); }
+.hero-badge-mark svg, .phone-avatar svg, .why3-mark svg, .faq2-avatar svg, .dv-mark svg, .ac-av svg { filter: drop-shadow(0 0 4px rgba(224,180,234,.55)); }
+
+/* Nav logo: a black pill that matches the rounded nav, with a soft lilac rim and glow on hover. */
+.logo-badge { height: 44px; padding: 0 18px; border-radius: 999px; background: #000; box-shadow: inset 0 0 0 1px rgba(224,180,234,.18), 0 8px 18px -10px rgba(10,10,10,.55); transition: box-shadow .3s ease, translate .3s var(--ease-out); }
+.logo-badge img { height: 30px; }
+.logo-lockup:hover .logo-badge { translate: 0 -1px; box-shadow: inset 0 0 0 1px rgba(224,180,234,.35), 0 10px 24px -8px rgba(201,151,212,.65); }
+.logo-lockup:focus-visible { border-radius: 999px; }
+@media (max-width: 560px) { .logo-badge { height: 40px; padding: 0 14px; } .logo-badge img { height: 26px; } }
+.ab-photo-img { object-fit: cover; object-position: center 30%; }
+.ab-badge-2 .ab-photo-img { object-position: center 25%; }

@@ -7,6 +7,7 @@ import { PageShell, Eyebrow, delay, useRevealOnce, useInView, FAQ_ITEMS } from "
 import { submitContactForm } from "@/app/contact/actions";
 import { trackEvent } from "@/lib/analytics";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { CONTACT } from "@/lib/site";
 import { SERVICE_INTERESTS } from "@/lib/validation/forms";
 import { LeadForm, type LeadField } from "@/components/forms/lead-form";
 
@@ -15,10 +16,9 @@ import { LeadForm, type LeadField } from "@/components/forms/lead-form";
 // email and both socials below the fold.
 const WHATSAPP_MESSAGE = "Hi nxtte, I'd like to talk about my business's social media.";
 
-// TODO: real business email and handles (content gap, do not fabricate).
-const EMAIL = "TODO_BUSINESS_EMAIL";
-const INSTAGRAM_URL = "https://instagram.com/TODO_HANDLE";
-const TIKTOK_URL = "https://tiktok.com/@TODO_HANDLE";
+const EMAIL = CONTACT.email;
+const INSTAGRAM_URL = CONTACT.instagramUrl;
+const TIKTOK_URL = CONTACT.tiktokUrl;
 
 const FIELDS: LeadField[] = [
   { name: "name", label: "Your name", autoComplete: "name" },
@@ -182,11 +182,11 @@ export function ContactView() {
             </a>
             <a className="ct-reach-card" href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
               <span className="ct-reach-ic"><BrandIcon path={siInstagram.path} /></span>
-              <span><small>Instagram</small><strong>@TODO_HANDLE</strong></span>
+              <span><small>Instagram</small><strong>{CONTACT.handle}</strong></span>
             </a>
             <a className="ct-reach-card" href={TIKTOK_URL} target="_blank" rel="noreferrer">
               <span className="ct-reach-ic"><BrandIcon path={siTiktok.path} /></span>
-              <span><small>TikTok</small><strong>@TODO_HANDLE</strong></span>
+              <span><small>TikTok</small><strong>{CONTACT.handle}</strong></span>
             </a>
             <div className="ct-reach-card ct-reach-static">
               <span className="ct-reach-ic"><MapPin size={20} /></span>
