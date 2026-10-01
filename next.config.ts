@@ -13,6 +13,13 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // The PDF library runs on the server only, and reads the font and logo files
+  // at runtime, so those are shipped with every route that renders a PDF.
+  serverExternalPackages: ['@react-pdf/renderer'],
+  outputFileTracingIncludes: {
+    '/api/documents/**': ['./assets/fonts/**', './public/brand/nxtte-logo.png'],
+    '/my/receipt': ['./assets/fonts/**', './public/brand/nxtte-logo.png'],
+  },
   async headers() {
     return [{ source: '/:path*', headers: SECURITY_HEADERS }]
   },

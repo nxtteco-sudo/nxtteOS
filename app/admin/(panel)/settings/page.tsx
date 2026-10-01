@@ -1,3 +1,5 @@
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { HeroStat, PageHero } from "@/components/admin/page-hero";
 import { PaymentSettingsForm } from "@/components/admin/crm";
 import { requireAdmin } from "@/lib/auth/admin";
 import { getPaymentSettings } from "@/lib/customer";
@@ -7,8 +9,14 @@ export default async function SettingsPage() {
   const admin = await requireAdmin();
   const settings = await getPaymentSettings();
   return (
-    <div className="adm-page">
-      <header className="adm-head"><div><h1>Settings</h1><p>Signed in as {admin.email}</p></div></header>
+    <div className="ov pg-narrow">
+      <PageHero
+        slim
+        kicker="Setup"
+        title="Settings"
+        sub={`Signed in as ${admin.email}. Payment details here show on customer dashboards and new invoices.`}
+        aside={<HeroStat icon={settings.account_number || settings.duitnow_id ? CheckCircle2 : AlertCircle} label="Payment details" value={settings.account_number || settings.duitnow_id ? "Ready" : "Missing"} sub={settings.account_number || settings.duitnow_id ? "Customers can pay" : "Add them below"} />}
+      />
       <PaymentSettingsForm settings={settings} />
       <section className="adm-card crm-settings">
         <h2 className="crm-h">Alerts</h2>

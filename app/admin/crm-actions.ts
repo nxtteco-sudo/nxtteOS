@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { requireAdmin } from '@/lib/auth/admin'
 import { PRIVATE_BUCKET, issueToken, privateLink } from '@/lib/customer'
 import { esc, sendEmail } from '@/lib/email'
+import { issueAuditReceipt, voidAuditReceipt } from '@/lib/documents/audit-receipt'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string }
@@ -132,6 +133,9 @@ export async function setPaid(id: string, paid: boolean): Promise<Result> {
     .update(paid ? { payment_status: 'paid', paid_at: new Date().toISOString() } : { payment_status: 'unpaid', paid_at: null, payment_claimed_at: null })
     .eq('id', id)
   if (error) return FAILED
+  // The receipt comes first, so the email's "your receipt is in your dashboard" is true.
+  if (paid) await issueAuditReceipt(id)
+  else await voidAuditReceipt(id)
   if (paid) {
     await notifyCustomer(audit, 'Payment confirmed: your nxtte audit', 'We have your payment. Thank you.', [`Your RM ${audit.amount} for the ${esc(audit.business)} audit is confirmed (reference ${esc(audit.reference ?? '')}).`, 'Your receipt is in your dashboard. We start as soon as we also have your details.'])
   }

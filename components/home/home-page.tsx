@@ -1,5 +1,6 @@
 "use client";
 
+import { FAQ_ITEMS } from "@/lib/faq";
 // Homepage design ported from the Vite prototype (_vite-scaffold-archive).
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -1701,14 +1702,6 @@ function PackageCard({ item, index }: { item: (typeof packages)[number]; index: 
     </article>
   );
 }
-
-const FAQ_ITEMS = [
-    ["How long is the contract, and can I stop?", "Packages have a 3-month minimum, then run month to month. After that you can stop with 30 days' notice."],
-    ["What actually happens in the first month?", "Day 1 is an onboarding call. Your first content calendar arrives within 5 working days, first posts go live in week 2, and the month ends with a report (plus a strategy call on Growth and Pro)."],
-    ["Who owns the content you produce?", "You do. Everything we create for you belongs to your business once paid."],
-    ["Is ad spend included in the management fee?", "No. Ad spend goes directly from you to Meta or TikTok, so you keep full control. Pro includes managing up to RM 3,000 a month on one platform. On its own, ads management is RM 1,200/month, or 15% of ad spend if higher."],
-    ["How fast is turnaround once I sign?", "Your first content calendar arrives within 5 working days. Timelines count from when we have your approvals, files and account access."],
-  ]
 
 const FAQ_BUBBLES = [
   { left: "43%", text: "Can I stop anytime?", size: "fb-md", dur: 24, delay: -3, side: "fb-left" },

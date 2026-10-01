@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-// Keeps the admin session cookie fresh. This is not the security boundary:
+// Keeps the admin, Documents and Accounts session cookie fresh. This is not the security boundary:
 // every admin page and server action calls requireAdmin() itself.
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -23,4 +23,4 @@ export async function middleware(request: NextRequest) {
   return response
 }
 
-export const config = { matcher: ['/admin/:path*'] }
+export const config = { matcher: ['/admin/:path*', '/documents/:path*', '/accounts/:path*'] }

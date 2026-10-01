@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { CheckCircle2, Clock3, Lock, Ticket } from "lucide-react";
+import { CheckCircle2, Clock3, Download, Lock, Ticket } from "lucide-react";
 import { PaymentPanel } from "@/components/my/my-ui";
 import { getPaymentSettings, requireMyAudit } from "@/lib/customer";
+import { auditReceiptFor } from "@/lib/documents/audit-receipt";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { formatDate } from "@/types/audit";
 
 export default async function PaymentPage() {
   const audit = await requireMyAudit();
   const settings = await getPaymentSettings();
+  const receipt = audit.payment_status === "paid" ? await auditReceiptFor(audit.id).catch(() => null) : null;
   const helpHref = buildWhatsAppLink(`Hi nxtte, please send me the payment details for my audit (${audit.reference ?? audit.business}).`);
 
   return (
@@ -30,6 +32,9 @@ export default async function PaymentPage() {
                 <div><dt>For</dt><dd>Social media audit, {audit.business}</dd></div>
                 <div><dt>Received by</dt><dd>Aurexis Solution (SSM NS0315281-P), trading as nxtte</dd></div>
               </dl>
+              {receipt
+                ? <a className="my-btn my-btn-dark" href="/my/receipt" download><Download size={17} /> Download receipt (PDF)</a>
+                : <p className="my-hint">Need an official receipt? Message us and we will send it.</p>}
             </section>
           ) : audit.payment_status === "claimed" ? (
             <section className="my-card my-receipt is-wait">

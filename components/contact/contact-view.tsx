@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Building2, Clock3, FileText, Mail, MapPin, MessageCircle, Phone, Plus, Receipt, Tag, Ticket } from "lucide-react";
 import { siInstagram, siTiktok } from "simple-icons";
-import { PageShell, Eyebrow, delay, useRevealOnce, useInView, FAQ_ITEMS } from "@/components/home/home-page";
+import { PageShell, Eyebrow, delay, useRevealOnce, useInView } from "@/components/home/home-page";
+import { FAQ_ITEMS, PRICE_ANSWER } from "@/lib/faq";
 import { submitContactForm } from "@/app/contact/actions";
 import { trackEvent } from "@/lib/analytics";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
@@ -42,10 +43,6 @@ const AFTER = [
   { icon: FileText, when: "Within 5 working days", title: "Your first calendar", body: "A month of content, planned before anything is posted." },
 ];
 
-const PRICE_ANSWER: [string, string] = [
-  "How much does it cost?",
-  "Packages are RM 1,199, RM 2,299 and RM 3,399 a month. Single pieces of work have fixed prices on the menu. Everything is listed on the Services page.",
-];
 
 function useMotion() {
   const [ref, state] = useRevealOnce<HTMLDivElement>();
@@ -63,7 +60,7 @@ export function ContactView() {
   const [afterRef, afterMotion] = useMotion();
   const [secRef, inView] = useInView<HTMLElement>();
   const waHref = buildWhatsAppLink(WHATSAPP_MESSAGE);
-  const answers = [PRICE_ANSWER, ...(FAQ_ITEMS as [string, string][])];
+  const answers = [PRICE_ANSWER, ...FAQ_ITEMS];
 
   return (
     <PageShell>

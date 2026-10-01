@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ImageOff, PenLine, Plus } from "lucide-react";
+import { BookOpenText, ImageOff, Lightbulb, Newspaper, PenLine, Plus } from "lucide-react";
+import { EmptyState, HeroStat, PageHero } from "@/components/admin/page-hero";
 import { requireAdmin } from "@/lib/auth/admin";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-// AGENTS.md: Insights goes in the site nav only once six posts are live.
-const NAV_THRESHOLD = 6;
+// A first goal of six posts (the spec's bar for a credible Insights page).
+const GOAL = 6;
 
 type Row = { id: string; slug: string; title: string; status: "draft" | "published"; cover_image_url: string | null; updated_at: string };
 
@@ -18,32 +19,21 @@ export default async function InsightsAdminPage() {
   const live = posts.filter((p) => p.status === "published").length;
 
   return (
-    <div className="adm-page">
-      <header className="adm-head">
-        <div>
-          <h1>Insights</h1>
-          <p>{live} published, {posts.length - live} draft{posts.length - live === 1 ? "" : "s"}</p>
-        </div>
-        <Link href="/admin/insights/new" className="adm-btn adm-btn-primary"><Plus size={16} /> New post</Link>
-      </header>
-
-      <div className="adm-goal" role="status">
-        <div className="adm-goal-bar" aria-hidden="true"><i style={{ width: `${Math.min(100, (live / NAV_THRESHOLD) * 100)}%` }} /></div>
-        <span>
-          {live >= NAV_THRESHOLD
-            ? "Six or more posts are live, so Insights can go in the site menu."
-            : `${live} of ${NAV_THRESHOLD} posts live. The spec keeps Insights out of the site menu until six are published.`}
-        </span>
-      </div>
+    <div className="ov">
+      <PageHero
+        slim
+        kicker="Website"
+        title="Insights"
+        accent="worth reading."
+        sub="Turn one Instagram carousel into a 400 to 700 word post. Each one helps people find nxtte on Google."
+        actions={<Link href="/admin/insights/new" className="ov-btn ov-btn-light"><Plus size={16} /> New post</Link>}
+        aside={<HeroStat icon={Newspaper} label="Published" value={`${live} of ${GOAL}`} progress={live / GOAL} sub={`${posts.length - live} draft${posts.length - live === 1 ? "" : "s"}${live >= GOAL ? " · first goal reached" : ""}`} />}
+      />
 
       {error && <p className="adm-error" role="alert">Could not load posts. Check that the migration has been run.</p>}
 
       {posts.length === 0 && !error ? (
-        <div className="adm-empty">
-          <h2>No posts yet</h2>
-          <p>Turn one of your Instagram carousels into a 400 to 700 word post.</p>
-          <Link href="/admin/insights/new" className="adm-btn adm-btn-primary"><Plus size={16} /> Write the first post</Link>
-        </div>
+        <EmptyState icons={[Lightbulb, BookOpenText, PenLine]} title="No posts yet." body="Pick your best-performing carousel, expand it into a short article, add a cover image, and publish. It goes live at /insights straight away." action={<Link href="/admin/insights/new" className="adm-btn adm-btn-primary"><Plus size={16} /> Write the first post</Link>} />
       ) : (
         <ul className="adm-list">
           {posts.map((p) => (

@@ -13,7 +13,7 @@ export default async function EditInsightPage({ params }: { params: Promise<{ id
   if (!UUID_RE.test(id)) notFound();
   const { data } = await supabaseAdmin()
     .from("insight_posts")
-    .select("id, slug, title, excerpt, body, cover_image_url, cover_alt, status, published_at, updated_at")
+    .select("id, slug, title, excerpt, body, cover_image_url, cover_alt, status, published_at, updated_at, seo_title, meta_description, focus_keyword, og_image_url, canonical_url, noindex, author_slug, takeaways, faqs")
     .eq("id", id)
     .maybeSingle();
   if (!data) notFound();

@@ -208,7 +208,8 @@ export function AdminThread({ auditId, messages, customer }: { auditId: string; 
   const [pending, start] = useTransition();
   const end = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { end.current?.scrollIntoView({ block: "nearest" }); }, [messages.length]);
+  // Scroll the thread itself to the newest message, never the whole page.
+  useEffect(() => { const list = end.current?.parentElement; if (list) list.scrollTop = list.scrollHeight; }, [messages.length]);
   useEffect(() => {
     if (messages.some((m) => m.sender === "customer" && !m.read_at)) void markCustomerMessagesRead(auditId);
   }, [auditId, messages]);

@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { ImageOff, PenLine, Plus } from "lucide-react";
+import { Briefcase, Camera, ImageOff, PenLine, Plus, TrendingUp } from "lucide-react";
+import { EmptyState, HeroStat, PageHero } from "@/components/admin/page-hero";
 import { requireAdmin } from "@/lib/auth/admin";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { CATEGORY_LABEL, type ServiceCategory } from "@/lib/pricing";
 import { CASE_TYPE_LABEL, type CaseType } from "@/types/work";
 
-// AGENTS.md: /work goes in the site nav only once three cases with a result are live.
-const NAV_THRESHOLD = 3;
+// A first goal of three cases, each with a real result.
+const GOAL = 3;
 
 type Row = { id: string; slug: string; headline: string; client_type: string; case_type: CaseType; category: ServiceCategory; result_value: string; status: "draft" | "published"; cover_image_url: string | null; sort_order: number };
 
@@ -21,32 +22,21 @@ export default async function WorkAdminPage() {
   const live = cases.filter((c) => c.status === "published").length;
 
   return (
-    <div className="adm-page">
-      <header className="adm-head">
-        <div>
-          <h1>Work</h1>
-          <p>{live} published, {cases.length - live} draft{cases.length - live === 1 ? "" : "s"}. The page shows 3 to 6 cases.</p>
-        </div>
-        <Link href="/admin/work/new" className="adm-btn adm-btn-primary"><Plus size={16} /> New case study</Link>
-      </header>
-
-      <div className="adm-goal" role="status">
-        <div className="adm-goal-bar" aria-hidden="true"><i style={{ width: `${Math.min(100, (live / NAV_THRESHOLD) * 100)}%` }} /></div>
-        <span>
-          {live >= NAV_THRESHOLD
-            ? "Three or more cases are live, so Work can go in the site menu."
-            : `${live} of ${NAV_THRESHOLD} cases live. The spec keeps Work out of the site menu until three are published, each with a real result.`}
-        </span>
-      </div>
+    <div className="ov">
+      <PageHero
+        slim
+        kicker="Website"
+        title="Work"
+        accent="that proves it."
+        sub="Case studies by service, each with a real result. The Work page shows 3 to 6 at a time, in the order you set."
+        actions={<Link href="/admin/work/new" className="ov-btn ov-btn-light"><Plus size={16} /> New case study</Link>}
+        aside={<HeroStat icon={Briefcase} label="Published" value={`${live} of ${GOAL}`} progress={live / GOAL} sub={`${cases.length - live} draft${cases.length - live === 1 ? "" : "s"}${live >= GOAL ? " · first goal reached" : ""}`} />}
+      />
 
       {error && <p className="adm-error" role="alert">Could not load case studies. Check that migration 0004 has been run.</p>}
 
       {cases.length === 0 && !error ? (
-        <div className="adm-empty">
-          <h2>No case studies yet</h2>
-          <p>Start with nxtte&rsquo;s own account, as the spec suggests, then an unpaid trial.</p>
-          <Link href="/admin/work/new" className="adm-btn adm-btn-primary"><Plus size={16} /> Write the first case</Link>
-        </div>
+        <EmptyState icons={[Camera, TrendingUp, Briefcase]} title="No case studies yet." body="Start with nxtte's own account, then a trial client. Add the problem, what you did, a real result, and before and after images." action={<Link href="/admin/work/new" className="adm-btn adm-btn-primary"><Plus size={16} /> Write the first case</Link>} />
       ) : (
         <ul className="adm-list">
           {cases.map((c) => (

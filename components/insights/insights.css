@@ -142,3 +142,31 @@
   .ip-endcard { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) { .ip-grid { grid-template-columns: 1fr; } }
+
+/* Author byline, key takeaways and FAQs (SEO and AEO) */
+.ip-meta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 18px; }
+.ip-meta-row .ip-meta { margin-top: 0; }
+.ip-byline { display: inline-flex; align-items: center; gap: 10px; color: #3d2530; font-size: 14px; }
+.ip-byline-photo { position: relative; overflow: hidden; width: 36px; height: 36px; border-radius: 50%; background: var(--pink-tint); box-shadow: 0 0 0 2px #fff, 0 6px 14px -8px rgba(120,30,70,.6); }
+.ip-byline-photo img { object-fit: cover; }
+.ip-byline small { display: block; color: var(--muted); font-size: 12.5px; }
+.ip-takeaways { margin: 0 0 30px; padding: 20px 22px; border-radius: 20px; background: #0a0a0a; color: #fff; box-shadow: 0 24px 46px -30px rgba(201,80,123,.7); }
+.ip-takeaways p { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.ip-takeaways p svg { color: var(--pink-soft); }
+.ip-takeaways ul { display: grid; gap: 8px; margin: 0; padding-left: 1.2em; list-style: disc; }
+.ip-takeaways li { color: #f4f4f5; font-size: 16.5px; line-height: 1.55; }
+.ip-takeaways li::marker { color: var(--pink-soft); }
+.ip-faqs { margin: 40px 0 0; }
+.ip-faqs h2 { margin: 0 0 14px; color: var(--ink); font: 700 26px var(--display); letter-spacing: -.03em; }
+.ip-faqs details { border-top: 1px solid rgba(201,80,123,.2); }
+.ip-faqs details:last-child { border-bottom: 1px solid rgba(201,80,123,.2); }
+.ip-faqs summary { display: flex; justify-content: space-between; align-items: center; gap: 14px; min-height: 52px; padding: 12px 0; color: var(--ink); font-size: 17px; font-weight: 700; cursor: pointer; list-style: none; }
+.ip-faqs summary::-webkit-details-marker { display: none; }
+.ip-faqs summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--pink-tint); color: #a83963; font-weight: 700; transition: rotate .2s ease; }
+.ip-faqs details[open] summary::after { rotate: 45deg; }
+.ip-faqs summary:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+.ip-faqs details p { margin: 0 0 16px; color: #3d2530; font-size: 16.5px; line-height: 1.6; }
+.wk-faqs { max-width: 900px; margin: 0 auto; }
+.adm-preview-byline:empty { display: none; }
+.adm-preview-byline { margin: 14px 0 0; }
+.ip-post-body > .ip-takeaways, .ip-post-body > .ip-faqs { max-width: 680px; margin-left: auto; margin-right: auto; }

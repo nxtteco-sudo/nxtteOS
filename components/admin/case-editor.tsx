@@ -2,7 +2,7 @@
 
 // Case study editor for /work. Same save / publish model as the Insights
 // editor. Publishing is blocked server-side until the case has a result.
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Eye, ImagePlus, Loader2, Plus, Sparkles, Trash2, X } from "lucide-react";
@@ -12,6 +12,8 @@ import { ImageUpload, uploadFile } from "./image-upload";
 import { SERVICE_CATEGORIES, type ServiceCategory } from "@/lib/pricing";
 import { slugify } from "./insight-editor";
 import { CASE_TYPE_LABEL, type CaseMetric, type CaseStudy, type CaseType, type GalleryImage } from "@/types/work";
+import { AnswersPanel, SearchSocialPanel, SeoScoreCard } from "./seo-panel";
+import { parseFaqs, seoChecks, type Faq } from "@/lib/content-seo";
 
 type Draft = {
   headline: string; slug: string; clientName: string; clientType: string; caseType: CaseType;
@@ -20,6 +22,7 @@ type Draft = {
   metrics: CaseMetric[]; services: string[]; testimonialQuote: string; testimonialAuthor: string;
   coverImageUrl: string | null; coverAlt: string; sortOrder: number;
   category: ServiceCategory; gallery: GalleryImage[]; beforeImageUrl: string | null; afterImageUrl: string | null;
+  seoTitle: string; metaDescription: string; focusKeyword: string; noindex: boolean; faqs: Faq[];
 };
 type Toast = { kind: "ok" | "error"; text: string } | null;
 const ALL_SERVICES = new Set<string>(SERVICE_CATEGORIES.flatMap((c) => [...c.services]));
@@ -50,6 +53,7 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
     metrics: c?.metrics ?? [], services: c?.services ?? [], testimonialQuote: c?.testimonial_quote ?? "", testimonialAuthor: c?.testimonial_author ?? "",
     coverImageUrl: c?.cover_image_url ?? null, coverAlt: c?.cover_alt ?? "", sortOrder: c?.sort_order ?? 100,
     category: c?.category ?? "social", gallery: c?.gallery ?? [], beforeImageUrl: c?.before_image_url ?? null, afterImageUrl: c?.after_image_url ?? null,
+    seoTitle: c?.seo_title ?? "", metaDescription: c?.meta_description ?? "", focusKeyword: c?.focus_keyword ?? "", noindex: c?.noindex ?? false, faqs: parseFaqs(c?.faqs),
   };
   const [d, setD] = useState<Draft>(initial);
   const [saved, setSaved] = useState(JSON.stringify(initial));
@@ -62,6 +66,8 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
   const [toast, setToast] = useState<Toast>(null);
   const dirty = JSON.stringify(d) !== saved;
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
+  const resultLine = [d.resultValue, d.resultLabel, d.resultPeriod].filter(Boolean).join(" ") + (d.clientType ? `. ${d.clientType}.` : "");
+  const checks = useMemo(() => seoChecks({ kind: "case", title: d.headline, seoTitle: d.seoTitle, metaDescription: d.metaDescription, fallbackDescription: resultLine, slug: d.slug, body: [d.situation, d.whatWeDid, d.whatChanged].join("\n\n"), focusKeyword: d.focusKeyword, coverImageUrl: d.coverImageUrl, coverAlt: d.coverAlt, faqs: d.faqs }), [d, resultLine]);
 
   useEffect(() => {
     if (!toast) return;
@@ -77,7 +83,7 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
 
   function save(nextStatus: "draft" | "published") {
     start(async () => {
-      const res = await saveCaseStudy({ id: c?.id, ...d, status: nextStatus });
+      const res = await saveCaseStudy({ id: c?.id, ...d, faqs: d.faqs.filter((f) => f.q.trim() && f.a.trim()), status: nextStatus });
       if (!res.ok) return setToast({ kind: "error", text: res.error });
       const wasLive = status === "published";
       setStatus(nextStatus);
@@ -272,6 +278,19 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
             <label className="adm-field"><span>Who said it</span><input value={d.testimonialAuthor} maxLength={100} placeholder="Name, role" onChange={(e) => set("testimonialAuthor", e.target.value)} /></label>
           </fieldset>
 
+          <div className="seo-score-narrow"><SeoScoreCard checks={checks} /></div>
+          <SearchSocialPanel
+            value={d}
+            onChange={(k, v) => set(k as keyof Draft, v as never)}
+            title={d.headline}
+            fallbackDescription={resultLine}
+            path="work"
+            slug={d.slug}
+            coverImageUrl={d.coverImageUrl}
+            onError={(text) => setToast({ kind: "error", text })}
+          />
+          <AnswersPanel faqs={d.faqs} onFaqs={(f) => set("faqs", f)} />
+
           {c && (
             <div className="adm-danger">
               <span>Delete this case study permanently</span>
@@ -292,6 +311,7 @@ export function CaseEditor({ c }: { c: CaseStudy | null }) {
         </div>
 
         <div className="adm-wide-preview">
+          <SeoScoreCard checks={checks} />
           <p className="adm-label">Tile preview</p>
           <div className="adm-preview-scroll">
             <div className="adm-case-tile">

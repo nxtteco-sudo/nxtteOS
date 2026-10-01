@@ -4,8 +4,8 @@ import type { CaseStudy, CaseSummary } from '@/types/work'
 
 // Public reads use the anon key; RLS only exposes published rows.
 const SUMMARY_COLUMNS =
-  'id, slug, headline, client_type, case_type, category, result_value, result_label, result_period, cover_image_url, cover_alt'
-const CASE_COLUMNS = `${SUMMARY_COLUMNS}, client_name, situation, what_we_did, what_changed, metrics, services, gallery, before_image_url, after_image_url, testimonial_quote, testimonial_author, status, sort_order, published_at, updated_at`
+  'id, slug, headline, client_type, case_type, category, result_value, result_label, result_period, cover_image_url, cover_alt, noindex'
+const CASE_COLUMNS = `${SUMMARY_COLUMNS}, client_name, situation, what_we_did, what_changed, metrics, services, gallery, before_image_url, after_image_url, testimonial_quote, testimonial_author, status, sort_order, published_at, updated_at, seo_title, meta_description, focus_keyword, faqs`
 
 export async function getPublishedCases(): Promise<CaseSummary[]> {
   const supabase = createSupabaseClient()

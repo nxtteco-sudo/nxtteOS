@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { getAdminUser, requireAdmin } from '@/lib/auth/admin'
 import { MEDIA_BUCKET, supabaseAdmin } from '@/lib/supabase/admin'
 import { createSessionClient } from '@/lib/supabase/ssr'
+import { parseFaqs } from '@/lib/content-seo'
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string }
 
@@ -49,6 +50,16 @@ const insightSchema = z.object({
   coverImageUrl: z.string().url().nullable(),
   coverAlt: z.string().trim().max(200),
   status: z.enum(['draft', 'published']),
+  // SEO and AEO (migration 0012). All optional.
+  seoTitle: z.string().trim().max(120).default(''),
+  metaDescription: z.string().trim().max(300).default(''),
+  focusKeyword: z.string().trim().max(80).default(''),
+  ogImageUrl: z.string().url().nullable().default(null),
+  canonicalUrl: z.union([z.literal(''), z.string().trim().url().max(300)]).default(''),
+  noindex: z.boolean().default(false),
+  authorSlug: z.enum(['nemila', 'jay']).nullable().default(null),
+  takeaways: z.string().trim().max(600).default(''),
+  faqs: z.array(z.object({ q: z.string(), a: z.string() })).max(8).default([]),
 })
 
 export type InsightInput = z.input<typeof insightSchema>
@@ -93,6 +104,15 @@ export async function saveInsight(input: InsightInput): Promise<Result<{ id: str
     cover_image_url: v.coverImageUrl,
     cover_alt: v.coverAlt,
     status: v.status,
+    seo_title: v.seoTitle,
+    meta_description: v.metaDescription,
+    focus_keyword: v.focusKeyword,
+    og_image_url: v.ogImageUrl,
+    canonical_url: v.canonicalUrl,
+    noindex: v.noindex,
+    author_slug: v.authorSlug,
+    takeaways: v.takeaways,
+    faqs: parseFaqs(v.faqs),
     // First publish stamps the date (used for ordering only); later saves keep it.
     published_at: previous?.published_at ?? (v.status === 'published' ? new Date().toISOString() : null),
   }

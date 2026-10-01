@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowUpRight, Clock3, MessageCircle, Sparkles } from "lucide
 import { PageShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref } from "@/components/home/home-page";
 import { trackEvent } from "@/lib/analytics";
 import type { InsightPost, InsightSummary } from "@/types/insights";
+import { authorBySlug, parseFaqs } from "@/lib/content-seo";
+import { PostByline, PostFaqs, PostTakeaways } from "./post-extras";
 
 // Spec (AGENTS.md section 5): cards newest first, no visible dates, one image
 // per post, CTA at the end of every post.
@@ -131,7 +133,10 @@ export function InsightPostView({ post, minutes, more, children }: { post: Insig
               <Link href="/insights" className="ip-back art-step" style={delay(0)}><ArrowLeft size={15} /> All insights</Link>
               <h1 className="art-step" style={delay(60)}>{post.title}</h1>
               {post.excerpt && <p className="ip-post-excerpt art-step" style={delay(120)}>{post.excerpt}</p>}
-              <span className="ip-meta art-step" style={delay(160)}><Clock3 size={14} /> {minutes} min read</span>
+              <span className="ip-meta-row art-step" style={delay(160)}>
+                <PostByline author={authorBySlug(post.author_slug)} />
+                <span className="ip-meta"><Clock3 size={14} /> {minutes} min read</span>
+              </span>
               {post.cover_image_url && (
                 <div className="ip-post-cover art-step" style={delay(200)}>
                   <Image src={post.cover_image_url} alt={post.cover_alt} fill priority sizes="(max-width: 900px) 100vw, 900px" className="ip-cover-img" />
@@ -140,7 +145,9 @@ export function InsightPostView({ post, minutes, more, children }: { post: Insig
             </div>
           </header>
           <div className="ip-post-main"><div className="site-shell ip-post-body">
+            <PostTakeaways text={post.takeaways ?? ""} />
             {children}
+            <PostFaqs faqs={parseFaqs(post.faqs)} />
             <aside className="ip-endcard">
               <span className="ip-endcard-ic" aria-hidden="true"><MessageCircle size={20} /></span>
               <div>

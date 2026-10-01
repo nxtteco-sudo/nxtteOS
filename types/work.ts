@@ -16,6 +16,7 @@ export type CaseSummary = {
   result_period: string
   cover_image_url: string | null
   cover_alt: string
+  noindex: boolean
 }
 
 export type CaseStudy = CaseSummary & {
@@ -34,6 +35,11 @@ export type CaseStudy = CaseSummary & {
   sort_order: number
   published_at: string | null
   updated_at: string
+  // SEO and AEO (migration 0012). Empty values fall back to the headline and result.
+  seo_title: string
+  meta_description: string
+  focus_keyword: string
+  faqs: unknown
 }
 
 // Shown on every tile so a trial or our own account is never passed off as a client.

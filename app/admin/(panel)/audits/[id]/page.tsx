@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, MessageCircle } from "lucide-react";
+import { ArrowLeft, Banknote, ExternalLink, MessageCircle } from "lucide-react";
+import { HeroStat, PageHero } from "@/components/admin/page-hero";
 import { AdminThread, AuditControls } from "@/components/admin/crm";
 import { Tracker } from "@/components/my/tracker";
 import { requireAdmin } from "@/lib/auth/admin";
-import { ADMIN_AUDIT_COLUMNS } from "@/lib/admin-data";
+import { ADMIN_AUDIT_COLUMNS, auditStage } from "@/lib/admin-data";
 import { getMessages, signedFileUrl } from "@/lib/customer";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { buildWhatsAppLinkTo } from "@/lib/whatsapp";
@@ -25,21 +26,26 @@ export default async function AuditDetailPage({ params }: { params: Promise<{ id
     audit.report_path ? signedFileUrl(audit.report_path, 600) : null,
   ]);
   const handle = audit.instagram.replace(/^@/, "");
+  const stage = auditStage(audit);
   const answers: [string, string][] = [
     ["What they want", audit.goals], ["Best customer", audit.ideal_customer], ["Want to sell more of", audit.best_sellers],
     ["Competitors", audit.competitors], ["Other accounts", audit.other_platforms], ["Anything else", audit.notes],
   ];
 
   return (
-    <div className="adm-page crm-detail">
+    <div className="ov crm-detail">
       <Link href="/admin/audits" className="crm-back"><ArrowLeft size={16} /> All audits</Link>
-      <header className="adm-head">
-        <div><h1>{audit.business}</h1><p>{audit.name} · {audit.reference ?? "no reference"} · booked {formatDate(audit.created_at)}</p></div>
-        <div className="crm-row">
-          <a className="adm-btn adm-btn-primary" target="_blank" rel="noreferrer" href={buildWhatsAppLinkTo(audit.whatsapp, `Hi ${audit.name.trim().split(/\s+/)[0]}, this is nxtte, about your audit for ${audit.business}.`)}><MessageCircle size={16} /> WhatsApp</a>
-          <a className="adm-btn" target="_blank" rel="noreferrer" href={`https://www.instagram.com/${handle}/`}><ExternalLink size={15} /> @{handle}</a>
-        </div>
-      </header>
+      <PageHero
+        slim
+        kicker={`Audit ${audit.reference ?? ""}`.trim()}
+        title={audit.business}
+        sub={<>{audit.name} · booked {formatDate(audit.created_at)} · <strong>{stage.label}</strong></>}
+        actions={<>
+          <a className="ov-btn ov-btn-light" target="_blank" rel="noreferrer" href={buildWhatsAppLinkTo(audit.whatsapp, `Hi ${audit.name.trim().split(/\s+/)[0]}, this is nxtte, about your audit for ${audit.business}.`)}><MessageCircle size={16} /> WhatsApp</a>
+          <a className="ov-btn" target="_blank" rel="noreferrer" href={`https://www.instagram.com/${handle}/`}><ExternalLink size={15} /> @{handle}</a>
+        </>}
+        aside={<HeroStat icon={Banknote} label="Payment" value={audit.payment_status === "paid" ? "Paid" : audit.payment_status === "claimed" ? "Check" : "Unpaid"} sub={`RM ${audit.amount}${audit.paid_at ? `, paid ${formatDate(audit.paid_at)}` : ""}`} />}
+      />
       <section className="adm-card crm-track"><Tracker audit={audit} /></section>
       <div className="crm-detail-grid">
         <div className="crm-col">

@@ -13,7 +13,7 @@ export default async function EditCasePage({ params }: { params: Promise<{ id: s
   if (!UUID_RE.test(id)) notFound();
   const { data } = await supabaseAdmin()
     .from("case_studies")
-    .select("id, slug, headline, client_name, client_type, case_type, category, result_value, result_label, result_period, situation, what_we_did, what_changed, metrics, services, gallery, before_image_url, after_image_url, testimonial_quote, testimonial_author, cover_image_url, cover_alt, status, sort_order, published_at, updated_at")
+    .select("id, slug, headline, client_name, client_type, case_type, category, result_value, result_label, result_period, situation, what_we_did, what_changed, metrics, services, gallery, before_image_url, after_image_url, testimonial_quote, testimonial_author, cover_image_url, cover_alt, status, sort_order, published_at, updated_at, noindex, seo_title, meta_description, focus_keyword, faqs")
     .eq("id", id)
     .maybeSingle();
   if (!data) notFound();

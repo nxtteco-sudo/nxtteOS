@@ -4,8 +4,11 @@ import { useActionState } from "react";
 import { ArrowRight, Loader2, LockKeyhole, Mail } from "lucide-react";
 import { signIn } from "@/app/admin/actions";
 
-export function LoginForm() {
-  const [state, action, pending] = useActionState(signIn, null);
+type SignInAction = (prev: { error: string } | null, formData: FormData) => Promise<{ error: string }>;
+
+// Shared by the admin and Documents sign-in pages.
+export function LoginForm({ action: signInAction = signIn }: { action?: SignInAction }) {
+  const [state, action, pending] = useActionState(signInAction, null);
   return (
     <form action={action} className="adm-form">
       <label className="adm-field adm-field-ic">

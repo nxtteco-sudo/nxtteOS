@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { DM_Sans, Space_Grotesk } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SITE_URL } from '@/lib/site'
+import { organizationJsonLd } from '@/lib/seo'
+import { JsonLd } from '@/components/seo/json-ld'
 import './globals.css'
 
 // Fonts are served from this site by next/font (no runtime font CDN). The client
@@ -28,8 +30,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bodyFont.variable} ${displayFont.variable}`}>
+    <html lang="en-MY" className={`${bodyFont.variable} ${displayFont.variable}`}>
       <body>
+        <JsonLd data={organizationJsonLd()} />
         {children}
         <Analytics />
       </body>

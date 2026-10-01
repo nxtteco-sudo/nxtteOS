@@ -415,3 +415,4 @@
   .my-form-foot { bottom: 10px; border-radius: 22px; }
   .my-foot-note { display: none; }
 }
+.my-receipt > .my-btn { justify-self: start; margin-top: 4px; }

@@ -159,7 +159,23 @@ The marketing spec has no accounts. The client asked for two dashboards on top o
   contact forms (bots get a fake success), and per-IP limits (SHA-256 hash, kept 24h, `form_attempts`) on
   those forms, customer sign-in and "email me my link". Fails open if the table is missing. The contact
   form saves through the service role; the public key has no insert policy. Security headers: `next.config.ts`.
-- Migrations `0001` to `0010` must be run in order. `/privacy` describes all of this; update
+- **Documents, `/documents`** (ported from the Aurexis project): proposals (Night glow), invoices and
+  receipts (Clean ink) as real PDFs via `@react-pdf/renderer` (`lib/documents`, `components/documents`,
+  `app/documents`, `app/api/documents`). Own access list `documents_access` (client: doc@nxtte.com);
+  admin does not grant access. No tax. Marking an audit paid issues a receipt (`lib/documents/audit-receipt.ts`),
+  undo voids it; the customer downloads it at `/my/receipt`. Fonts in `assets/fonts` are shipped with the
+  PDF routes via `outputFileTracingIncludes` in `next.config.ts`.
+- **SEO and AEO** (approach ported from Aurexis, nxtte facts only): `lib/seo.ts` (brand facts, Organization,
+  Service/packages, FAQ and breadcrumb JSON-LD), `lib/faq.ts` (one FAQ list for pages and schema),
+  `lib/content-seo.ts` (authors, checklist and score), `components/admin/seo-panel.tsx` (search and share
+  previews, answers card), `app/llms.txt`, AI crawlers allowed in `app/robots.ts`. Posts: search title and
+  description, keyword, share image, canonical, noindex, author, key takeaways, FAQs. Case studies: the same
+  minus share image, canonical, author and takeaways. No visible dates on Insights (spec); dates are in schema only.
+- **Accounts, `/accounts`** (ported from Aurexis, no referrals): income, payments and expenses, own access
+  list `accounts_access`. Invoices and receipts in Documents sync in on every page load (`lib/accounts/data.ts`,
+  `planSync` in `lib/accounts/model.ts`); a receipt with no invoice, such as an audit receipt, becomes its own
+  paid income row. Cash basis, no tax. Overview, Income, Expenses, Reports (CSV export, print).
+- Migrations `0001` to `0013` must be run in order. `/privacy` describes all of this; update
   it whenever a form, tool or provider changes.
 
 ## Repo structure to build toward

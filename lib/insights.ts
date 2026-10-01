@@ -4,8 +4,8 @@ import type { InsightPost, InsightSummary } from '@/types/insights'
 
 // Public reads use the anon key; RLS only exposes published rows, and the
 // status filter is repeated here so intent is explicit.
-const SUMMARY_COLUMNS = 'id, slug, title, excerpt, cover_image_url, cover_alt, published_at'
-const POST_COLUMNS = `${SUMMARY_COLUMNS}, body, status, updated_at`
+const SUMMARY_COLUMNS = 'id, slug, title, excerpt, cover_image_url, cover_alt, published_at, noindex'
+const POST_COLUMNS = `${SUMMARY_COLUMNS}, body, status, updated_at, seo_title, meta_description, focus_keyword, og_image_url, canonical_url, author_slug, takeaways, faqs`
 
 export async function getPublishedInsights(): Promise<InsightSummary[]> {
   const supabase = createSupabaseClient()

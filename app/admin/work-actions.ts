@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { requireAdmin } from '@/lib/auth/admin'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { parseFaqs } from '@/lib/content-seo'
 
 type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string }
 
@@ -37,6 +38,12 @@ const caseSchema = z.object({
   coverAlt: z.string().trim().max(200),
   sortOrder: z.number().int().min(0).max(999),
   status: z.enum(['draft', 'published']),
+  // SEO and AEO (migration 0012). All optional.
+  seoTitle: z.string().trim().max(120).default(''),
+  metaDescription: z.string().trim().max(300).default(''),
+  focusKeyword: z.string().trim().max(80).default(''),
+  noindex: z.boolean().default(false),
+  faqs: z.array(z.object({ q: z.string(), a: z.string() })).max(8).default([]),
 })
 
 export type CaseInput = z.input<typeof caseSchema>
@@ -102,6 +109,11 @@ export async function saveCaseStudy(input: CaseInput): Promise<Result<{ id: stri
     cover_alt: v.coverAlt,
     sort_order: v.sortOrder,
     status: v.status,
+    seo_title: v.seoTitle,
+    meta_description: v.metaDescription,
+    focus_keyword: v.focusKeyword,
+    noindex: v.noindex,
+    faqs: parseFaqs(v.faqs),
     published_at: previous?.published_at ?? (v.status === 'published' ? new Date().toISOString() : null),
   }
 

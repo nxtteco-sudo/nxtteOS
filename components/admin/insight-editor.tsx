@@ -10,10 +10,13 @@ import {
 } from "lucide-react";
 import { deleteInsight, saveInsight } from "@/app/admin/actions";
 import { PostBody } from "@/components/insights/post-body";
+import { PostByline, PostFaqs, PostTakeaways } from "@/components/insights/post-extras";
 import { ImageUpload, uploadFile } from "./image-upload";
 import type { InsightPost } from "@/types/insights";
+import { AnswersPanel, SearchSocialPanel, SeoScoreCard, type SearchFields } from "./seo-panel";
+import { authorBySlug, parseFaqs, seoChecks, type AuthorSlug, type Faq } from "@/lib/content-seo";
 
-type Draft = { title: string; slug: string; excerpt: string; body: string; coverImageUrl: string | null; coverAlt: string };
+type Draft = SearchFields & { title: string; slug: string; excerpt: string; body: string; coverImageUrl: string | null; coverAlt: string; ogImageUrl: string | null; canonicalUrl: string; authorSlug: AuthorSlug | null; takeaways: string; faqs: Faq[] };
 type Toast = { kind: "ok" | "error"; text: string } | null;
 
 // Spec: posts are 400 to 700 words.
@@ -52,6 +55,15 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
     body: post?.body ?? "",
     coverImageUrl: post?.cover_image_url ?? null,
     coverAlt: post?.cover_alt ?? "",
+    focusKeyword: post?.focus_keyword ?? "",
+    seoTitle: post?.seo_title ?? "",
+    metaDescription: post?.meta_description ?? "",
+    noindex: post?.noindex ?? false,
+    ogImageUrl: post?.og_image_url ?? null,
+    canonicalUrl: post?.canonical_url ?? "",
+    authorSlug: (authorBySlug(post?.author_slug)?.slug ?? null),
+    takeaways: post?.takeaways ?? "",
+    faqs: parseFaqs(post?.faqs),
   };
   const [d, setD] = useState<Draft>(initial);
   const [saved, setSaved] = useState(JSON.stringify(initial));
@@ -69,6 +81,7 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
   const words = useMemo(() => d.body.trim().split(/\s+/).filter(Boolean).length, [d.body]);
   const wordState = words < WORD_MIN ? "short" : words > WORD_MAX ? "long" : "good";
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
+  const checks = useMemo(() => seoChecks({ kind: "post", title: d.title, seoTitle: d.seoTitle, metaDescription: d.metaDescription, fallbackDescription: d.excerpt, slug: d.slug, body: d.body, focusKeyword: d.focusKeyword, coverImageUrl: d.coverImageUrl, coverAlt: d.coverAlt, takeaways: d.takeaways, faqs: d.faqs }), [d]);
 
   useEffect(() => {
     if (!toast) return;
@@ -84,7 +97,7 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
 
   function save(nextStatus: "draft" | "published") {
     start(async () => {
-      const res = await saveInsight({ id: post?.id, ...d, status: nextStatus });
+      const res = await saveInsight({ id: post?.id, ...d, faqs: d.faqs.filter((f) => f.q.trim() && f.a.trim()), status: nextStatus });
       if (!res.ok) return setToast({ kind: "error", text: res.error });
       const wasLive = status === "published";
       setStatus(nextStatus);
@@ -141,13 +154,16 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
     <div className="adm-preview">
       <h1>{d.title || "Your title"}</h1>
       {d.excerpt && <p className="adm-preview-excerpt">{d.excerpt}</p>}
+      <div className="adm-preview-byline"><PostByline author={authorBySlug(d.authorSlug)} /></div>
       {d.coverImageUrl && (
         // eslint-disable-next-line @next/next/no-img-element -- preview only
         <img className="adm-preview-cover" src={d.coverImageUrl} alt={d.coverAlt} />
       )}
+      <PostTakeaways text={d.takeaways} />
       {d.body.trim()
         ? <PostBody markdown={d.body} />
         : <p className="adm-muted">Start writing and the post appears here, exactly as readers will see it.</p>}
+      <PostFaqs faqs={d.faqs.filter((f) => f.q.trim() && f.a.trim())} />
     </div>
   );
 
@@ -251,6 +267,26 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
             <div className={`adm-narrow-preview ${pane === "write" ? "adm-hide" : ""}`}>{preview}</div>
           </div>
 
+          <div className="seo-score-narrow"><SeoScoreCard checks={checks} /></div>
+          <SearchSocialPanel
+            value={d}
+            onChange={(k, v) => set(k, v as Draft[typeof k])}
+            title={d.title}
+            fallbackDescription={d.excerpt}
+            path="insights"
+            slug={d.slug}
+            coverImageUrl={d.coverImageUrl}
+            onError={(text) => setToast({ kind: "error", text })}
+          />
+          <AnswersPanel
+            author={d.authorSlug}
+            onAuthor={(v) => set("authorSlug", v)}
+            takeaways={d.takeaways}
+            onTakeaways={(v) => set("takeaways", v)}
+            faqs={d.faqs}
+            onFaqs={(f) => set("faqs", f)}
+          />
+
           {post && (
             <div className="adm-danger">
               <span>Delete this post permanently</span>
@@ -278,6 +314,7 @@ export function InsightEditor({ post }: { post: InsightPost | null }) {
         </div>
 
         <div className="adm-wide-preview">
+          <SeoScoreCard checks={checks} />
           <p className="adm-label">Live preview</p>
           <div className="adm-preview-scroll">{preview}</div>
         </div>

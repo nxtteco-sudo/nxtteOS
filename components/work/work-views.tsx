@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, MessageCircle, Quote, Sparkles } from "lucide-react";
 import { PageShell, Eyebrow, delay, useRevealOnce, useInView, whatsappHref } from "@/components/home/home-page";
 import { trackEvent } from "@/lib/analytics";
+import { parseFaqs } from "@/lib/content-seo";
+import { PostFaqs } from "@/components/insights/post-extras";
 import { CATEGORY_LABEL, SERVICE_CATEGORIES, type ServiceCategory } from "@/lib/pricing";
 import { CASE_TYPE_LABEL, type CaseStudy, type CaseSummary } from "@/types/work";
 
@@ -132,6 +134,7 @@ export function WorkIndexView({ cases }: { cases: CaseSummary[] }) {
 export function CaseStudyView({ c, more, situation, whatWeDid, whatChanged }: {
   c: CaseStudy; more: CaseSummary[]; situation: React.ReactNode; whatWeDid: React.ReactNode; whatChanged: React.ReactNode;
 }) {
+  const faqs = parseFaqs(c.faqs);
   const [ref, motion] = useMotion();
   const [storyRef, storyMotion] = useMotion();
   const parts = [
@@ -224,6 +227,8 @@ export function CaseStudyView({ c, more, situation, whatWeDid, whatChanged }: {
                   {c.testimonial_author && <figcaption>{c.testimonial_author}</figcaption>}
                 </figure>
               )}
+
+              {faqs.length > 0 && <div className="wk-faqs"><PostFaqs faqs={faqs} /></div>}
 
               <aside className="ip-endcard">
                 <span className="ip-endcard-ic" aria-hidden="true"><MessageCircle size={20} /></span>
